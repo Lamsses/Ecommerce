@@ -22,7 +22,7 @@ namespace EcommerceApi.Controllers
         public record UesrData(int UserId, string UesrName,string FirstName, string LastName);
 
 
-        [HttpPost ("token")]
+        [HttpPost ("token123")]
         [AllowAnonymous]
         public ActionResult<string> Authenticate([FromBody] AuthenticationData data)
         {

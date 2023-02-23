@@ -1,3 +1,5 @@
+using Ecommerce.DataAccess;
+using EcommerceLibrary.DataAccess;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -8,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers(); 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSingleton< ISqlDataAccess, SqlDataAccess>();
+builder.Services.AddSingleton<IProdcutsData, ProdcutsData>();
 builder.Services.AddAuthorization(opts =>
 {
     opts.FallbackPolicy = new AuthorizationPolicyBuilder()

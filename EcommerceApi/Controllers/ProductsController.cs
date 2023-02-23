@@ -1,4 +1,5 @@
-﻿using EcommerceLibrary.Models;
+﻿using EcommerceLibrary.DataAccess;
+using EcommerceLibrary.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,25 +8,35 @@ namespace EcommerceApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+   
     public class ProductsController : ControllerBase
     {
-        [HttpGet]
-        public ActionResult<IEnumerable<ProductsModel>> Get()
+        private readonly IProdcutsData _data;
+
+        public ProductsController(IProdcutsData data)
         {
-            throw new NotImplementedException();
+            _data = data;
+        }
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ProductsModel>>> Get()
+        {
+           var output =await  _data.GetAll();
+            return Ok(output);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<ProductsModel> Get(int id)
+        public async Task<ActionResult<ProductsModel>> Get(int id)
         {
-            throw new NotImplementedException();
+            var output = await _data.GetOne(id);
+            return Ok(output);
 
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] string value)
+        public async Task<ActionResult<ProductsModel>> Post([FromBody] string name, string price, int quantity, string img_url, string description, int catagoryId)
         {
-            throw new NotImplementedException();
+            var output = await _data.Create(name, price, quantity, img_url, description, catagoryId);
+            return Ok(output);
 
         }
 
