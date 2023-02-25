@@ -3,7 +3,9 @@ using Dapper;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace Ecommerce.DataAccess;
+using System.Data;
+
+namespace EcommerceLibrary.DataAccess;
 
 public class SqlDataAccess : ISqlDataAccess
 {
@@ -25,7 +27,7 @@ public class SqlDataAccess : ISqlDataAccess
         return rows.ToList();
     }
 
-    public async Task<List<T>> Loaddata<T>(string storedProcedure,string connectionStringName)
+    public async Task<List<T>> Loaddata<T>(string storedProcedure, string connectionStringName)
     {
         string connectionString = _config.GetConnectionString(connectionStringName);
 
@@ -37,14 +39,14 @@ public class SqlDataAccess : ISqlDataAccess
         return rows.ToList();
     }
 
-    public Task SaveData<T>(string storedProcedure, T parameters, string connectionStringName)
+    public async Task SaveData<T>(string storedProcedure, T parameters, string connectionStringName)
 
     {
         string connectionString = _config.GetConnectionString(connectionStringName);
 
         using IDbConnection connection = new SqlConnection(connectionString);
 
-        return connection.ExecuteAsync(
+        await connection.ExecuteAsync(
             storedProcedure,
             parameters,
             commandType: CommandType.StoredProcedure);

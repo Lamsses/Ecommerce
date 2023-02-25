@@ -13,9 +13,9 @@ public class ProdcutsData : IProdcutsData
         _sql = sql;
     }
 
-    public Task<List<ProductsModel>> GetAll()
+    public Task<List<ProductsModel>> GetAllAssigned()
     {
-        return _sql.Loaddata<ProductsModel>("dbo.spProducts_GetAll", "Default");
+        return _sql.Loaddata<ProductsModel>("dbo.spTodos_GetAllAssigned", "Default");
     }
     public async Task<ProductsModel?> GetOne(int productId)
     {

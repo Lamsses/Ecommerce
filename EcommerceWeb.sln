@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33403.182
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EcommerceWebApi", "EcommerceWebApi\EcommerceWebApi.csproj", "{2CD656B5-D36F-439D-A6AB-75874C5AB362}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EcommerceLibrary", "EcommerceLibrary\EcommerceLibrary.csproj", "{CEA9A791-43FF-4402-8887-E49CCEACCF9A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2CD656B5-D36F-439D-A6AB-75874C5AB362}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CD656B5-D36F-439D-A6AB-75874C5AB362}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CD656B5-D36F-439D-A6AB-75874C5AB362}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CD656B5-D36F-439D-A6AB-75874C5AB362}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEA9A791-43FF-4402-8887-E49CCEACCF9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEA9A791-43FF-4402-8887-E49CCEACCF9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEA9A791-43FF-4402-8887-E49CCEACCF9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEA9A791-43FF-4402-8887-E49CCEACCF9A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {36B27439-BC84-4498-B6E1-89DA22FD5A7B}
+	EndGlobalSection
+EndGlobal
