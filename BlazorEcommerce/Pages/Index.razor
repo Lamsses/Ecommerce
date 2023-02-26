@@ -1,0 +1,49 @@
+﻿@page "/"
+@using System.Net.Http.Json
+@inject IHttpClientFactory factory
+@inject TokenModel tokenInfo
+<PageTitle>Index</PageTitle>
+
+@if (isLoggedIn)
+{
+    <h1>you are logged in </h1>
+    <button class="btn btn-danger" @onclick="LogOut">log out</button>
+}
+else
+{
+    <h1>Log in</h1>
+    <EditForm Model="login" OnValidSubmit="HandleValidSubmit">
+        <InputText @bind-Value = "login.UesrName"/>
+        <InputText type="password" @bind-Value="login.Password" />
+
+        <button class="btn btn-success" type="submit">Log in</button>
+
+    </EditForm>
+}
+
+
+@code {
+
+    private AuthenticationModel login = new();
+    private bool isLoggedIn = false;
+
+    protected override void OnInitialized()
+    {
+        isLoggedIn = !string.IsNullOrEmpty(tokenInfo.Token);
+    }
+    private async void HandleValidSubmit()
+    {
+        var client = factory.CreateClient("api");
+
+        var info = await client.PostAsJsonAsync<AuthenticationModel>("Authentication/token", login);
+
+        tokenInfo.Token = await info.Content.ReadAsStringAsync();
+        isLoggedIn = true;
+        await InvokeAsync(StateHasChanged);
+    }
+    private  void LogOut()
+    {
+        tokenInfo.Token = "";
+        isLoggedIn = false;
+    }
+}
