@@ -1,0 +1,42 @@
+﻿@page "/cart"
+@inject ILocalStorageService LocalStorage
+<h3>Cart</h3>
+
+@if(products is not null )
+{
+    foreach (var item in products)
+    {
+               <div> @item.name 
+            @item.price
+            @item.quantity
+                    </div>
+        <button class="alert-danger" type="button" @onclick="() => Delete(item)"></button>
+
+    }
+}
+else
+{
+            <span>No items found</span>
+
+}
+
+@code {
+    List<ProductsModel> products = new();
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            products = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
+
+            StateHasChanged();
+        }
+    }
+    private async Task Delete(ProductsModel product)
+    {
+
+        products.Remove(product);
+
+        LocalStorage.SetItemAsync("cart", products);
+
+    }
+}

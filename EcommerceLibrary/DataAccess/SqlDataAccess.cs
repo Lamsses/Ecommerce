@@ -3,7 +3,6 @@ using Dapper;
 using System.Data;
 using System.Data.SqlClient;
 
-using System.Data;
 
 namespace EcommerceLibrary.DataAccess;
 

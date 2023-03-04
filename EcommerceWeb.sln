@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EcommerceWebApi", "Ecommerc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EcommerceLibrary", "EcommerceLibrary\EcommerceLibrary.csproj", "{CEA9A791-43FF-4402-8887-E49CCEACCF9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorEcommerce", "BlazorEcommerce\BlazorEcommerce.csproj", "{6A90332E-9CF7-4358-9D78-EB430FA8428D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorEcommerce", "BlazorEcommerce\BlazorEcommerce.csproj", "{6A90332E-9CF7-4358-9D78-EB430FA8428D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
