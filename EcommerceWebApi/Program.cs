@@ -12,10 +12,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHealthChecks();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddSingleton<ISqlDataAccess, SqlDataAccess>();
 builder.Services.AddSingleton<IProductsData, ProductsData>();
 builder.Services.AddSingleton<ICategoriesData, CategoriesData>();
+builder.Services.AddSingleton<ICustomersData, CustomersData>();
 builder.Services.AddSingleton<IOrdersData, OrdersData>();
+
 
 
 

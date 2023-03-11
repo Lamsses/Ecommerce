@@ -5,49 +5,37 @@
 @inject TokenModel tokenInfo
 @inject ILocalStorageService LocalStorage
 @inject ISyncLocalStorageService sessionStorage
+
+
 <PageTitle>Counter</PageTitle>
 
+
+
+
 <h1>Products</h1>
-
-
-
-
 @if (products is not null)
 {
     @foreach (var p in products)
     {
-            <div calss="h2">
-                @p.name @p.price @p.quantity
-                <button class="btn btn-primary" @onclick="() => AddToCart(p) ">Add To cart</button>
-            </div>
-
+        <div calss="h2">
+            @p.name @p.price @p.ProductAmount
+            <button class="btn btn-primary" @onclick="() => AddToCart(p) ">Add To cart</button>
+        </div>
     }
-    <a href="cart"> 
-
-        <div>@if (cart is not null)
+    <a href="cart">
+        <div>
+            @if (cart is not null)
             {
-
-
                 @cart.Count  <span>items in your cart</span>
             }
             else
             {
                 <span> Add items to your Cart bitch   </span>
-                
             }
-            
-            
         </div>
 
-        </a>
+    </a>
 }
-
-
-
-
-
-   
-
 
 @code {
     private List<ProductsModel>? products;
@@ -65,11 +53,11 @@
     }
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
-          if (firstRender)
+        if (firstRender)
         {
-          cart = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
+            cart = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
 
-         StateHasChanged();
+            StateHasChanged();
         }
     }
 
@@ -77,15 +65,32 @@
     protected List<ProductsModel> cart = new();
 
 
+
     private async Task AddToCart(ProductsModel products)
     {
         if (cart is null)
         {
+
             cart = new List<ProductsModel>();
         }
-        cart.Add(products);
-        await LocalStorage.SetItemAsync("cart", cart);
+        var find = cart.Find(p => p.product_id == products.product_id);
+        if (find is null)
+        {
+            cart.Add(products);
+            await LocalStorage.SetItemAsync("cart", cart);
+
+        }
+        else
+        {
+
+            find.ProductAmount += 1;
+            products.ProductAmount = find.ProductAmount;
+            await LocalStorage.SetItemAsync("cart", cart);
+            StateHasChanged();
+
+        }
     }
+    
    
 
 

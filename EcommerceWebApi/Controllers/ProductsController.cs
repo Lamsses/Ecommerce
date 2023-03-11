@@ -9,7 +9,7 @@ namespace EcommerceApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[AllowAnonymous]
+
 
 public class ProductsController : ControllerBase
 {

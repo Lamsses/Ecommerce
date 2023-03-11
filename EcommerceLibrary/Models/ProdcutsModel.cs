@@ -16,5 +16,7 @@ namespace EcommerceLibrary.Models
 
         public string? description { get; set; }
         public int category_id { get; set; }
+
+        public int ProductAmount { get; set; }
     }
 }

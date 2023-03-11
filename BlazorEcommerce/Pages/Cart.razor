@@ -2,25 +2,29 @@
 @inject ILocalStorageService LocalStorage
 <h3>Cart</h3>
 
-@if(products is not null )
+@if (products is not null)
 {
     foreach (var item in products)
     {
-               <div> @item.name 
+        <div>
+            @item.name
             @item.price
-            @item.quantity
-                    </div>
-        <button class="alert-danger" type="button" @onclick="() => Delete(item)"></button>
+            @item.ProductAmount
+        </div>
+        <button class="alert-danger" type="button" @onclick="() => Delete(item)">Delete</button>
 
     }
+
+    
+
 }
 else
 {
-            <span>No items found</span>
-
+    <span>No items found</span>
 }
 
 @code {
+    
     List<ProductsModel> products = new();
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {

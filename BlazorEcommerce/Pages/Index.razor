@@ -12,11 +12,26 @@
 else
 {
     <h1>Log in</h1>
-    <EditForm Model="login" OnValidSubmit="HandleValidSubmit">
-        <InputText @bind-Value = "login.UesrName"/>
-        <InputText type="password" @bind-Value="login.Password" />
+    <EditForm Model="Authenticat" OnValidSubmit="HandleValidSubmit">
+        <InputText @bind-Value = "Authenticat.email"/>
+        <InputText type="password" @bind-Value="Authenticat.password" />
 
         <button class="btn btn-success" type="submit">Log in</button>
+
+    </EditForm>
+
+    <h1>Register</h1>
+    <EditForm Model="Authenticat" OnValidSubmit="HandleRegister">
+        <InputText @bind-Value="Authenticat.first_name" />
+        <InputText @bind-Value="Authenticat.last_name" />
+        <InputText @bind-Value="Authenticat.password" />
+        <InputText @bind-Value="Authenticat.phone_number" />
+        <InputText @bind-Value="Authenticat.email" />
+        <InputText @bind-Value="Authenticat.city" />
+
+        <button class="btn btn-success" type="submit">Register</button>
+
+
 
     </EditForm>
 }
@@ -24,7 +39,7 @@ else
 
 @code {
 
-    private AuthenticationModel login = new();
+    private AuthenticationModel Authenticat = new();
     private bool isLoggedIn = false;
 
     protected override void OnInitialized()
@@ -35,10 +50,28 @@ else
     {
         var client = factory.CreateClient("api");
 
-        var info = await client.PostAsJsonAsync<AuthenticationModel>("Authentication/token", login);
+        var info = await client.PostAsJsonAsync<AuthenticationModel>("Customers/token", Authenticat);
 
-        tokenInfo.Token = await info.Content.ReadAsStringAsync();
-        isLoggedIn = true;
+        var Token = await info.Content.ReadAsStringAsync();
+        if (info.IsSuccessStatusCode)
+        {
+            isLoggedIn = true;
+            await InvokeAsync(StateHasChanged);
+
+        }
+        else
+        {
+            
+        }
+    }
+    private async Task HandleRegister()
+    {
+        var client = factory.CreateClient("api");
+
+        var info = await client.PostAsJsonAsync<AuthenticationModel>("Customers", Authenticat);
+       
+     
+
         await InvokeAsync(StateHasChanged);
     }
     private  void LogOut()
