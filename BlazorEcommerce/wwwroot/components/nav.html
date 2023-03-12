@@ -1,0 +1,73 @@
+<nav class="nav">
+  <a href="/"> <img class="nav__brand" src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e86ab4c21faa7bc0bd90dd_Logo.svg" alt="" /> </a>
+  <img class="icon nav__toggler" src="images/menu1.svg" alt="">
+  <ul class="list nav__list">
+    <li class="nav__item">
+      <div class="collapsible ">
+        <header class="collapsible__header">
+          <a href="#">Category</a>
+          <img class="icon collapsible__chevron" src="images/expand.svg" alt="">
+
+        </header>
+        <div class="collapsible__content collapsible__content-wrap ">
+          <ul class="list">
+            <li class="list__item"><a class="category__link" href="">Headphones</a></li>
+            <li class="list__item"><a class="category__link" href="">Mouses</a></li>
+            <li class="list__item"><a class="category__link" href="">Keyboards</a></li>
+            <li class="list__item"><a class="category__link" href="">Accessories</a></li>
+            <li class="list__item"><a class="category__link" href="">Laptops</a></li>
+          </ul>
+        </div>
+      </div>
+    </li>
+    <li class="nav__item"><a href="#">Deals</a></li>
+    <li class="nav__item"><a href="#">What's New</a></li>
+    <li class="nav__item"><a href="#">Delivery</a></li>
+  </ul>
+  <div class="input-group">
+    <input type="search" placeholder="Search Products" class="input input--search"/>
+    <img class="icon" src="images/search_icon.svg" alt="" />
+  </div>
+  <div class="nav-right-content">
+    <a class="nav-right-text" href="#">
+      <img class="nav-icon" src="images/user.png" alt="">
+      <span class="">Account</span>
+    </a>
+    <div class="cart ">
+      
+      <a class="nav-right-text" href="#">
+        <img class="nav-icon left-padding" src="images/shopping-cart-add.png" alt="">
+        <span class="">Cart</span>
+      </a>
+      <div class="cart-box">
+        <div class="cart-window">
+          <div class="cart-items-wrap">
+            <div class="cart-item grid grid--cols-2">
+              <img
+                class="cart-item-img"
+                src="images/airpodmax-large-blue.jpg"
+                alt=""
+              />
+              <div class="item-content">
+                <h3 class="item-name">airpods max</h3>
+                <button class="remove-btn">x</button>
+                <div class="amount-input">
+                  <button class="btn-wrap color-one">-</button>
+                  <span class="amount-number">1</span>
+                  <button class="btn-wrap color-two">+</button>
+                </div>
+                <p class="item-price">100$</p>
+              </div>
+            </div>
+          </div>
+          <div class="total-wrap">
+            <p class="total-text">Total</p>
+            <p class="total-text">$100</p>
+          </div>
+          <button class="btn btn--primary">Checkout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</nav>
