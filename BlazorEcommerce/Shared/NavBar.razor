@@ -1,11 +1,13 @@
-﻿<nav class="nav">
+﻿@using Microsoft.JSInterop.Implementation
+@inject IJSRuntime JS
+<nav class="nav">
     <a href="/"> <img class="nav__brand" src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e86ab4c21faa7bc0bd90dd_Logo.svg" alt="" /> </a>
     <img class="icon nav__toggler" src="images/menu1.svg" alt="">
     <ul class="list nav__list">
         <li class="nav__item">
-            <div class="collapsible ">
+            <div @onclick="ShowCategory" class="collapsible">
                 <header class="collapsible__header">
-                    <a href="#">Category</a>
+                    <a  href="#" >Category</a>
                     <img class="icon collapsible__chevron" src="images/expand.svg" alt="">
 
                 </header>
@@ -35,7 +37,7 @@
         </a>
         <div class="cart ">
 
-            <a class="nav-right-text" href="#">
+            <a class="nav-right-text" @onclick="ShowCart" href="#">
                 <img class="nav-icon left-padding" src="images/shopping-cart-add.png" alt="">
                 <span class="">Cart</span>
             </a>
@@ -69,7 +71,16 @@
     </div>
 
 </nav>
-
 @code {
+    
 
+    async Task ShowCategory()
+    {
+        await JS.InvokeVoidAsync("ShowCategory");
+    }
+
+    async Task ShowCart()
+    {
+        await JS.InvokeVoidAsync("ShowCart");
+    }
 }

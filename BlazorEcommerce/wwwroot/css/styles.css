@@ -472,7 +472,7 @@ input {
 .hero__background {
   background-image: url(https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e8c4e58c0997219ec01eb6_background-bg-min.png);
   position: relative;
-  z-index: 0;
+  z-index: -1;
   padding-top: 150px;
   padding-bottom: 150px;
   background-position: 50% 50%;
@@ -756,6 +756,8 @@ li .btn.active {
 }
 .cart-box {
   max-height: 0;
+    z-index: 1;
+    background-color: #fff;
   overflow: hidden;
   opacity: 0;
   transition: all 0.3s;
