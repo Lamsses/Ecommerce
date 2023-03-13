@@ -1,6 +1,8 @@
 ﻿@page "/"
+@using System.Net.Http.Headers
 @inject IJSRuntime JS
-
+@inject IHttpClientFactory factory
+@inject TokenModel tokenInfo
 <section class="block hero__background">
     <div class="container grid grid--cols-2">
         <div class="hero__content">
@@ -155,33 +157,6 @@
                 </header>
               </div>
             </div>
-
-            <div class="product">
-              <div class="card">
-                <header >
-                  <div class="product__favorite">
-                    <img
-                      src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e9df775b939f51a0b22f6d_Icon.svg"
-                      alt=""
-                    />
-                  </div>
-                  <img
-                    class="product--img"
-                    src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e8c4e68b497e229146b818_leptop%20sleeve-min.png"
-                    alt=""
-                  />
-                  <div class="card__body">
-                    <span class="product__price">$59</span>
-                    <h3 class="prodcut__name">Laptop sleeve MacBook</h3>
-                    <span class="product__description"
-                      >Organic Cotton, fairtrade certified</span
-                    >
-                    <button class="btn btn--outline">Add to Cart</button>
-                  </div>
-                </header>
-              </div>
-            </div>
-
             <div class="product">
               <div class="card">
                 <header >
@@ -257,7 +232,6 @@
                 </header>
               </div>
             </div>
-
             <div class="product">
               <div class="card">
                 <header >
@@ -283,7 +257,31 @@
                 </header>
               </div>
             </div>
-
+            <div class="product">
+              <div class="card">
+                <header >
+                  <div class="product__favorite">
+                    <img
+                      src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e9df775b939f51a0b22f6d_Icon.svg"
+                      alt=""
+                    />
+                  </div>
+                  <img
+                    class="product--img"
+                    src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e8c4e68b497e229146b818_leptop%20sleeve-min.png"
+                    alt=""
+                  />
+                  <div class="card__body">
+                    <span class="product__price">$59</span>
+                    <h3 class="prodcut__name">Laptop sleeve MacBook</h3>
+                    <span class="product__description"
+                      >Organic Cotton, fairtrade certified</span
+                    >
+                    <button class="btn btn--outline">Add to Cart</button>
+                  </div>
+                </header>
+              </div>
+            </div>
             <div class="product">
               <div class="card">
                 <header >
@@ -387,6 +385,15 @@
     </div>
 </footer>
 @code {
+    protected List<CategoriesModel> Categories = new();
+    private HttpClient? client;
+    protected async override void OnInitialized()
+    {
+        client = factory.CreateClient("api");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenInfo.Token);
+        Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
+        await InvokeAsync(StateHasChanged);
+    }
 
     async Task SelectTap()
     {
