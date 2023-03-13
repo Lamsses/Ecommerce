@@ -1,5 +1,7 @@
 ﻿@using Microsoft.JSInterop.Implementation
 @inject IJSRuntime JS
+@inject ILocalStorageService LocalStorage
+
 <nav class="nav">
     <a href="/"> <img class="nav__brand" src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e86ab4c21faa7bc0bd90dd_Logo.svg" alt="" /> </a>
     <img class="icon nav__toggler" src="images/menu1.svg" alt="">
@@ -31,40 +33,49 @@
         <img class="icon" src="images/search_icon.svg" alt="" />
     </div>
     <div class="nav-right-content">
-        <a class="nav-right-text" href="#">
+        <a class="nav-right-text" href="/Login">
             <img class="nav-icon" src="images/user.png" alt="">
             <span class="">Account</span>
         </a>
         <div class="cart ">
 
-            <a class="nav-right-text" @onclick="ShowCart" href="#">
+            <a class="nav-right-text" @onclick="ShowCart" >
                 <img class="nav-icon left-padding" src="images/shopping-cart-add.png" alt="">
                 <span class="">Cart</span>
             </a>
             <div class="cart-box">
                 <div class="cart-window">
                     <div class="cart-items-wrap">
-                        <div class="cart-item grid grid--cols-2">
-                            <img class="cart-item-img"
+                        @if (products is not null)
+                        {
+                            @foreach (var item in products)
+                            {
+
+
+                                <div class="cart-item grid grid--cols-2">
+                                    <img class="cart-item-img"
                                  src="images/airpodmax-large-blue.jpg"
                                  alt="" />
-                            <div class="item-content">
-                                <h3 class="item-name">airpods max</h3>
-                                <button class="remove-btn">x</button>
-                                <div class="amount-input">
-                                    <button class="btn-wrap color-one">-</button>
-                                    <span class="amount-number">1</span>
-                                    <button class="btn-wrap color-two">+</button>
+                                    <div class="item-content">
+                                        <h3 class="item-name">@item.name</h3>
+                                        <button class="remove-btn" @onclick="() =>Delete(item)">x</button>
+                                        <div class="amount-input">
+                                            <button class="btn-wrap color-one">-</button>
+                                            <span class="amount-number">@item.ProductAmount</span>
+                                            <button class="btn-wrap color-two">+</button>
+                                        </div>
+                                        <p class="item-price">@item.price</p>
+                                    </div>
                                 </div>
-                                <p class="item-price">100$</p>
-                            </div>
-                        </div>
+                            }
+                        }
                     </div>
+
                     <div class="total-wrap">
                         <p class="total-text">Total</p>
                         <p class="total-text">$100</p>
                     </div>
-                    <button class="btn btn--primary">Checkout</button>
+                    <a href="/Checkout" class="btn btn--primary">Checkout</a>
                 </div>
             </div>
         </div>
@@ -82,5 +93,23 @@
     async Task ShowCart()
     {
         await JS.InvokeVoidAsync("ShowCart");
+    }
+    List<ProductsModel> products = new();
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            products = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
+
+            StateHasChanged();
+        }
+    }
+    private async Task Delete(ProductsModel product)
+    {
+
+        products.Remove(product);
+
+        LocalStorage.SetItemAsync("cart", products);
+
     }
 }
