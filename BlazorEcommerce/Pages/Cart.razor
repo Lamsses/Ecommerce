@@ -1,7 +1,7 @@
 ﻿@page "/cart"
+@attribute [Authorize]
 @inject ILocalStorageService LocalStorage
 <h3>Cart</h3>
-
 @if (products is not null)
 {
     foreach (var item in products)
@@ -23,7 +23,12 @@ else
     <span>No items found</span>
 }
 
+    
+
+
 @code {
+  
+
     
     List<ProductsModel> products = new();
     protected async override Task OnAfterRenderAsync(bool firstRender)

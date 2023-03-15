@@ -1,15 +1,21 @@
 
 using BlazorEcommerce.Models;
+using BlazorEcommerce.Shared;
 using Blazored.LocalStorage;
 using Blazored.SessionStorage;
+using Microsoft.AspNetCore.Components.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<TokenModel>();
+builder.Services.AddScoped<AuthenticationStateProvider , CustomAuthStateProvider>();
+
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddBlazoredSessionStorage();
+builder.Services.AddAuthorizationCore();
+
 builder.Services.AddHttpClient("api" ,opts =>
 {
     opts.BaseAddress = new Uri(builder.Configuration.GetValue<string>("ApiUrl"));

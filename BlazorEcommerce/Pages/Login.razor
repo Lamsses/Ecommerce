@@ -2,6 +2,8 @@
 @using System.Net.Http.Json
 @inject IHttpClientFactory factory
 @inject TokenModel tokenInfo
+@inject  AuthenticationStateProvider AuthStateProvider 
+@inject ILocalStorageService LocalStorage
 <PageTitle>Index</PageTitle>
 
 @if (isLoggedIn)
@@ -21,7 +23,7 @@ else
     </EditForm>
 
     <h1>Register</h1>
-    <EditForm Model="Authenticat" OnValidSubmit="HandleRegister">
+    <EditForm Model="Authenticat" OnValidSubmit="HandleRegisteration">
         <InputText @bind-Value="Authenticat.first_name" />
         <InputText @bind-Value="Authenticat.last_name" />
         <InputText @bind-Value="Authenticat.password" />
@@ -37,6 +39,7 @@ else
 }
 
 @code {
+
 
     private AuthenticationModel Authenticat = new();
     private bool isLoggedIn = false;
@@ -54,16 +57,21 @@ else
         var Token = await info.Content.ReadAsStringAsync();
         if (info.IsSuccessStatusCode)
         {
-            isLoggedIn = true;
-            await InvokeAsync(StateHasChanged);
+            await LocalStorage!.SetItemAsync("token", Token);
 
+            isLoggedIn = true;
+            await AuthStateProvider!.GetAuthenticationStateAsync();
+
+            await InvokeAsync(StateHasChanged);
+            Console.WriteLine(tokenInfo.Token);
         }
         else
         {
+            var showError = Token;
 
         }
     }
-    private async Task HandleRegister()
+    private async Task HandleRegisteration()
     {
         var client = factory.CreateClient("api");
 
@@ -73,9 +81,11 @@ else
 
         await InvokeAsync(StateHasChanged);
     }
-    private void LogOut()
+    private async void LogOut()
     {
         tokenInfo.Token = "";
+        await AuthStateProvider!.GetAuthenticationStateAsync();
+
         isLoggedIn = false;
     }
 }

@@ -31,16 +31,16 @@ public class CustomersData : ICustomersData
         return result.FirstOrDefault();
     }
 
-    public async Task<CustomersModel?> Create(string first_name, string last_name, byte[] passwordHash, byte[] passwordSalt, string phone_number, string email, string city)
+    public async Task<CustomersModel?> Create(string first_name, string last_name, byte[] passwordHash, byte[] passwordSalt, string phone_number, string email, string city,int role_id)
     {
-        var result = await _sql.Loaddata<CustomersModel, dynamic>("dbo.spCustomers_Create", new { first_name, last_name,  passwordHash, passwordSalt, phone_number, email, city }, "Default");
+        var result = await _sql.Loaddata<CustomersModel, dynamic>("dbo.spCustomers_Create", new { first_name, last_name,  passwordHash, passwordSalt, phone_number, email, city, role_id }, "Default");
 
         return result.FirstOrDefault();
     }
 
-    public Task Update(int customer_id, string first_name, string last_name, string password, string phone_number, string email, string city)
+    public Task Update(int customer_id, string first_name, string last_name, string password, string phone_number, string email, string city, int role_id)
     {
-        return _sql.SaveData<dynamic>("dbo.spCustomers_Update", new { customer_id, first_name, last_name, password, phone_number, email, city }, "Default");
+        return _sql.SaveData<dynamic>("dbo.spCustomers_Update", new { customer_id, first_name, last_name, password, phone_number, email, city,  role_id }, "Default");
     }
     public Task Delete(int customer_id)
     {

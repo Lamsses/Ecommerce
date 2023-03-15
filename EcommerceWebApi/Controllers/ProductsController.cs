@@ -14,23 +14,23 @@ namespace EcommerceApi.Controllers;
 
 public class ProductsController : ControllerBase
 {
-    private readonly IProductsData _data;
+    private readonly IProductsData _products;
 
-    public ProductsController(IProductsData data)
+    public ProductsController(IProductsData products)
     {
-        _data = data;
+        _products = products;
     }
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ProductsModel>>> Get()
     {
-       var output =await  _data.GetAll();
+       var output =await  _products.GetAll();
         return Ok(output);
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<ProductsModel>> Get(int id)
     {
-        var output = await _data.GetOne(id);
+        var output = await _products.GetOne(id);
         return Ok(output);
 
     }
@@ -38,7 +38,7 @@ public class ProductsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ProductsModel>> Post(string name, decimal price, int quantity, string imgUrl, string description ,int category_id)
     {
-        var output = await _data.Create(name, price, quantity, imgUrl, description, category_id);
+        var output = await _products.Create(name, price, quantity, imgUrl, description, category_id);
         return Ok(output);
 
     }
@@ -46,7 +46,7 @@ public class ProductsController : ControllerBase
     [HttpPut("{id}")]
     public async Task<ActionResult<ProductsModel>> PutAsync(int id, string name, decimal price, int quantity, string img_url, string description, int catagory_id)
     {
-         await _data.Update( id,  name,  price,  quantity,  img_url,  description,  catagory_id);
+         await _products.Update( id,  name,  price,  quantity,  img_url,  description,  catagory_id);
 
         return Ok();
     }
@@ -54,7 +54,7 @@ public class ProductsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAsync(int id)
     {
-         await _data.Delete(id);
+         await _products.Delete(id);
 
         return Ok();
     }
