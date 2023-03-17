@@ -15,6 +15,14 @@ builder.Services.AddScoped<AuthenticationStateProvider , CustomAuthStateProvider
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddBlazoredSessionStorage();
 builder.Services.AddAuthorizationCore();
+builder.Services.AddAuthorization(opts =>
+{
+    opts.AddPolicy("MustBeAdmin", policy =>
+    {
+        policy.RequireClaim("role_id", "2");
+
+    });
+});
 
 builder.Services.AddHttpClient("api" ,opts =>
 {

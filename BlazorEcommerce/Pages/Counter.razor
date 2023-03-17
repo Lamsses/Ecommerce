@@ -5,7 +5,8 @@
 @inject TokenModel tokenInfo
 @inject ILocalStorageService LocalStorage
 @inject ISyncLocalStorageService sessionStorage
-@attribute [Authorize(Roles ="admin")]
+@attribute [Authorize(Policy = "MustBeAdmin")]
+
 
 
 <PageTitle>Counter</PageTitle>

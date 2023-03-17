@@ -1,5 +1,6 @@
 ﻿@page "/cart"
-@attribute [Authorize]
+@attribute [Authorize(Policy = "MustBeAdmin")]
+
 @inject ILocalStorageService LocalStorage
 <h3>Cart</h3>
 @if (products is not null)

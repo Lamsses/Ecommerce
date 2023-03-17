@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace EcommerceWebApi.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-[AllowAnonymous]
 
     
 public class OrdersController : ControllerBase
@@ -19,6 +18,8 @@ public class OrdersController : ControllerBase
         _orders = orders;
     }
     [HttpGet]
+    [Authorize(Policy = "Admin")]
+    [Authorize(Policy = "SuperAdmin")]
     public async Task<ActionResult<IEnumerable<OrdersModel>>> Get()
     {
         var output = await _orders.GetAll();
@@ -26,6 +27,8 @@ public class OrdersController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Policy = "Admin")]
+    [Authorize(Policy = "SuperAdmin")]
     public async Task<ActionResult<OrdersModel>> Get(int id)
     {
         var output = await _orders.GetOne(id);
@@ -34,6 +37,8 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = "Admin")]
+    [Authorize(Policy = "SuperAdmin")]
     public async Task<ActionResult<OrdersModel>> Post(DateTime order_date , int customer_id)
     {
         var output = await _orders.Create(order_date, customer_id);
@@ -42,6 +47,8 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Policy = "Admin")]
+    [Authorize(Policy = "SuperAdmin")]
     public async Task<ActionResult<OrdersModel>> PutAsync(int id, DateTime order_date, int customer_id)
     {
         await _orders.Update(id, order_date, customer_id);
@@ -50,6 +57,8 @@ public class OrdersController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Policy = "Admin")]
+    [Authorize(Policy = "SuperAdmin")]
     public async Task<IActionResult> DeleteAsync(int id)
     {
         await _orders.Delete(id);

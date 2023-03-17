@@ -18,6 +18,6 @@ public class AuthenticationModel
     
     public string city { get; set; }
 
-    public int role_id { get; set; }
+    public int? role_id { get; set; }
 
 }

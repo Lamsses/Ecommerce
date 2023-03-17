@@ -9,7 +9,6 @@ namespace EcommerceApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[AllowAnonymous]
 
 
 public class ProductsController : ControllerBase
@@ -21,6 +20,8 @@ public class ProductsController : ControllerBase
         _products = products;
     }
     [HttpGet]
+    [AllowAnonymous]
+
     public async Task<ActionResult<IEnumerable<ProductsModel>>> Get()
     {
        var output =await  _products.GetAll();
@@ -28,6 +29,8 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [AllowAnonymous]
+
     public async Task<ActionResult<ProductsModel>> Get(int id)
     {
         var output = await _products.GetOne(id);
@@ -36,6 +39,9 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = "Admin")]
+    [Authorize(Policy = "SuperAdmin")]
+
     public async Task<ActionResult<ProductsModel>> Post(string name, decimal price, int quantity, string imgUrl, string description ,int category_id)
     {
         var output = await _products.Create(name, price, quantity, imgUrl, description, category_id);
@@ -44,6 +50,8 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Policy = "Admin")]
+    [Authorize(Policy = "SuperAdmin")]
     public async Task<ActionResult<ProductsModel>> PutAsync(int id, string name, decimal price, int quantity, string img_url, string description, int catagory_id)
     {
          await _products.Update( id,  name,  price,  quantity,  img_url,  description,  catagory_id);
@@ -52,6 +60,8 @@ public class ProductsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Policy = "Admin")]
+    [Authorize(Policy = "SuperAdmin")]
     public async Task<IActionResult> DeleteAsync(int id)
     {
          await _products.Delete(id);

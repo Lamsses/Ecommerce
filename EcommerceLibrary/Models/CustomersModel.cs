@@ -23,6 +23,6 @@ public class CustomersModel
     public string email { get; set; }
     
     public string city { get; set; }
-    public int role_id { get; set; }
+    public int? role_id { get; set; }
 
 }

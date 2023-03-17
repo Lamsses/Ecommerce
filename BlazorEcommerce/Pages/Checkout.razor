@@ -27,6 +27,8 @@
                 </div>
             </div>
         </div>
+        <AuthorizeView>
+            <Authorized>
         <div class="info-content grid grid--cols-1">
             <input class="info-input" placeholder="saved adress" type="text">
             <input class="info-input" placeholder="Country/Region" type="text">
@@ -43,6 +45,13 @@
             <input class="info-input" placeholder="Phone" type="text">
             <button class="btn btn--primary small-btn">Checkout</button>
         </div>
+            </Authorized>
+            <NotAuthorized>
+                Please login first
+            </NotAuthorized>
+
+
+        </AuthorizeView>
     </div>
 
 </section>

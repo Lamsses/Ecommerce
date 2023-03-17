@@ -10,13 +10,12 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using EcommerceLibrary.Dto;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace EcommerceWebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[AllowAnonymous]
-
 public class CustomersController : ControllerBase
 {
     private readonly ICustomersData _customers;
@@ -42,6 +41,10 @@ public class CustomersController : ControllerBase
         claims.Add(new(JwtRegisteredClaimNames.Sub, user.customer_id.ToString()));
         claims.Add(new(JwtRegisteredClaimNames.GivenName, user.first_name));
         claims.Add(new(JwtRegisteredClaimNames.FamilyName, user.last_name));
+        claims.Add(new("role_id", user.role_id.ToString()));
+
+        
+
 
         var token = new JwtSecurityToken(
             _config.GetValue<string>("Authentication:Issuer"),
@@ -75,6 +78,8 @@ public class CustomersController : ControllerBase
 
 
     [HttpGet]
+    [Authorize(Policy = "Admin")]
+    [Authorize(Policy = "SuperAdmin")]
     public async Task<ActionResult<IEnumerable<CustomersModel>>> Get()
     {
         var output = await _customers.GetAll();
@@ -82,6 +87,8 @@ public class CustomersController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Policy = "Admin")]
+    [Authorize(Policy = "SuperAdmin")]
     public async Task<ActionResult<CustomersModel>> Get(int id)
     {
         var output = await _customers.GetOne(id);
@@ -95,18 +102,34 @@ public class CustomersController : ControllerBase
     public async Task<ActionResult<CustomersModel>> Post([FromBody] AuthenticationModel customer)
     {
         var customerModel = _mapper.Map<CustomersModel>(customer);
-        _customers.CreatePassWordHash( customer.password, out byte[] passwordHash, out byte[] passwordSalt);
-        var output = await _customers.Create(customerModel.first_name, customerModel.last_name, passwordHash,
-                            passwordSalt, customerModel.phone_number, customerModel.email, customerModel.city , customerModel.role_id);
 
-        return Ok(output);
+        var existingCustomer = await _customers.GetUserByEmail(customer.email);
+
+        if (existingCustomer != null)
+        {
+            return Conflict("A customer with this email address already exists.");
+        }
+        
+            _customers.CreatePassWordHash(customer.password, out byte[] passwordHash, out byte[] passwordSalt);
+            var output = await _customers.Create(customerModel.first_name, customerModel.last_name, passwordHash,
+                                passwordSalt, customerModel.phone_number, customerModel.email, customerModel.city, customerModel.role_id);
+
+            return Ok(output);
+
+        
+        return BadRequest("try another Email");
+        
 
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<CustomersModel>> PutAsync(int id, string first_name, string last_name, string password, string phone_number, string email, string city, int role_id)
+    public async Task<ActionResult<CustomersModel>> PutAsync(int id, [FromBody] AuthenticationModel customer)
     {
-        await _customers.Update(id, first_name, last_name, password, phone_number, email, city, role_id);
+        var customerModel = _mapper.Map<CustomersModel>(customer);
+        customerModel.customer_id = id;
+        _customers.CreatePassWordHash(customer.password, out byte[] passwordHash, out byte[] passwordSalt);
+        var output =   _customers.Update(customerModel.customer_id,customerModel.first_name, customerModel.last_name, passwordHash,
+                            passwordSalt, customerModel.phone_number, customerModel.email, customerModel.city, customerModel.role_id);
 
         return Ok();
     }
