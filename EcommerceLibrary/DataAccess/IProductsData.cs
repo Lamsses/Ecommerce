@@ -9,4 +9,6 @@ public interface IProductsData
     Task Update(int product_id, string name, decimal price, int quantity, string img_url, string description, int category_id);
     Task<List<ProductsModel>> GetAll();
     Task<ProductsModel?> GetOne(int productId);
+
+    Task<IEnumerable<ProductsModel>?> SearchProducts(string searchText);
 }

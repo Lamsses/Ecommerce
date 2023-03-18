@@ -38,6 +38,16 @@ public class ProductsController : ControllerBase
 
     }
 
+    [HttpGet("Serach/{searchText}")]
+    [AllowAnonymous]
+    public async Task<ActionResult<ProductsModel>> Get(string searchText)
+    {
+        var output = await _products.SearchProducts(searchText);
+        return Ok(output);
+
+    }
+
+
     [HttpPost]
     [Authorize(Policy = "Admin")]
     [Authorize(Policy = "SuperAdmin")]

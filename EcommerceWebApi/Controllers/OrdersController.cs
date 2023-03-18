@@ -7,6 +7,7 @@ namespace EcommerceWebApi.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 
+
     
 public class OrdersController : ControllerBase
 {
@@ -18,8 +19,7 @@ public class OrdersController : ControllerBase
         _orders = orders;
     }
     [HttpGet]
-    [Authorize(Policy = "Admin")]
-    [Authorize(Policy = "SuperAdmin")]
+    
     public async Task<ActionResult<IEnumerable<OrdersModel>>> Get()
     {
         var output = await _orders.GetAll();
@@ -37,8 +37,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Policy = "Admin")]
-    [Authorize(Policy = "SuperAdmin")]
+
     public async Task<ActionResult<OrdersModel>> Post(DateTime order_date , int customer_id)
     {
         var output = await _orders.Create(order_date, customer_id);
