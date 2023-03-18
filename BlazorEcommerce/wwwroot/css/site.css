@@ -66,3 +66,8 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+@media (min-width: 992px) {
+    .navbar .input-form {
+        width: 50%;
+    }
+}
