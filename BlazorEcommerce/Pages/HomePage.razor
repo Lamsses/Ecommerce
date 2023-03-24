@@ -5,217 +5,176 @@
 @inject TokenModel tokenInfo
 @inject ILocalStorageService LocalStorage
 
-<section class="block hero__background">
-    <div class="container grid grid--cols-2">
-        <div class="hero__content">
-            <h1 class="block__heading">Electronic Store</h1>
-            <p class="hero__tagline">Shopping is a bit of a relaxing hobby for me, which is sometimes troubling for the bank balance.
-            </p>
-            <a href="#" class="btn btn--primary">Learn More</a>
+ @*Hero*@
+<section class="hero-section">
+    <div class="container text-center bg-img">
+        <div class="row">
+            <div class="col">
+                <h1 class="block__heading">Electronic Store</h1>
+                <p class="mb-5">
+                    Shopping is a bit of a relaxing hobby for me, which is sometimes
+                    troubling for the bank balance.
+                </p>
+                <a class="mybtn mybtn--primary">Learn More</a>
+            </div>
         </div>
-        <img class="hero__img" src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e9c0607f75e4aad54b94a0_ele.png" alt="">
     </div>
 </section>
 
-@* discount sec *@
-<section class="discount-section block">
+ @*Products*@
+<section class="products-section pt-5">
+    <div class="container ">
+        <h1 class="section__heading mb-4">Todays Best Deals For You</h1>
+        <ul class="category-taps nav nav-pills">
+            @foreach (var item in Categories)
+            {
+                <li class="nav-item">
+                    <a class="nav-link ms-2 mt-2 active" @onclick="()=>SelectTap(item.category_id)" aria-current="page" href="#">@item.Name</a>
+                </li>
+            }
+        </ul>
+    </div>
+    <div class="products-container row mt-4">
+        @if (categoriesProduct is not null)
+        {
+            @foreach (var item in categoriesProduct)
+            {
+                <div class="col col-6 col-xl-3 col-lg-4 col- col-sm-6  mb-3">
+                    <div class="card">
+                        <img src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e8c4e68b497e229146b818_leptop%20sleeve-min.png" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title d-flex justify-content-between">@item.name
+                                <span class="">@item.price</span>
+
+                            </h5>
+                            <p class="card-text">@item.description</p>
+                            <a href="#" @onclick="() => AddToCart(item)" class="btn mybtn--outline">Add To Cart</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+
+
+    </div>
+</section>
+
+@*Discount*@
+<section class="discount-section pt-5">
     <div class="container">
-        <h3 class="discount__heading">Get Up to 70% Off</h3>
-        <div class="discount--area grid grid--cols-4">
-            <div class="discount--card">
-                <header>
-                    <div class="discount__content">
-                        <h3 class="discount__title">Save</h3>
-                        <div class="discount__price">
+        <h1 class="section__heading mb-4">Get Up To 70% Off</h1>
+        <div class="discount-container row mt-4">
+            <div class="col col-6 col-xl-3 col-lg-4 col- col-sm-6  mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Save</h5>
+                        <div class="dicount__price">
                             <span class="dollar--sign">$</span>100
                         </div>
-                        <span class="discount__discription"
-                        >Explore Our Furniture & Home Furnishing Range</span
-                        >
+                        <p class="card-text">Explore Our Furniture & Home Furnishing Range</p>
                     </div>
-                    <div class="discount__body">
-                        <img class="discount__img" src="images/furniture.png" alt="" />
-                    </div>
-                </header>
+                    <img src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e8c4e6cd367817e964f756_sofa-min.png" class="card-img-top" alt="...">
+                </div>
             </div>
-            <div class="discount--card">
-                <header>
-                    <div class="discount__content">
-                        <h3 class="discount__title">Save</h3>
-                        <div class="discount__price red-rose">
-                            <span class="dollar--sign">$</span>29
+            <div class="col col-6 col-xl-3 col-lg-4 col- col-sm-6  mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Save</h5>
+                        <div class="dicount__price">
+                            <span class="dollar--sign">$</span>100
                         </div>
-                        <span class="discount__discription"
-                        >Explore Our Furniture & Home Furnishing Range</span
-                        >
+                        <p class="card-text">Explore Our Furniture & Home Furnishing Range</p>
                     </div>
-                    <div class="discount__body">
-                        <img class="discount__img" src="images/furniture.png" alt="" />
-                    </div>
-                </header>
+                    <img src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e8c4e6cd367817e964f756_sofa-min.png" class="card-img-top" alt="...">
+                </div>
             </div>
-            <div class="discount--card">
-                <header>
-                    <div class="discount__content">
-                        <h3 class="discount__title">Save</h3>
-                        <div class="discount__price color-two">
-                            <span class="dollar--sign">$</span>69
+            <div class="col col-6 col-xl-3 col-lg-4 col- col-sm-6  mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Save</h5>
+                        <div class="dicount__price">
+                            <span class="dollar--sign">$</span>100
                         </div>
-                        <span class="discount__discription"
-                        >Explore Our Furniture & Home Furnishing Range</span
-                        >
+                        <p class="card-text">Explore Our Furniture & Home Furnishing Range</p>
                     </div>
-                    <div class="discount__body">
-                        <img class="discount__img" src="images/furniture.png" alt="" />
-                    </div>
-                </header>
+                    <img src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e8c4e6cd367817e964f756_sofa-min.png" class="card-img-top" alt="...">
+                </div>
             </div>
-            <div class="discount--card">
-                <header>
-                    <div class="discount__content">
-                        <h3 class="discount__title">Save</h3>
-                        <div class="discount__price main-color">
-                            <span class="dollar--sign">$</span>56
+            <div class="col col-6 col-xl-3 col-lg-4 col- col-sm-6  mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Save</h5>
+                        <div class="dicount__price">
+                            <span class="dollar--sign">$</span>100
                         </div>
-                        <span class="discount__discription"
-                        >Explore Our Furniture & Home Furnishing Range</span
-                        >
+                        <p class="card-text">Explore Our Furniture & Home Furnishing Range</p>
                     </div>
-                    <div class="discount__body">
-                        <img class="discount__img" src="images/furniture.png" alt="" />
-                    </div>
-                </header>
+                    <img src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e8c4e6cd367817e964f756_sofa-min.png" class="card-img-top" alt="...">
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<section class="product-section block">
-    <div class="container">
-      <header>
-        <h3 class="section--title">Todays Best Deals For You!</h3>
-      </header>
-      <div class="products--taps">
-          <div class="products--taps--menu">
-            <ul class="list">
-                @foreach (var item in Categories)
-                {
-                        
-                  <li class="tap--list__item"><button @onclick="()=>SelectTap(item.category_id)" class="btn btn--outline tap ">@item.Name</button></li>
-                }
-                   
-            </ul>
-          </div>
-      </div>
-      <div class="content--container">
-        <div class="tap__content grid ">
-                @if (categoriesProduct is not null)
-                {
-                    @foreach (var item in categoriesProduct)
-                    {
-
-                        <div class="product">
-                            <div class="card">
-                                <header >
-                                    <div class="product__favorite">
-                                        <img
-                      src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e9df775b939f51a0b22f6d_Icon.svg"
-                      alt=""
-                    />
-                                    </div>
-                                    <img
-                    class="product--img"
-                    src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e8c4e68b497e229146b818_leptop%20sleeve-min.png"
-                    alt=""
-                  />
-                                    <div class="card__body">
-                                        <span class="product__price">@item.price</span>
-                                        <h3 class="prodcut__name">@item.name</h3>
-                                        <span class="product__description"
-                      >@item.description</span
-                    >
-                                        <button class="btn btn--outline" @onclick="()=>AddToCart(item)">Add to Cart</button>
-                                    </div>
-                                </header>
-                            </div>
-                        </div>
-                    }
-                }
-
+<footer>
+    <div class="container mt-5">
+        <div class="row border-top pt-5">
+            <div class="col-8 col-lg-4">
+                <div class="footer__brand">
+                    <img class="mb-3" src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e86ab4c21faa7bc0bd90dd_Logo.svg" alt="">
+                    <p class="footer__copyright">Copyright 2023 MOJO</p>
+                </div>
+            </div>
+            <div class="col-4 col-lg-2">
+                <div class="links">
+                    <h5 class="footer-menu-title">Categories</h5>
+                    <ul class="list-unstyled lh-lg">
+                        <li class="list-item"><a href="">Headphones</a></li>
+                        <li class="list-item"><a href="">Mouses</a></li>
+                        <li class="list-item"><a href="">Keyboards</a></li>
+                        <li class="list-item"><a href="">Accessories</a></li>
+                        <li class="list-item"><a href="">Laptops</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-4 col-lg-2">
+                <div class="links">
+                    <h5 class="footer-menu-title">About Us</h5>
+                    <ul class="list-unstyled lh-lg">
+                        <li class="list-item"><a href="">About Shopcart</a></li>
+                        <li class="list-item"><a href="">Careers</a></li>
+                        <li class="list-item"><a href="">Ideas & Guides</a></li>
+                        <li class="list-item"><a href="">News & Blog</a></li>
+                        <li class="list-item"><a href="">Shopcart Brands</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-4 col-lg-2">
+                <div class="links">
+                    <h5 class="footer-menu-title">Services</h5>
+                    <ul class="list-unstyled lh-lg">
+                        <li class="list-item"><a href="">Gift Card</a></li>
+                        <li class="list-item"><a href="">Mobile App</a></li>
+                        <li class="list-item"><a href="">Shipping & Delivery</a></li>
+                        <li class="list-item"><a href="">Order Pickup</a></li>
+                        <li class="list-item"><a href="">Account Signup</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-4 col-lg-2">
+                <div class="links">
+                    <h5 class="footer-menu-title">Help</h5>
+                    <ul class="list-unstyled lh-lg">
+                        <li class="list-item"><a href="">Shopcart Help</a></li>
+                        <li class="list-item"><a href="">Returns</a></li>
+                        <li class="list-item"><a href="">Track Orders</a></li>
+                        <li class="list-item"><a href="">Contact Us</a></li>
+                        <li class="list-item"><a href="">Feedback</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  </section>
-  <footer class="footer block">
-    <div class="container grid footer__sections">
-      <section class="collapsible collapsible--expanded footer__section">
-        <header class="collapsible__header">
-          <h2 class="collapsible__heading footer__heading">Categories</h2>
-          <img src="images/expand.svg" class="icon icon--white collapsible__chevron"/>
-        </header>
-        <div class="collapsible__content">
-          <ul class="list">
-            <li class="footer-list__item"><a href="">Headphones</a></li>
-            <li class="footer-list__item"><a href="">Mouses</a></li>
-            <li class="footer-list__item"><a href="">Keyboards</a></li>
-            <li class="footer-list__item"><a href="">Accessories</a></li>
-            <li class="footer-list__item"><a href="">Laptops</a></li>
-          </ul>
-        </div>
-      </section>
-      <section class="collapsible footer__section ">
-        <header class="collapsible__header">
-          <h2 class="collapsible__heading footer__heading">About Us</h2>
-            <img src="images/expand.svg" class="icon icon--white collapsible__chevron"/>
-          
-        </header>
-        <div class="collapsible__content">
-          <ul class="list">
-            <li class="footer-list__item"><a href="">About Shopcart</a></li>
-            <li class="footer-list__item"><a href="">Careers</a></li>
-            <li class="footer-list__item"><a href="">Ideas & Guides</a></li>
-            <li class="footer-list__item"><a href="">News & Blog</a></li>
-            <li class="footer-list__item"><a href="">Shopcart Brands
-            </a></li>
-          </ul>
-        </div>
-      </section>
-      <section class="collapsible footer__section">
-        <header class="collapsible__header">
-          <h2 class="collapsible__heading footer__heading">Services</h2>
-            <img src="images/expand.svg" class="icon icon--white collapsible__chevron"/>
-          
-        </header>
-        <div class="collapsible__content">
-          <ul class="list">
-            <li class="footer-list__item"><a href="">Gift Card</a></li>
-            <li class="footer-list__item"><a href="">Mobile App</a></li>
-            <li class="footer-list__item"><a href="">Shipping & Delivery</a></li>
-            <li class="footer-list__item"><a href="">Order Pickup</a></li>
-            <li class="footer-list__item"><a href="">Account Signup</a></li>
-          </ul>
-        </div>
-      </section>
-      <section class="collapsible footer__section">
-        <header class="collapsible__header">
-          <h2 class="collapsible__heading footer__heading">Help</h2>
-            <img src="images/expand.svg" class="icon icon--white collapsible__chevron"/>
-          
-        </header>
-        <div class="collapsible__content">
-          <ul class="list">
-            <li class="footer-list__item"><a href="">Shopcart Help</a></li>
-            <li class="footer-list__item"><a href="">Returns</a></li>
-            <li class="footer-list__item"><a href="">Track Orders</a></li>
-            <li class="footer-list__item"><a href="">Contact Us</a></li>
-            <li class="footer-list__item"><a href="">Feedback</a></li>
-          </ul>
-        </div>
-      </section>
-      <section class="footer__brand">
-        <img src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e86ab4c21faa7bc0bd90dd_Logo.svg" alt="">
-        <p class="footer__copyright">Copyright 2023 MOJO</p>
-      </section>
     </div>
 </footer>
 @code {

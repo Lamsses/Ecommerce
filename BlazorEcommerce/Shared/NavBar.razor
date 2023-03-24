@@ -3,30 +3,30 @@
 @inject ILocalStorageService LocalStorage
 
 
-<nav class="nav">
-    <a href="/"> <img class="nav__brand" src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e86ab4c21faa7bc0bd90dd_Logo.svg" alt="" /> </a>
-    <img class="icon nav__toggler" src="images/menu1.svg" alt="">
-    <ul class="list nav__list">
-        <li class="nav__item">
-            <div @onclick="ShowCategory" class="collapsible">
-                <header class="collapsible__header">
-                    <a  href="#" >Category</a>
-                    <img class="icon collapsible__chevron" src="images/expand.svg" alt="">
-
-@*<nav class="nav"> <a href="/"> <img class="nav__brand" src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e86ab4c21faa7bc0bd90dd_Logo.svg" alt="" /> </a> <img class="icon nav__toggler" src="images/menu1.svg" alt=""> <ul class="list nav__list"> <li class="nav__item"> <div @onclick="ShowCategory" class="collapsible"> <header class="collapsible__header"> <a  href="#" >Category</a> <img class="icon collapsible__chevron" src="images/expand.svg" alt="">  </header> <div class="collapsible__content collapsible__content-wrap "> <ul class="list"> <li class="list__item"><a class="category__link" href="">Headphones</a></li> <li class="list__item"><a class="category__link" href="">Mouses</a></li> <li class="list__item"><a class="category__link" href="">Keyboards</a></li> <li class="list__item"><a class="category__link" href="">Accessories</a></li> <li class="list__item"><a class="category__link" href="">Laptops</a></li> </ul> </div> </div> </li> <li class="nav__item"><a href="#">Deals</a></li> <li class="nav__item"><a href="#">What's New</a></li> <li class="nav__item"><a href="#">Delivery</a></li> </ul> <div class="input-group"> <input type="search" placeholder="Search Products" class="input input--search" /> <img class="icon" src="images/search_icon.svg" alt="" /> </div> <div class="nav-right-content"> <a class="nav-right-text" href="#"> <img class="nav-icon" src="images/user.png" alt=""> <span class="">Account</span> </a> <div class="cart ">  <a class="nav-right-text" @onclick="ShowCart" href="#"> <img class="nav-icon left-padding" src="images/shopping-cart-add.png" alt=""> <span class="">Cart</span> </a> <div class="cart-box"> <div class="cart-window"> <div class="cart-items-wrap"> <div class="cart-item grid grid--cols-2"> <img class="cart-item-img" src="images/airpodmax-large-blue.jpg" alt="" /> <div class="item-content"> <h3 class="item-name">airpods max</h3> <button class="remove-btn">x</button> <div class="amount-input"> <button class="btn-wrap color-one">-</button> <span class="amount-number">1</span> <button class="btn-wrap color-two">+</button> </div> <p class="item-price">100$</p> </div> </div> </div> <div class="total-wrap"> <p class="total-text">Total</p> <p class="total-text">$100</p> </div> <button class="btn btn--primary">Checkout</button> </div> </div> </div> </div>  </nav>*@
 <nav class="navbar navbar-expand-lg shadow">
     <div class="container">
         <a class="navbar-brand" href="#">
-            <img src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e86ab4c21faa7bc0bd90dd_Logo.svg" alt="">
+            <img src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e86ab4c21faa7bc0bd90dd_Logo.svg"
+                 alt="" />
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ms-lg-5 mb-2 mb-lg-0">
                 <li class="nav-item dropdown">
-                    <a class="nav-link  dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle"
+                       href="#"
+                       role="button"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">
                         Category
                     </a>
                     <ul class="dropdown-menu">
@@ -34,66 +34,71 @@
                         <li><a class="dropdown-item" href="#">Mouses</a></li>
                         <li><a class="dropdown-item" href="#">Keyboards</a></li>
                     </ul>
-                </div>
-            </div>
-        </li>
-        <li class="nav__item"><a href="#">Deals</a></li>
-        <li class="nav__item"><a href="#">What's New</a></li>
-        <li class="nav__item"><a href="#">Delivery</a></li>
-    </ul>
-    <div class="input-group">
-        <input type="search" placeholder="Search Products" class="input input--search" />
-        <img class="icon" src="images/search_icon.svg" alt="" />
-    </div>
-    <div class="nav-right-content">
-        <a class="nav-right-text" href="/Login">
-            <img class="nav-icon" src="images/user.png" alt="">
-            <span class="">Account</span>
-        </a>
-        <div class="cart ">
-
-            <a class="nav-right-text" @onclick="ShowCart" >
-                <img class="nav-icon left-padding" src="images/shopping-cart-add.png" alt="">
-                <span class="">Cart</span>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link" href="#">Deals</a>
+                </li>
+            </ul>
+            <form class="input-form ms-lg-5 d-flex" role="search">
+                <input class="form-control me-2"
+                       type="search"
+                       placeholder="Search"
+                       aria-label="Search" />
+                <button class="btn btn-outline-success" type="submit">
+                    Search
+                </button>
+            </form>
+            <a href=""
+               class="nav-link mt-sm-2 mb-sm-2 ms-lg-auto mt-3 d-flex align-items-center d-lg-flex justify-content-lg-center align-items-lg-center d-sm-flex justify-content-sm-start align-items-sm-center">
+                <i class="fa-regular fa-user pe-2 ms-lg-3"></i>
+                <p class="m-0">Login</p>
             </a>
-            <div class="cart-box">
-                <div class="cart-window">
-                    <div class="cart-items-wrap">
-                        @if (products is not null)
-                        {
-                            @foreach (var item in products)
-                            {
-
-
-                                <div class="cart-item grid grid--cols-2">
-                                    <img class="cart-item-img"
-                                 src="images/airpodmax-large-blue.jpg"
-                                 alt="" />
-                                    <div class="item-content">
-                                        <h3 class="item-name">@item.name</h3>
-                                        <button class="remove-btn" @onclick="() =>Delete(item)">x</button>
-                                        <div class="amount-input">
-                                            <button class="btn-wrap color-one">-</button>
-                                            <span class="amount-number">@item.ProductAmount</span>
-                                            <button class="btn-wrap color-two">+</button>
-                                        </div>
-                                        <p class="item-price">@item.price</p>
-                                    </div>
-                                </div>
-                            }
-                        }
-                    </div>
-
-                    <div class="total-wrap">
-                        <p class="total-text">Total</p>
-                        <p class="total-text">$100</p>
-                    </div>
-                    <a href="/Checkout" class="btn btn--primary">Checkout</a>
-                </div>
-            </div>
+            <a href="#offcanvas" role="button" data-bs-toggle="offcanvas" aria-controls="offcanvas" class="nav-link  ms-lg-4 mt-sm-1 mt-3 d-flex align-items-center d-lg-flex justify-content-lg-center align-items-lg-center d-sm-flex justify-content-sm-start align-items-sm-center">
+                <i class="fa-solid fa-cart-shopping pe-2"></i>
+                <p class="m-0 position-relative">
+                    Cart
+                    <span class="position-absolute top-0 start-100 translate-middle-y badge rounded-pill bg-danger">
+                        9
+                        <span class="visually-hidden">unread messages</span>
+                    </span>
+                </p>
+            </a>
         </div>
     </div>
 </nav>
+<div class="offcanvas offcanvas-end cart" tabindex="-1" id="offcanvas" aria-labelledby="offcanvasLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasLabel">Your Cart</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+
+        <div class="card mb-3" style="max-width: 540px;">
+            <div class="row g-0">
+                <div class="col-4">
+                    <img src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e8c4e68b497e229146b818_leptop%20sleeve-min.png" class="img-fluid rounded-start" alt="...">
+                </div>
+                <div class="col-8">
+                    <div class="card-body">
+                        <button type="button" class="btn-close" aria-label="Close"></button>
+                        <h5 class="card-title d-flex justify-content-between">
+                            Card title
+                            <span>100$</span>
+                        </h5>
+                        <p class="card-text">This is a wider card and its responsive and well designed.</p>
+                        <p>amount: 5</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p class="d-flex justify-content-between border-top pt-2">
+            Total Price
+            <span>$100</span>
+        </p>
+        <button class="mybtn mybtn--primary align-self-center">Checkout</button>
+    </div>
+</div>
+
 @code {
  
     async Task ShowCategory()
