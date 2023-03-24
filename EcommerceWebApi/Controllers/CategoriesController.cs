@@ -7,26 +7,28 @@ namespace EcommerceWebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[AllowAnonymous]
+
 
 public class CategoriesController : ControllerBase
 {
-    private readonly ICategoriesData _data;
+    private readonly ICategoriesData _categories;
 
-    public CategoriesController(ICategoriesData data)
+    public CategoriesController(ICategoriesData categories)
     {
-        _data = data;
+        _categories = categories;
     }
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CategoriesModel>>> Get()
     {
-        var output = await _data.GetAll();
+        var output = await _categories.GetAll();
         return Ok(output);
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<CategoriesModel>> Get(int id)
     {
-        var output = await _data.GetOne(id);
+        var output = await _categories.GetOne(id);
         return Ok(output);
 
     }
@@ -34,7 +36,7 @@ public class CategoriesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<CategoriesModel>> Post(string name)
     {
-        var output = await _data.Create(name);
+        var output = await _categories.Create(name);
         return Ok(output);
 
     }
@@ -42,7 +44,7 @@ public class CategoriesController : ControllerBase
     [HttpPut("{id}")]
     public async Task<ActionResult<CategoriesModel>> PutAsync(int id, string name)
     {
-        await _data.Update(id, name);
+        await _categories.Update(id, name);
 
         return Ok();
     }
@@ -50,7 +52,7 @@ public class CategoriesController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAsync(int id)
     {
-        await _data.Delete(id);
+        await _categories.Delete(id);
 
         return Ok();
     }

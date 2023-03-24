@@ -8,13 +8,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHealthChecks();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddSingleton<ISqlDataAccess, SqlDataAccess>();
 builder.Services.AddSingleton<IProductsData, ProductsData>();
+builder.Services.AddSingleton<IOrdersProductsData, OrdersProductsData>();
 builder.Services.AddSingleton<ICategoriesData, CategoriesData>();
 builder.Services.AddSingleton<ICustomersData, CustomersData>();
 builder.Services.AddSingleton<IOrdersData, OrdersData>();
@@ -24,6 +24,16 @@ builder.Services.AddSingleton<IOrdersData, OrdersData>();
 
 builder.Services.AddAuthorization(opts =>
 {
+    opts.AddPolicy("Admin",policy =>
+    {
+        policy.RequireClaim("role_id", "2"); 
+
+    });
+    opts.AddPolicy("SuperAdmin", policy =>
+    {
+        policy.RequireClaim("role_id", "1");
+
+    });
     opts.FallbackPolicy = new AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
         .Build();

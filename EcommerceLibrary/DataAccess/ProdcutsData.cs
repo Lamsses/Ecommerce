@@ -37,4 +37,10 @@ public class ProductsData : IProductsData
     {
         return _sql.SaveData<dynamic>("dbo.spProducts_Delete", new { product_id}, "Default");
     }
+
+    public async Task<IEnumerable<ProductsModel>?> SearchProducts(string searchText)
+    {
+        var result = await _sql.Loaddata<ProductsModel,dynamic>("dbo.spProducts_SearchProducts",new { name  = searchText}, "Default");
+        return  result.Where(opts => opts.name.Contains(searchText));
+    }
 }

@@ -4,27 +4,28 @@ using EcommerceLibrary.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using static TodoApi.Controllers.AuthenticationController;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using EcommerceLibrary.Dto;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace EcommerceWebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[AllowAnonymous]
 
 public class CustomersController : ControllerBase
 {
-    private readonly ICustomersData _data;
+    private readonly ICustomersData _customers;
     private readonly IMapper _mapper;
     private readonly IConfiguration _config;
 
-    public CustomersController(ICustomersData data, IMapper mapper, IConfiguration config)
+    public CustomersController(ICustomersData customers, IMapper mapper, IConfiguration config)
     {
-        _data = data;
+        _customers = customers;
         _mapper = mapper;
         _config = config;
     }
@@ -41,6 +42,10 @@ public class CustomersController : ControllerBase
         claims.Add(new(JwtRegisteredClaimNames.Sub, user.customer_id.ToString()));
         claims.Add(new(JwtRegisteredClaimNames.GivenName, user.first_name));
         claims.Add(new(JwtRegisteredClaimNames.FamilyName, user.last_name));
+        claims.Add(new("role_id", user.role_id.ToString()));
+
+        
+
 
         var token = new JwtSecurityToken(
             _config.GetValue<string>("Authentication:Issuer"),
@@ -57,7 +62,7 @@ public class CustomersController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<string>> Login([FromBody] LoginInput userInput)
     {
-        var user = await _data.GetUserByEmail(userInput.email);
+        var user = await _customers.GetUserByEmail(userInput.email);
         if (user == null) return BadRequest(ModelState);
         if (userInput.email == string.Empty && userInput.password == string.Empty)
         {
@@ -65,7 +70,7 @@ public class CustomersController : ControllerBase
         }
         else if (user.email != userInput.email)
             return BadRequest("Wrong Username");
-        else if (!_data.VerifyPasswordHash(userInput.password, user.passwordHash!, user.passwordSalt!))
+        else if (!_customers.VerifyPasswordHash(userInput.password, user.passwordHash!, user.passwordSalt!))
             return BadRequest("Wrong Password");
 
         string token = GenerateToken(user);
@@ -74,16 +79,20 @@ public class CustomersController : ControllerBase
 
 
     [HttpGet]
+    [Authorize(Policy = "Admin")]
+    [Authorize(Policy = "SuperAdmin")]
     public async Task<ActionResult<IEnumerable<CustomersModel>>> Get()
     {
-        var output = await _data.GetAll();
+        var output = await _customers.GetAll();
         return Ok(output);
     }
 
     [HttpGet("{id}")]
+    [Authorize(Policy = "Admin")]
+    [Authorize(Policy = "SuperAdmin")]
     public async Task<ActionResult<CustomersModel>> Get(int id)
     {
-        var output = await _data.GetOne(id);
+        var output = await _customers.GetOne(id);
         return Ok(output);
 
     }
@@ -94,18 +103,33 @@ public class CustomersController : ControllerBase
     public async Task<ActionResult<CustomersModel>> Post([FromBody] AuthenticationModel customer)
     {
         var customerModel = _mapper.Map<CustomersModel>(customer);
-        _data.CreatePassWordHash( customer.password, out byte[] passwordHash, out byte[] passwordSalt);
-        var output = await _data.Create(customerModel.first_name, customerModel.last_name, passwordHash,
-                            passwordSalt, customerModel.phone_number, customerModel.email, customerModel.city);
 
-        return Ok(output);
+        var existingCustomer = await _customers.GetUserByEmail(customer.email);
+
+        if (existingCustomer != null)
+        {
+            return Conflict("A customer with this email address already exists.");
+        }
+        
+            _customers.CreatePassWordHash(customer.password, out byte[] passwordHash, out byte[] passwordSalt);
+            var output = await _customers.Create(customerModel.first_name, customerModel.last_name, passwordHash,
+                                passwordSalt, customerModel.phone_number, customerModel.email, customerModel.city, customerModel.role_id);
+
+            return Ok(output);
+
+        
+        
 
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<CustomersModel>> PutAsync(int id, string first_name, string last_name, string password, string phone_number, string email, string city)
+    public async Task<ActionResult<CustomersModel>> PutAsync(int id, [FromBody] AuthenticationModel customer)
     {
-        await _data.Update(id, first_name, last_name, password, phone_number, email, city);
+        var customerModel = _mapper.Map<CustomersModel>(customer);
+        customerModel.customer_id = id;
+        _customers.CreatePassWordHash(customer.password, out byte[] passwordHash, out byte[] passwordSalt);
+        var output =   _customers.Update(customerModel.customer_id,customerModel.first_name, customerModel.last_name, passwordHash,
+                            passwordSalt, customerModel.phone_number, customerModel.email, customerModel.city, customerModel.role_id);
 
         return Ok();
     }
@@ -113,7 +137,7 @@ public class CustomersController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAsync(int id)
     {
-        await _data.Delete(id);
+        await _customers.Delete(id);
 
         return Ok();
     }

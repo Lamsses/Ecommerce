@@ -22,12 +22,14 @@
     <link href="BlazorEcommerce.styles.css" rel="stylesheet" />
     <link rel="icon" type="image/png" href="favicon.png"/>
     <link rel="stylesheet" href="css/normalize.css" />
-    <link rel="stylesheet" href="css/style2.css"/>
-    @*<link rel="stylesheet" href="css/styles.css" />*@
-    <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link href="_content/Blazored.Typeahead/blazored-typeahead.css" rel="stylesheet" />
+    <script src="_content/Blazored.Typeahead/blazored-typeahead.js"></script>
+
+    <component type="typeof(HeadOutlet)" render-mode="Server" />
 </head>
 <body>
-<component type="typeof(App)" render-mode="ServerPrerendered" />
+<component type="typeof(App)" render-mode="Server" />
     
     <div id="blazor-error-ui">
         <environment include="Staging,Production">
