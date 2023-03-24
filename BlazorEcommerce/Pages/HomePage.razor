@@ -230,7 +230,6 @@
     protected async override void OnInitialized()
     {
         client = factory.CreateClient("api");
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenInfo.Token);
         Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
         products = await client.GetFromJsonAsync<List<ProductsModel>>("Products");
 

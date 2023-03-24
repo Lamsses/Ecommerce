@@ -17,9 +17,16 @@ builder.Services.AddBlazoredSessionStorage();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddAuthorization(opts =>
 {
-    opts.AddPolicy("MustBeAdmin", policy =>
+
+
+    opts.AddPolicy("Admin", policy =>
     {
         policy.RequireClaim("role_id", "2");
+
+    });
+    opts.AddPolicy("SuperAdmin", policy =>
+    {
+        policy.RequireClaim("role_id", "1");
 
     });
 });

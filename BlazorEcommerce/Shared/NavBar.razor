@@ -2,6 +2,7 @@
 @inject IJSRuntime JS
 @inject ILocalStorageService LocalStorage
 
+
 <nav class="nav">
     <a href="/"> <img class="nav__brand" src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e86ab4c21faa7bc0bd90dd_Logo.svg" alt="" /> </a>
     <img class="icon nav__toggler" src="images/menu1.svg" alt="">
@@ -83,8 +84,7 @@
 
 </nav>
 @code {
-    
-
+ 
     async Task ShowCategory()
     {
         await JS.InvokeVoidAsync("ShowCategory");
@@ -93,7 +93,9 @@
     async Task ShowCart()
     {
         await JS.InvokeVoidAsync("ShowCart");
+        products = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
     }
+
     List<ProductsModel> products = new();
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {

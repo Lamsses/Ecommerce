@@ -15,6 +15,8 @@ namespace EcommerceWebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[AllowAnonymous]
+
 public class CustomersController : ControllerBase
 {
     private readonly ICustomersData _customers;
@@ -116,7 +118,6 @@ public class CustomersController : ControllerBase
             return Ok(output);
 
         
-        return BadRequest("try another Email");
         
 
     }

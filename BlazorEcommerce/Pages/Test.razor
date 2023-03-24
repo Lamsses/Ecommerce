@@ -1,20 +1,36 @@
 ﻿
-@page "/test"
+@page "/Test"
+@using System.Net.Http.Json
+@using System.Net.Http.Headers;
+@inject IHttpClientFactory factory
+@inject TokenModel tokenInfo
+@inject ILocalStorageService LocalStorage
+
+<BlazoredTypeahead SearchMethod="@SearchProducts" @bind-Value="selectedProduct">
+    <SelectedTemplate>
+        @context.name
+    </SelectedTemplate>
+    <ResultTemplate>
+        @context.name
+
+    </ResultTemplate>
+    <NotFoundTemplate>
+        get otta here 
+    </NotFoundTemplate>
+</BlazoredTypeahead>
 
 
-<div>
-    <input type="text" @bind-value="@SearchTerm" />
-    <button @onclick="Search">Search</button>
-</div>
+@code
+{
+    private ProductsModel selectedProduct;
+    private HttpClient? client;
 
-@code {
-    public string SearchTerm { get; set; }
 
-    [Parameter]
-    public EventCallback<string> OnSearch { get; set; }
-
-    private async Task Search()
+    private async Task<IEnumerable<ProductsModel>> SearchProducts(string searchText)
     {
-        await OnSearch.InvokeAsync(SearchTerm);
+        client = factory.CreateClient("api");
+        
+        var response = await client.GetFromJsonAsync<IEnumerable<ProductsModel>>("Search/{searchText}");
+        return response;
     }
 }
