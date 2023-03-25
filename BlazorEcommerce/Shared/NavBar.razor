@@ -1,7 +1,11 @@
 ﻿@using Microsoft.JSInterop.Implementation
+@using Pages
+@inherits MainBase
 @inject IJSRuntime JS
 @inject ILocalStorageService LocalStorage
-
+@using System.Net.Http.Json
+@using System.Net.Http.Headers
+@inject IHttpClientFactory factory
 
 <nav class="navbar navbar-expand-lg shadow">
     <div class="container">
@@ -40,25 +44,38 @@
                 </li>
             </ul>
             <form class="input-form ms-lg-5 d-flex" role="search">
-                <input class="form-control me-2"
-                       type="search"
-                       placeholder="Search"
-                       aria-label="Search" />
-                <button class="btn btn-outline-success" type="submit">
-                    Search
-                </button>
+
+                <BlazoredTypeahead SearchMethod="@SearchProducts" @bind-Value="selectedProduct">
+                    <SelectedTemplate>
+                        @context.name
+                    </SelectedTemplate>
+                    <ResultTemplate>
+                        @context.name
+                    </ResultTemplate>
+                    <NotFoundTemplate>
+                        get otta here
+                    </NotFoundTemplate>
+                </BlazoredTypeahead>
             </form>
             <a href=""
                class="nav-link mt-sm-2 mb-sm-2 ms-lg-auto mt-3 d-flex align-items-center d-lg-flex justify-content-lg-center align-items-lg-center d-sm-flex justify-content-sm-start align-items-sm-center">
                 <i class="fa-regular fa-user pe-2 ms-lg-3"></i>
-                <p class="m-0">Login</p>
+                <AuthorizeView>
+                    <Authorized>
+                        <p class="m-0" @onclick="()=>Logout()" >Logout</p>
+                    </Authorized>
+                    <NotAuthorized>
+                        <p class="m-0">Login</p>
+                    </NotAuthorized>
+                </AuthorizeView>
             </a>
-            <a href="#offcanvas" role="button" data-bs-toggle="offcanvas" aria-controls="offcanvas" class="nav-link  ms-lg-4 mt-sm-1 mt-3 d-flex align-items-center d-lg-flex justify-content-lg-center align-items-lg-center d-sm-flex justify-content-sm-start align-items-sm-center">
+            <a href="#offcanvas" @onclick="()=>ShowCart()" role="button" data-bs-toggle="offcanvas" aria-controls="offcanvas" class="nav-link  ms-lg-4 mt-sm-1 mt-3 d-flex align-items-center d-lg-flex justify-content-lg-center align-items-lg-center d-sm-flex justify-content-sm-start align-items-sm-center">
                 <i class="fa-solid fa-cart-shopping pe-2"></i>
                 <p class="m-0 position-relative">
                     Cart
                     <span class="position-absolute top-0 start-100 translate-middle-y badge rounded-pill bg-danger">
-                        9
+                          @products.Count
+                            
                         <span class="visually-hidden">unread messages</span>
                     </span>
                 </p>
@@ -72,43 +89,45 @@
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
-
-        <div class="card mb-3" style="max-width: 540px;">
-            <div class="row g-0">
-                <div class="col-4">
-                    <img src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e8c4e68b497e229146b818_leptop%20sleeve-min.png" class="img-fluid rounded-start" alt="...">
-                </div>
-                <div class="col-8">
-                    <div class="card-body">
-                        <button type="button" class="btn-close" aria-label="Close"></button>
-                        <h5 class="card-title d-flex justify-content-between">
-                            Card title
-                            <span>100$</span>
-                        </h5>
-                        <p class="card-text">This is a wider card and its responsive and well designed.</p>
-                        <p>amount: 5</p>
+           @if (products is not null)
+        {
+            @foreach (var item in products)
+            {
+                <div class="card mb-3" style="max-width: 540px;">
+                    <div class="row g-0">
+                        <div class="col-4">
+                            <img src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e8c4e68b497e229146b818_leptop%20sleeve-min.png" class="img-fluid rounded-start" alt="...">
+                        </div>
+                        <div class="col-8">
+                            <div class="card-body">
+                                <button type="button" class="btn-close" aria-label="Close"  @onclick="()=>Delete(item)"></button>
+                                <h5 class="card-title d-flex justify-content-between">
+                                    @item.name
+                                    <span>@item.price</span>
+                                </h5>
+                                <p class="card-text">@item.description</p>
+                                <p>amount: @item.ProductAmount</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            }
+        }
         <p class="d-flex justify-content-between border-top pt-2">
             Total Price
             <span>$100</span>
         </p>
-        <button class="mybtn mybtn--primary align-self-center">Checkout</button>
+        <a href="/Checkout" class="mybtn mybtn--primary align-self-center">Checkout</a>
     </div>
 </div>
 
 @code {
  
-    async Task ShowCategory()
-    {
-        await JS.InvokeVoidAsync("ShowCategory");
-    }
+
 
     async Task ShowCart()
     {
-        await JS.InvokeVoidAsync("ShowCart");
+
         products = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
     }
 
@@ -129,5 +148,16 @@
 
         LocalStorage.SetItemAsync("cart", products);
 
+    }
+    private ProductsModel selectedProduct;
+    private HttpClient? client;
+
+
+    private async Task<IEnumerable<ProductsModel>> SearchProducts(string searchText)
+    {
+        client = factory.CreateClient("api");
+
+        var response = await client.GetFromJsonAsync<IEnumerable<ProductsModel>>($"Products/Search/{searchText}");
+        return response;
     }
 }

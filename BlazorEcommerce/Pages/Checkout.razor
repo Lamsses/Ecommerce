@@ -1,48 +1,43 @@
 ﻿@page "/Checkout"
+@inject ILocalStorageService LocalStorage
 
+    <AuthorizeView>
+        <Authorized>
 
-<section class="mb-5">
+        <section class="mb-5">
     <div class="container">
         <div class="row">
             <div class="col-12 col-lg-6 mt-4 pe-5 border-end">
                 <div class="card border-0 border-bottom mb-3">
-                    <div class="row g-0">
-                        <div class="col-4">
-                            <img src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e8c4e68b497e229146b818_leptop%20sleeve-min.png" class="img-fluid rounded-start" alt="...">
-                        </div>
-                        <div class="col-8">
-                            <div class="card-body pt-5">
-                                <h5 class="card-title d-flex justify-content-between">
-                                    Card title
-                                    <span>100$</span>
-                                </h5>
-                                <p>amount: 5</p>
+                     @if (products is not null)
+                    {
+                        @foreach (var item in products)
+                        {
+                            <div class="row g-0">
+                                <div class="col-4">
+                                    <img src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e8c4e68b497e229146b818_leptop%20sleeve-min.png" class="img-fluid rounded-start" alt="...">
+                                </div>
+                                <div class="col-8">
+                                    <div class="card-body pt-5">
+                                        <h5 class="card-title d-flex justify-content-between">
+                                            @item.name
+                                            <span>@item.price</span>
+                                        </h5>
+                                        <p>amount: @item.ProductAmount</p>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
+                        }
+                    }
                 </div>
-                <div class="card border-0 border-bottom mb-3">
-                    <div class="row g-0">
-                        <div class="col-4">
-                            <img src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e8c4e68b497e229146b818_leptop%20sleeve-min.png" class="img-fluid rounded-start" alt="...">
-                        </div>
-                        <div class="col-8">
-                            <div class="card-body pt-5">
-                                <h5 class="card-title d-flex justify-content-between">
-                                    Card title
-                                    <span>100$</span>
-                                </h5>
-                                <p>amount: 5</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+               
                 <p class="d-flex justify-content-between  pt-2">
                     Total Price
                     <span>$100</span>
                 </p>
             </div>
-            <div class="col mt-5 ms-lg-4 ">
+        
+                      <div class="col mt-5 ms-lg-4 ">
                 <form class="row g-3">
                     <div class="col-md-6">
                         <label for="firstName" class="form-label">Frist Name</label>
@@ -71,9 +66,38 @@
                     </div>
                 </form>
             </div>
+
+           
         </div>
     </div>
 </section>
+    </Authorized>
+    <NotAuthorized>
+        logIn,bitch
+    </NotAuthorized>
+    </AuthorizeView>
 @code {
 
+
+
+
+    List<ProductsModel> products = new();
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            products = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
+
+            StateHasChanged();
+        }
+    }
+    private async Task Delete(ProductsModel product)
+    {
+
+        products.Remove(product);
+
+        LocalStorage.SetItemAsync("cart", products);
+
+    }
 }
+

@@ -36,17 +36,6 @@ function ShowCategory() {
 //        })
 //);
 
-
-function ShowCart() {
-    var cart = document.querySelector(".cart");
-    cart.classList.toggle("toggle-cart");
-}
-var cart = document.querySelector(".cart");
-cart.addEventListener("click",
-    function() {
-        this.classList.toggle("toggle-cart");
-    });
-
 //var mainImg = document.getElementById('main-img');
 ////var m = mainImg.src;
 //var bottomImg = document.getElementsByClassName('bottom-img');

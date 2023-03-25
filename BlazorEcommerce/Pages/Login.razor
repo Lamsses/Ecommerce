@@ -1,20 +1,12 @@
 ﻿@page "/login"
-@using System.Net.Http.Json
-@inject IHttpClientFactory factory
-@inject TokenModel tokenInfo
-@inject  AuthenticationStateProvider AuthStateProvider 
-@inject ILocalStorageService LocalStorage
+@inherits MainBase
+
 <PageTitle>Index</PageTitle>
 
-@if (isLoggedIn)
-{
-    <h1>you are logged in </h1>
-    <button class="btn btn-danger" @onclick="LogOut">log out</button>
-}
-else
-{
+
+
     <h1>Log in</h1>
-    <EditForm Model="Authenticat" OnValidSubmit="HandleValidSubmit">
+    <EditForm Model="Authenticat" OnValidSubmit="HandleValidLogIn">
         <InputText @bind-Value="Authenticat.email" />
         <InputText type="password" @bind-Value="Authenticat.password" />
 
@@ -34,56 +26,5 @@ else
         <button class="btn btn-success" type="submit">Register</button>
 
     </EditForm>
-}
-
-@code {
 
 
-    private AuthenticationModel Authenticat = new();
-    private bool isLoggedIn = false;
-
-    protected override void OnInitialized()
-    {
-        isLoggedIn = !string.IsNullOrEmpty(tokenInfo.Token);
-    }
-    private async void HandleValidSubmit()
-    {
-        var client = factory.CreateClient("api");
-
-        var info = await client.PostAsJsonAsync<AuthenticationModel>("Customers/token", Authenticat);
-
-        var Token = await info.Content.ReadAsStringAsync();
-        if (info.IsSuccessStatusCode)
-        {
-            await LocalStorage!.SetItemAsync("token", Token);
-
-            isLoggedIn = true;
-            await AuthStateProvider!.GetAuthenticationStateAsync();
-
-            await InvokeAsync(StateHasChanged);
-            Console.WriteLine(tokenInfo.Token);
-        }
-        else
-        {
-            var showError = Token;
-
-        }
-    }
-    private async Task HandleRegisteration()
-    {
-        var client = factory.CreateClient("api");
-
-        var info = await client.PostAsJsonAsync<AuthenticationModel>("Customers", Authenticat);
-
-
-
-        await InvokeAsync(StateHasChanged);
-    }
-    private async void LogOut()
-    {
-        tokenInfo.Token = "";
-        await AuthStateProvider!.GetAuthenticationStateAsync();
-
-        isLoggedIn = false;
-    }
-}
