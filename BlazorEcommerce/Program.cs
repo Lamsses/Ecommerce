@@ -3,6 +3,7 @@ using BlazorEcommerce.Models;
 using BlazorEcommerce.Shared;
 using Blazored.LocalStorage;
 using Blazored.SessionStorage;
+using EcommerceLibrary.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +12,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<TokenModel>();
 builder.Services.AddScoped<AuthenticationStateProvider , CustomAuthStateProvider>();
-
+builder.Services.AddScoped<List<ProductsModel>>();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddBlazoredSessionStorage();
 builder.Services.AddAuthorizationCore();

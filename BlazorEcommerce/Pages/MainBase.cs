@@ -13,8 +13,9 @@ public class MainBase : ComponentBase
      protected AuthenticationModel Authenticat = new();
 
 
+    public List<ProductsModel>? cartItems;
 
-
+    
     public IHttpClientFactory? factory;
     protected async Task Logout()
     {

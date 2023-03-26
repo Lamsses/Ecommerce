@@ -1,5 +1,5 @@
 ﻿@page "/cart"
-@attribute [Authorize(Policy = "MustBeAdmin")]
+
 
 @inject ILocalStorageService LocalStorage
 <h3>Cart</h3>
@@ -15,8 +15,6 @@
         <button class="alert-danger" type="button" @onclick="() => Delete(item)">Delete</button>
 
     }
-
-    
 
 }
 else

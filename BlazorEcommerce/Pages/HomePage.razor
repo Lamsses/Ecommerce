@@ -1,9 +1,5 @@
 ﻿@page "/"
-@using System.Net.Http.Headers
-@inject IJSRuntime JS
-@inject IHttpClientFactory factory
-@inject TokenModel tokenInfo
-@inject ILocalStorageService LocalStorage
+@inherits MainBase
 
  @*Hero*@
 <section class="hero-section">
@@ -121,53 +117,64 @@
     </div>
 </section>
 
+<footer>
+    <div class="container mt-5">
+        <div class="row border-top pt-5">
+            <div class="col-8 col-lg-4">
+                <div class="footer__brand">
+                    <img class="mb-3" src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e86ab4c21faa7bc0bd90dd_Logo.svg" alt="">
+                    <p class="footer__copyright">Copyright 2023 MOJO</p>
+                </div>
+            </div>
+            <div class="col-4 col-lg-2">
+                <div class="links">
+                    <h5 class="footer-menu-title">Categories</h5>
+                    <ul class="list-unstyled lh-lg">
+                        <li class="list-item"><a href="">Headphones</a></li>
+                        <li class="list-item"><a href="">Mouses</a></li>
+                        <li class="list-item"><a href="">Keyboards</a></li>
+                        <li class="list-item"><a href="">Accessories</a></li>
+                        <li class="list-item"><a href="">Laptops</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-4 col-lg-2">
+                <div class="links">
+                    <h5 class="footer-menu-title">About Us</h5>
+                    <ul class="list-unstyled lh-lg">
+                        <li class="list-item"><a href="">About Shopcart</a></li>
+                        <li class="list-item"><a href="">Careers</a></li>
+                        <li class="list-item"><a href="">Ideas & Guides</a></li>
+                        <li class="list-item"><a href="">News & Blog</a></li>
+                        <li class="list-item"><a href="">Shopcart Brands</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-4 col-lg-2">
+                <div class="links">
+                    <h5 class="footer-menu-title">Services</h5>
+                    <ul class="list-unstyled lh-lg">
+                        <li class="list-item"><a href="">Gift Card</a></li>
+                        <li class="list-item"><a href="">Mobile App</a></li>
+                        <li class="list-item"><a href="">Shipping & Delivery</a></li>
+                        <li class="list-item"><a href="">Order Pickup</a></li>
+                        <li class="list-item"><a href="">Account Signup</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-4 col-lg-2">
+                <div class="links">
+                    <h5 class="footer-menu-title">Help</h5>
+                    <ul class="list-unstyled lh-lg">
+                        <li class="list-item"><a href="">Shopcart Help</a></li>
+                        <li class="list-item"><a href="">Returns</a></li>
+                        <li class="list-item"><a href="">Track Orders</a></li>
+                        <li class="list-item"><a href="">Contact Us</a></li>
+                        <li class="list-item"><a href="">Feedback</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
 
-@code {
-    protected List<CategoriesModel> Categories = new();
-    private HttpClient? client;
-    private IEnumerable<ProductsModel>? products;
-    private IEnumerable<ProductsModel>? categoriesProduct;
-    protected List<ProductsModel> cart = new();
-
-
-
-    protected async override void OnInitialized()
-    {
-        client = factory.CreateClient("api");
-        Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
-        products = await client.GetFromJsonAsync<List<ProductsModel>>("Products");
-
-        await InvokeAsync(StateHasChanged);
-    }
-
-    async Task SelectTap(int id)
-    {
-        await JS.InvokeVoidAsync("SelectTap");
-        categoriesProduct = products.Where(opts => opts.category_id == id);
-    }
-    private async Task AddToCart(ProductsModel products)
-    {
-        if (cart is null)
-        {
-
-            cart = new List<ProductsModel>();
-        }
-        var find = cart.Find(p => p.product_id == products.product_id);
-        if (find is null)
-        {
-            cart.Add(products);
-            await LocalStorage.SetItemAsync("cart", cart);
-
-
-        }
-        else
-        {
-
-            find.ProductAmount += 1;
-            products.ProductAmount = find.ProductAmount;
-            await LocalStorage.SetItemAsync("cart", cart);
-            StateHasChanged();
-
-        }
-    }
-}
