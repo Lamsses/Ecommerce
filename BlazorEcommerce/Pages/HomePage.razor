@@ -1,9 +1,5 @@
 ﻿@page "/"
-@using System.Net.Http.Headers
-@inject IJSRuntime JS
-@inject IHttpClientFactory factory
-@inject TokenModel tokenInfo
-@inject ILocalStorageService LocalStorage
+@inherits MainBase
 
  @*Hero*@
 <section class="hero-section">
@@ -180,52 +176,3 @@
         </div>
     </div>
 </footer>
-@code {
-    protected List<CategoriesModel> Categories = new();
-    private HttpClient? client;
-    private IEnumerable<ProductsModel>? products;
-    private IEnumerable<ProductsModel>? categoriesProduct;
-    protected List<ProductsModel> cart = new();
-
-
-
-    protected async override void OnInitialized()
-    {
-        client = factory.CreateClient("api");
-        Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
-        products = await client.GetFromJsonAsync<List<ProductsModel>>("Products");
-
-        await InvokeAsync(StateHasChanged);
-    }
-
-    async Task SelectTap(int id)
-    {
-        await JS.InvokeVoidAsync("SelectTap");
-        categoriesProduct = products.Where(opts => opts.category_id == id);
-    }
-    private async Task AddToCart(ProductsModel products)
-    {
-        if (cart is null)
-        {
-
-            cart = new List<ProductsModel>();
-        }
-        var find = cart.Find(p => p.product_id == products.product_id);
-        if (find is null)
-        {
-            cart.Add(products);
-            await LocalStorage.SetItemAsync("cart", cart);
-
-
-        }
-        else
-        {
-
-            find.ProductAmount += 1;
-            products.ProductAmount = find.ProductAmount;
-            await LocalStorage.SetItemAsync("cart", cart);
-            StateHasChanged();
-
-        }
-    }
-}

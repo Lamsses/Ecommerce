@@ -11,6 +11,7 @@ public class MainBase : ComponentBase
     [Inject] protected ILocalStorageService? LocalStorage { get; set; }
     [Inject] protected AuthenticationStateProvider? AuthStateProvider { get; set; }
 
+    public List<ProductsModel>? cartItems;
 
 
     public IHttpClientFactory? factory;
