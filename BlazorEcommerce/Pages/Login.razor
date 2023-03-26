@@ -4,27 +4,20 @@
 <PageTitle>Index</PageTitle>
 
 
+<div class="log-form container mt-5 mb-5">
 
-    <h1>Log in</h1>
-    <EditForm Model="Authenticat" OnValidSubmit="HandleValidLogIn">
-        <InputText @bind-Value="Authenticat.email" />
-        <InputText type="password" @bind-Value="Authenticat.password" />
-
+    <EditForm Model="Authenticat" OnValidSubmit="HandleValidLogIn" class="row g-3">
+        <div class="col-md-12">
+            <label for="inputEmail" class="form-label">Email</label>
+            <InputText @bind-Value="Authenticat.email" class="form-control" id="inputEmail" />
+        </div>
+        <div class="col-md-12">
+            <label for="inputPassword" class="form-label">Password</label>
+            <InputText type="password" @bind-Value="Authenticat.password" class="form-control" id="inputPassword" />
+        </div>
+        <p>New Customer? <a href="/register" >Create New Account</a> </p>
         <button class="btn btn-success" type="submit">Log in</button>
-
     </EditForm>
-
-    <h1>Register</h1>
-    <EditForm Model="Authenticat" OnValidSubmit="HandleRegisteration">
-        <InputText @bind-Value="Authenticat.first_name" />
-        <InputText @bind-Value="Authenticat.last_name" />
-        <InputText @bind-Value="Authenticat.password" />
-        <InputText @bind-Value="Authenticat.phone_number" />
-        <InputText @bind-Value="Authenticat.email" />
-        <InputText @bind-Value="Authenticat.city" />
-
-        <button class="btn btn-success" type="submit">Register</button>
-
-    </EditForm>
+</div>
 
 

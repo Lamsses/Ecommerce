@@ -57,19 +57,24 @@
                     </NotFoundTemplate>
                 </BlazoredTypeahead>
             </form>
-            <a href=""
-               class="nav-link mt-sm-2 mb-sm-2 ms-lg-auto mt-3 d-flex align-items-center d-lg-flex justify-content-lg-center align-items-lg-center d-sm-flex justify-content-sm-start align-items-sm-center">
-                <i class="fa-regular fa-user pe-2 ms-lg-3"></i>
+
                 <AuthorizeView>
                     <Authorized>
-                        <p class="m-0" @onclick="()=>Logout()" >Logout</p>
+                        <a 
+                           class="nav-link mt-sm-2 mb-sm-2 ms-lg-auto mt-3 d-flex align-items-center d-lg-flex justify-content-lg-center align-items-lg-center d-sm-flex justify-content-sm-start align-items-sm-center">
+                        <i class="fa-regular fa-user pe-2 ms-lg-3"></i>
+                        <p class="m-0" @onclick="() => Logout()">Logout</p>
+                        </a>
                     </Authorized>
                     <NotAuthorized>
+                        <a href="/login"
+                           class="nav-link mt-sm-2 mb-sm-2 ms-lg-auto mt-3 d-flex align-items-center d-lg-flex justify-content-lg-center align-items-lg-center d-sm-flex justify-content-sm-start align-items-sm-center">
+                        <i class="fa-regular fa-user pe-2 ms-lg-3"></i>
                         <p class="m-0">Login</p>
+                        </a>
                     </NotAuthorized>
                 </AuthorizeView>
-            </a>
-            <a href="#offcanvas" @onclick="()=>ShowCart()" role="button" data-bs-toggle="offcanvas" aria-controls="offcanvas" class="nav-link  ms-lg-4 mt-sm-1 mt-3 d-flex align-items-center d-lg-flex justify-content-lg-center align-items-lg-center d-sm-flex justify-content-sm-start align-items-sm-center">
+            <a href="#offcanvas" @onclick="ShowCart" role="button" data-bs-toggle="offcanvas" aria-controls="offcanvas" class="nav-link  ms-lg-4 mt-sm-1 mt-3 d-flex align-items-center d-lg-flex justify-content-lg-center align-items-lg-center d-sm-flex justify-content-sm-start align-items-sm-center">
                 <i class="fa-solid fa-cart-shopping pe-2"></i>
                 <p class="m-0 position-relative">
                     Cart
