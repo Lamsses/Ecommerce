@@ -62,7 +62,7 @@ partial class NavBar
     private void HandleSearch()
     {
         if (cartItems is null) return;
-        selectedProduct = cartItems;
+
         NavigationManager.NavigateTo($"p/{selectedProduct.product_id}");
     }
 }

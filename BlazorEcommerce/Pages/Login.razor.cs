@@ -5,7 +5,7 @@ namespace BlazorEcommerce.Pages;
 
 partial class Login : MainBase
 {
-    private AuthenticationModel Authenticat = new();
+    // private AuthenticationModel Authenticat = new();
 
     private async void HandleValidLogIn()
     {
@@ -22,12 +22,5 @@ partial class Login : MainBase
 
         }
     }
-    private async Task HandleRegisteration()
-    {
-        var client = factory.CreateClient("api");
-
-        var info = await client.PostAsJsonAsync<AuthenticationModel>("Customers", Authenticat);
-
-        await InvokeAsync(StateHasChanged);
-    }
+    
 }
