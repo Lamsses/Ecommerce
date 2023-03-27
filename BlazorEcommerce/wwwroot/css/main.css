@@ -123,10 +123,9 @@ a {
     border: 1px solid #c5c5c5;
     font-size: .875rem;
 }
-.category-taps .nav-item .nav-link:hover,
-.category-taps .nav-item .nav-link:focus
+.category-taps .nav-item .nav-link:hover
 {
-    color: var(--color-primary);
+    color: var(--color-headings);
 }
 .category-taps .nav-item .nav-link.active{
     background-color: var(--color-primary);

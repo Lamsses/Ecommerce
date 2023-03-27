@@ -1,5 +1,5 @@
-﻿@page "/p"
-
+﻿@page "/p/{id:int}"
+@inherits MainBase
 <section class="product-details">
     <div class="container">
         <div class="row">
@@ -34,10 +34,11 @@
             <div class="col-12 col-lg-6 p-lg-5">
                 <div class="container">
                     <div class="row ps-5 ">
-                        <h3 class="product-name mb-3 ">Airpod Max</h3>
-                        <p class="product-description border-bottom pb-4 ">a perfect balance of exhilarating high-fidelity audio and the effortless magic of AirPods. The ultimate personal listening experience is here.</p>
 
-                        <h4 class="col-2 product-price mt-2 ">100$</h4>
+                        <h3 class="product-name mb-3 ">@product.name</h3>
+                        <p class="product-description border-bottom pb-4 ">@product.description</p>
+
+                        <h4 class="col-2 product-price mt-2 ">@product.price</h4>
                         <div class="col-6 ">
                             <select class="form-select mt-2 amount-po" aria-label="Default select example">
                                 <option value="1" selected>1</option>

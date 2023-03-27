@@ -62,14 +62,16 @@
 
                 <AuthorizeView>
                     <Authorized>
-                        <a 
-                           class="nav-link mt-sm-2 mb-sm-2 ms-lg-auto mt-3 d-flex align-items-center d-lg-flex justify-content-lg-center align-items-lg-center d-sm-flex justify-content-sm-start align-items-sm-center">
+                    <a href="" class="nav-link mt-sm-2 mb-sm-2 ms-lg-auto mt-3 d-flex align-items-center d-lg-flex justify-content-lg-center align-items-lg-center d-sm-flex justify-content-sm-start align-items-sm-center">
                         <i class="fa-regular fa-user pe-2 ms-lg-3"></i>
                         <p class="m-0" @onclick="() => Logout()">Logout</p>
                         </a>
                     </Authorized>
                     <NotAuthorized>
-                        <p  class="m-0">Login</p>
+                    <a  href="/login" class="nav-link mt-sm-2 mb-sm-2 ms-lg-auto mt-3 d-flex align-items-center d-lg-flex justify-content-lg-center align-items-lg-center d-sm-flex justify-content-sm-start align-items-sm-center">
+                        <i class="fa-regular fa-user pe-2 ms-lg-3"></i>
+                        <p class="m-0" >Login</p>
+                    </a>
                     </NotAuthorized>
                 </AuthorizeView>
  
@@ -93,7 +95,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
-           @if (cartItems is not null)
+        @if (cartItems is not null )
         {
             @foreach (var item in cartItems)
             {
@@ -116,12 +118,16 @@
                     </div>
                 </div>
             }
-        }
         <p class="d-flex justify-content-between border-top pt-2">
             Total Price
             <span>@CalculateTotal()</span>
         </p>
-        <a href="/Checkout" class="mybtn mybtn--primary align-self-center">Checkout</a>
+            <a href="/Checkout" class="mybtn mybtn--primary align-self-center">Checkout</a>
+        }
+        else
+        {
+            <p>no items found</p>
+        }
     </div>
 </div>
 

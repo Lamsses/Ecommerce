@@ -18,7 +18,9 @@ partial class Login : MainBase
         {
             await LocalStorage!.SetItemAsync("token", Token);
             await AuthStateProvider!.GetAuthenticationStateAsync();
+            
             await InvokeAsync(StateHasChanged);
+            NavigationManager.NavigateTo("/", true);
 
         }
     }

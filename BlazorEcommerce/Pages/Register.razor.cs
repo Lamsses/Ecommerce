@@ -12,6 +12,12 @@ namespace BlazorEcommerce.Pages
             var info = await client.PostAsJsonAsync<AuthenticationModel>("Customers", Authenticat);
 
             await InvokeAsync(StateHasChanged);
+            if(info.IsSuccessStatusCode)
+            {
+              NavigationManager.NavigateTo("/login", true);
+
+            }
+
         }
     }
 }

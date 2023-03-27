@@ -1,4 +1,6 @@
-﻿using EcommerceLibrary.Models;
+﻿using BlazorEcommerce.Pages;
+using EcommerceLibrary.Models;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace BlazorEcommerce.Shared;
 
@@ -23,17 +25,18 @@ partial class NavBar
     }
     private async Task Delete(ProductsModel item)
     {
+        var find = cartItems.Find(p => p.product_id == item.product_id);
 
-        cartItems.Remove(item);
+        cartItems.Remove(find);
         await LocalStorage.SetItemAsync("cart", cartItems);
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
 
     }
    
     private async Task<IEnumerable<ProductsModel>> SearchProducts(string searchText)
     {
         client = factory.CreateClient("api");
-
+  
         var response = await client.GetFromJsonAsync<IEnumerable<ProductsModel>>($"Products/Search/{searchText}");
         return response;
     }
@@ -59,10 +62,10 @@ partial class NavBar
         }
         return 0;
     }
-    private void HandleSearch()
+    private void HandleSearch(ProductsModel product)
     {
         if (cartItems is null) return;
-
+        selectedProduct= product;
         NavigationManager.NavigateTo($"p/{selectedProduct.product_id}");
     }
 }
