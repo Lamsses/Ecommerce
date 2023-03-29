@@ -30,9 +30,12 @@
                         Category
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Headphones</a></li>
-                        <li><a class="dropdown-item" href="#">Mouses</a></li>
-                        <li><a class="dropdown-item" href="#">Keyboards</a></li>
+                        @foreach (var item in Categories)
+                        {
+                        <li><a class="dropdown-item" href="/cat/@item.category_id">@item.Name</a></li>
+
+                        }
+
                     </ul>
                 </li>
                 <li class="nav-item dropdown">

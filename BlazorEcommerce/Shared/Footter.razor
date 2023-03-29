@@ -1,4 +1,6 @@
-﻿<footer>
+﻿@using Pages
+@inherits MainBase
+<footer>
     <div class="container mt-5">
         <div class="row border-top pt-5">
             <div class="col-8 col-lg-4">
@@ -11,11 +13,12 @@
                 <div class="links">
                     <h5 class="footer-menu-title">Categories</h5>
                     <ul class="list-unstyled lh-lg">
-                        <li class="list-item"><a href="">Headphones</a></li>
-                        <li class="list-item"><a href="">Mouses</a></li>
-                        <li class="list-item"><a href="">Keyboards</a></li>
-                        <li class="list-item"><a href="">Accessories</a></li>
-                        <li class="list-item"><a href="">Laptops</a></li>
+                        @foreach (var item in Categories)
+                        {
+                        <li class="list-item"><a href="/cat/@item.category_id">@item.Name</a></li>
+
+                        }
+
                     </ul>
                 </div>
             </div>

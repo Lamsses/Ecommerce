@@ -5,8 +5,10 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace BlazorEcommerce.Shared;
 
-partial class NavBar
+partial class NavBar : MainBase
 {
+    protected List<CategoriesModel> Categories = new();
+
     private ProductsModel selectedProduct;
     private HttpClient? client;
     async Task ShowCart()
@@ -15,12 +17,14 @@ partial class NavBar
     }
 
 
-  
- 
+    protected async override Task OnInitializedAsync()
+    {
+        client = factory.CreateClient("api");
+        Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
+        await ShowCart();
+    }
 
- 
 
-   
     private async Task<IEnumerable<ProductsModel>> SearchProducts(string searchText)
     {
         client = factory.CreateClient("api");

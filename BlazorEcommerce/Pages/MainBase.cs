@@ -18,7 +18,31 @@ public class MainBase : ComponentBase
 
     public List<ProductsModel>? cartItems = new();
 
-    
+    public async Task AddToCart(ProductsModel products)
+    {
+        var cart = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
+        if (cart is null)
+        {
+
+            cart = new List<ProductsModel>();
+        }
+        var find = cart.Find(p => p.product_id == products.product_id);
+        if (find is null)
+        {
+            cart.Add(products);
+
+        }
+        else
+        {
+            find.ProductAmount += 1;
+            products.ProductAmount = find.ProductAmount;
+
+        }
+        await LocalStorage.SetItemAsync("cart", cart);
+
+
+    }
+
     protected async Task Logout()
     {
         NavigationManager!.NavigateTo("/", true);
