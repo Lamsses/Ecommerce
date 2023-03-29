@@ -9,12 +9,18 @@ partial class NavBar
 {
     private ProductsModel selectedProduct;
     private HttpClient? client;
+    async Task ShowCart()
+    {
+        cartItems = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
+    }
 
 
   
  
 
+ 
 
+   
     private async Task<IEnumerable<ProductsModel>> SearchProducts(string searchText)
     {
         client = factory.CreateClient("api");
@@ -36,7 +42,14 @@ partial class NavBar
         }
         return total;
     }
-   
+    private int CartCount()
+    {
+        if(cartItems is not null) 
+        {
+            return cartItems.Count();
+        }
+        return 0;
+    }
     private void HandleSearch(ProductsModel product)
     {
         if (cartItems is null) return;

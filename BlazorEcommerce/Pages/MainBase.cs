@@ -18,29 +18,12 @@ public class MainBase : ComponentBase
 
     public List<ProductsModel>? cartItems = new();
 
-    public async Task ShowCart()
-    {
-        cartItems = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
-    }
+    
     protected async Task Logout()
     {
         NavigationManager!.NavigateTo("/", true);
         await LocalStorage!.RemoveItemAsync("token");
         await AuthStateProvider!.GetAuthenticationStateAsync();
     }
-    public int counter =0;
-    public int CartCount()
-    {
-        if (cartItems is not null)
-        {
-            counter= cartItems.Count();
-            StateHasChanged();
-            return counter;
-
-        }
-        StateHasChanged();
-        return counter;
-    }
-    
 
 }
