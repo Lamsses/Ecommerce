@@ -28,28 +28,31 @@ partial class HomePage : MainBase
     {
         categoriesProduct = products.Where(opts => opts.category_id == id);
     }
-    private async Task AddToCart(ProductsModel products)
+    public async Task AddToCart(ProductsModel products)
     {
-        if (cartItems is null)
+        var cart = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
+        if (cart is null)
         {
 
-            cartItems = new List<ProductsModel>();
+            cart = new List<ProductsModel>();
         }
-        var find = cartItems.Find(p => p.product_id == products.product_id);
+        var find = cart.Find(p => p.product_id == products.product_id);
         if (find is null)
         {
-            cartItems.Add(products);
-            await LocalStorage.SetItemAsync("cart", cartItems);
-            StateHasChanged();
+            cart.Add(products);
 
         }
         else
         {
             find.ProductAmount += 1;
             products.ProductAmount = find.ProductAmount;
-            await LocalStorage.SetItemAsync("cart", cartItems);
-            StateHasChanged();
 
         }
+        await LocalStorage.SetItemAsync("cart", cart);
+        CartCount();
+        ShowCart();
+
     }
+
+
 }
