@@ -2,13 +2,14 @@
 using EcommerceLibrary.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace EcommerceWebApi.Controllers;
 [Route("api/[controller]")]
 [ApiController]
+[AllowAnonymous]
 
 
-    
 public class OrdersController : ControllerBase
 {
 
@@ -18,6 +19,7 @@ public class OrdersController : ControllerBase
     {
         _orders = orders;
     }
+
     [HttpGet]
     
     public async Task<ActionResult<IEnumerable<OrdersModel>>> Get()
@@ -35,12 +37,13 @@ public class OrdersController : ControllerBase
         return Ok(output);
 
     }
-
+  
     [HttpPost]
-
-    public async Task<ActionResult<OrdersModel>> Post(DateTime order_date , int customer_id)
+    [AllowAnonymous]
+    public async Task<ActionResult<OrdersModel>> Post([FromBody] OrdersModel orders)
     {
-        var output = await _orders.Create(order_date, customer_id);
+
+        var output = await _orders.Create(orders.order_date, orders.customer_id);
         return Ok(output);
 
     }
@@ -50,7 +53,7 @@ public class OrdersController : ControllerBase
     [Authorize(Policy = "SuperAdmin")]
     public async Task<ActionResult<OrdersModel>> PutAsync(int id, DateTime order_date, int customer_id)
     {
-        await _orders.Update(id, order_date, customer_id);
+        await _orders.Update(id, order_date, customer_id = GetCustomerId());
 
         return Ok();
     }
@@ -64,4 +67,10 @@ public class OrdersController : ControllerBase
 
         return Ok();
     }
+    private int GetCustomerId()
+    {
+        var userId = User.Claims.FirstOrDefault(i => i.Type == ClaimTypes.NameIdentifier)?.Value;
+        return int.Parse(userId);
+    }
+
 }

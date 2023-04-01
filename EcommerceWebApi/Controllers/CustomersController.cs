@@ -23,7 +23,7 @@ public class CustomersController : ControllerBase
     private readonly IMapper _mapper;
     private readonly IConfiguration _config;
 
-    public CustomersController(ICustomersData customers, IMapper mapper, IConfiguration config)
+    public CustomersController(ICustomersData customers, IMapper mapper, IConfiguration config) 
     {
         _customers = customers;
         _mapper = mapper;
@@ -74,6 +74,7 @@ public class CustomersController : ControllerBase
             return BadRequest("Wrong Password");
 
         string token = GenerateToken(user);
+
         return Ok(token);
     }
 

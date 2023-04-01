@@ -1,5 +1,6 @@
 ﻿using EcommerceLibrary.Models;
 using Microsoft.JSInterop;
+using System.Net.Http.Json;
 
 namespace BlazorEcommerce.Pages;
 
@@ -28,6 +29,7 @@ partial class HomePage : MainBase
     {
         categoriesProduct = products.Where(opts => opts.category_id == id);
     }
+
 
 
 }
