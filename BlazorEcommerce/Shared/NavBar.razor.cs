@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace BlazorEcommerce.Shared;
 
-partial class NavBar : MainBase
+partial class NavBar : MainBase 
 {
     protected List<CategoriesModel> Categories = new();
 

@@ -50,18 +50,22 @@ public class ProductsController : ControllerBase
     [HttpPost]
   
 
-    public async Task<ActionResult<ProductsModel>> Post(string name, decimal price, int quantity, string imgUrl, string description ,int category_id)
+    public async Task<ActionResult<ProductsModel>> Post([FromBody] ProductsModel products)
     {
-        var output = await _products.Create(name, price, quantity, imgUrl, description, category_id);
+        var output = await _products.Create
+            (products.name, decimal.Parse(products.price), products.quantity, products.img_url, products.description, products.category_id);
         return Ok(output);
 
     }
 
     [HttpPut("{id}")]
 
-    public async Task<ActionResult<ProductsModel>> PutAsync(int id, string name, decimal price, int quantity, string img_url, string description, int catagory_id)
+    public async Task<ActionResult<ProductsModel>> PutAsync(int id,[FromBody] ProductsModel products)
     {
-         await _products.Update( id,  name,  price,  quantity,  img_url,  description,  catagory_id);
+        
+         await _products.Update
+            (id, products.name, decimal.Parse(products.price), 
+            products.quantity,  products.img_url,  products.description, products.category_id);
 
         return Ok();
     }

@@ -30,6 +30,7 @@ partial class HomePage : MainBase
         categoriesProduct = products.Where(opts => opts.category_id == id);
     }
 
+  
 
 
 }

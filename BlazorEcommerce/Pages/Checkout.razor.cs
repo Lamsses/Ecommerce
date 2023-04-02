@@ -1,34 +1,10 @@
-﻿@page "/cart"
+﻿using EcommerceLibrary.Models;
 
+namespace BlazorEcommerce.Pages;
 
-@inject ILocalStorageService LocalStorage
-<h3>Cart</h3>
-@if (products is not null)
+partial class Checkout
 {
-    foreach (var item in products)
-    {
-        <div>
-            @item.name
-            @item.price
-            @item.ProductAmount
-        </div>
-        <button class="alert-danger" type="button" @onclick="() => Delete(item)">Delete</button>
 
-    }
-
-}
-else
-{
-    <span>No items found</span>
-}
-
-    
-
-
-@code {
-  
-
-    
     List<ProductsModel> products = new();
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -38,6 +14,19 @@ else
 
             StateHasChanged();
         }
+    }
+    private decimal CalculateTotal()
+    {
+        decimal total = 0;
+        if (products is not null)
+        {
+            foreach (var item in products)
+            {
+                total += (Convert.ToDecimal(item.price) * Convert.ToDecimal(item.ProductAmount));
+
+            }
+        }
+        return total;
     }
     private async Task Delete(ProductsModel product)
     {
