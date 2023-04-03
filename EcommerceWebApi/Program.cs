@@ -12,6 +12,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHealthChecks();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddSingleton<ISqlDataAccess, SqlDataAccess>();
+builder.Services.AddSingleton<IAdminLog, AdminLog>();
 builder.Services.AddSingleton<IProductsData, ProductsData>();
 builder.Services.AddSingleton<IOrdersProductsData, OrdersProductsData>();
 builder.Services.AddSingleton<ICategoriesData, CategoriesData>();

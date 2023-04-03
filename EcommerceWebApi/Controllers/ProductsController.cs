@@ -15,17 +15,27 @@ namespace EcommerceApi.Controllers;
 public class ProductsController : ControllerBase
 {
     private readonly IProductsData _products;
+    private readonly ILogger<ProductsController> _logger;
+    private readonly IAdminLog _adminLog;
+    private readonly ICustomersData _customers;
 
-    public ProductsController(IProductsData products)
+    public ProductsController
+        (IProductsData products, ILogger<ProductsController> logger, IAdminLog adminLog, ICustomersData customers)
     {
         _products = products;
+        _logger = logger;
+        _adminLog = adminLog;
+        _customers = customers;
     }
     [HttpGet]
 
     public async Task<ActionResult<IEnumerable<ProductsModel>>> Get()
     {
+       
        var output =await  _products.GetAll();
+    
         return Ok(output);
+
     }
 
     [HttpGet("{id}")]
@@ -54,6 +64,8 @@ public class ProductsController : ControllerBase
     {
         var output = await _products.Create
             (products.name, decimal.Parse(products.price), products.quantity, products.img_url, products.description, products.category_id);
+
+
         return Ok(output);
 
     }

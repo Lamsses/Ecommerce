@@ -59,9 +59,6 @@ partial class NavBar : CartBase
         CartItems = await CartService.GetCartItems();
     }
 
-
-
-
     private async Task<IEnumerable<ProductsModel>> SearchProducts(string searchText)
     {
         client = factory.CreateClient("api");
