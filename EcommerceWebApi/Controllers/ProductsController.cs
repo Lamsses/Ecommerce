@@ -15,17 +15,10 @@ namespace EcommerceApi.Controllers;
 public class ProductsController : ControllerBase
 {
     private readonly IProductsData _products;
-    private readonly ILogger<ProductsController> _logger;
-    private readonly IAdminLog _adminLog;
-    private readonly ICustomersData _customers;
 
-    public ProductsController
-        (IProductsData products, ILogger<ProductsController> logger, IAdminLog adminLog, ICustomersData customers)
+    public ProductsController(IProductsData products)
     {
         _products = products;
-        _logger = logger;
-        _adminLog = adminLog;
-        _customers = customers;
     }
     [HttpGet]
 
