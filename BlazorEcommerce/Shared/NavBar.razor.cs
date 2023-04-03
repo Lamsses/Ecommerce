@@ -9,7 +9,9 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace BlazorEcommerce.Shared;
 
+
 partial class NavBar : CartBase
+
 {
     [Inject]
     public ICartService? CartService { get; set; }

@@ -1,0 +1,78 @@
+﻿@page "/Admin/products"
+
+@inherits MainBase
+<h3>DashBoardProdcuts</h3>
+
+ <BlazoredTypeahead SearchMethod="@SearchProducts" 
+                TValue="ProductsModel"
+                TItem="ProductsModel"
+                Value="selectedProduct"
+                ValueExpression="@(() => selectedProduct)"
+                placeholder="Search">
+                    <SelectedTemplate>
+                        @context.name
+                    </SelectedTemplate>
+                    <ResultTemplate>
+                        @context.name
+                    </ResultTemplate>
+                    <NotFoundTemplate>
+                        get otta here
+                    </NotFoundTemplate>
+                </BlazoredTypeahead>
+<h3>Prodcuts</h3>
+
+@if (products is not null)
+{
+    @foreach (var item in products)
+    {
+        @if (!OkayDisabled)
+        {
+            <a>
+                <span>@item.name </span>
+                <span>@item.quantity </span>
+                <span>@item.img_url </span>
+                <button type="button" @onclick="()=>Delete(item.product_id)">Delete</button>
+                <button type="button" @onclick="()=>EditProduct(item.product_id)">Edit</button>
+                <button type="button" @onclick="()=>Enable(item.product_id)">Disable</button>
+
+            </a>
+        }
+       
+
+    }
+    
+}
+<h3>AddPrdouct</h3>
+<div class="log-form container mt-5 mb-5">
+    <EditForm Model="selectedProduct" OnValidSubmit="AddProduct" class="row g-3">
+
+        <InputText placeholder="name" @bind-Value="selectedProduct.name" class="form-control" />
+        <InputText placeholder="description" @bind-Value="selectedProduct.description" class="form-control" />
+        <InputText placeholder="img_url" @bind-Value="selectedProduct.img_url" class="form-control" />
+        <InputText placeholder="price" @bind-Value="selectedProduct.price" class="form-control" />
+        <InputNumber placeholder="quantity" @bind-Value="selectedProduct.quantity" class="form-control" />
+        <InputNumber placeholder="category_id" @bind-Value="selectedProduct.category_id" class="form-control" />
+
+
+
+        <button class="btn btn-success" type="submit">Add Product</button>
+    </EditForm>
+</div>
+
+<h3>EditProduct</h3>
+
+<div class="log-form container mt-5 mb-5">
+    <EditForm Model="editProduct"  class="row g-3">
+
+        <InputText placeholder="name" @bind-Value="editProduct.name" class="form-control" />
+        <InputText placeholder="description" @bind-Value="editProduct.description" class="form-control" />
+        <InputText placeholder="img_url" @bind-Value="editProduct.img_url" class="form-control" />
+        <InputText placeholder="price" @bind-Value="editProduct.price" class="form-control" />
+        <InputNumber placeholder="quantity" @bind-Value="editProduct.quantity" class="form-control" />
+        <InputNumber placeholder="category_id" @bind-Value="editProduct.category_id" class="form-control" />
+
+
+
+        <button class="btn btn-success" type="submit">Edit Product</button>
+    </EditForm>
+</div>

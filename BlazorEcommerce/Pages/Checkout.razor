@@ -1,6 +1,5 @@
 ﻿@page "/Checkout"
 @inherits MainBase
-@inject ILocalStorageService LocalStorage
 
     <AuthorizeView>
         <Authorized>
@@ -80,6 +79,7 @@
         }
     </NotAuthorized>
     </AuthorizeView>
+
 @code {
 
 

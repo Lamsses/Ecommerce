@@ -57,10 +57,10 @@ public class MainBase : ComponentBase
     public async Task OrdersCheckout()
     {
         var token = await LocalStorage.GetItemAsync<string>("token");
+
         var order = new OrdersModel
         {
             order_date = DateTime.Now,
-
             customer_id = GetUserIdFromToken(token)
         };
 
@@ -80,7 +80,7 @@ public class MainBase : ComponentBase
             {
                 await client.PostAsJsonAsync("OrdersProducts", 
                     new OrdersProductsModel
-                    { order_id = result.order_id ,product_id = item.product_id ,amount = item.ProductAmount , price = decimal.Parse(item.price)});
+                    { order_id = result.order_id ,product_id = item.product_id ,amount = item.ProductAmount , price = decimal.Parse( item.price)});
                 
             }
 
@@ -97,5 +97,6 @@ public class MainBase : ComponentBase
 
         return int.Parse( userIdClaim?.Value);
     }
+
 }
 

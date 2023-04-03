@@ -38,8 +38,8 @@ public class OrdersProductsData : IOrdersProductsData
     {
         return _sql.SaveData<dynamic>("dbo.spOrdersProducts_Update", new {  order_id,  product_id,  amount,  price }, "Default");
     }
-    public Task Delete(int order_id)
+    public Task Delete(int product_id)
     {
-        return _sql.SaveData<dynamic>("dbo.spOrdersProducts_Delete", new { order_id }, "Default");
+        return _sql.SaveData<dynamic>("dbo.spOrdersProducts_Delete", new { product_id }, "Default");
     }
 }
