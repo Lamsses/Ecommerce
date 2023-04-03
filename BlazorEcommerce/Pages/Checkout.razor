@@ -75,7 +75,9 @@
 </section>
     </Authorized>
     <NotAuthorized>
-        logIn,bitch
+        @{
+            NavigationManager.NavigateTo("/login",true);
+        }
     </NotAuthorized>
     </AuthorizeView>
 @code {
@@ -106,14 +108,7 @@
         }
         return total;
     }
-    private async Task Delete(ProductsModel product)
-    {
 
-        products.Remove(product);
-
-        LocalStorage.SetItemAsync("cart", products);
-
-    }
 
 }
 

@@ -1,5 +1,7 @@
 
 using BlazorEcommerce.Models;
+using BlazorEcommerce.Services;
+using BlazorEcommerce.Services.Interface;
 using BlazorEcommerce.Shared;
 using Blazored.LocalStorage;
 using Blazored.SessionStorage;
@@ -12,6 +14,9 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<TokenModel>();
 builder.Services.AddScoped<AuthenticationStateProvider , CustomAuthStateProvider>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<List<ProductsModel>>();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddBlazoredSessionStorage();

@@ -1,6 +1,9 @@
 ﻿@using Microsoft.JSInterop.Implementation
 @using Pages
-@inherits MainBase
+@inherits CartBase
+@implements IDisposable
+
+
 
 
 <nav class="navbar navbar-expand-lg shadow">
@@ -27,7 +30,7 @@
                        role="button"
                        data-bs-toggle="dropdown"
                        aria-expanded="false">
-                        Category
+                        Category 
                     </a>
                     <ul class="dropdown-menu">
                         @foreach (var item in Categories)
@@ -67,7 +70,7 @@
                     <Authorized>
                     <a href="" class="nav-link mt-sm-2 mb-sm-2 ms-lg-auto mt-3 d-flex align-items-center d-lg-flex justify-content-lg-center align-items-lg-center d-sm-flex justify-content-sm-start align-items-sm-center">
                         <i class="fa-regular fa-user pe-2 ms-lg-3"></i>
-                        <p class="m-0" @onclick="() => Logout()">Logout</p>
+                        <p class="m-0" @onclick="Logout">Logout</p>
                         </a>
                     </Authorized>
                     <NotAuthorized>
@@ -78,7 +81,7 @@
                     </NotAuthorized>
                 </AuthorizeView>
  
-            <a href="#offcanvas" @onclick="()=>ShowCart()" role="button" data-bs-toggle="offcanvas" aria-controls="offcanvas" class="nav-link  ms-lg-4 mt-sm-1 mt-3 d-flex align-items-center d-lg-flex justify-content-lg-center align-items-lg-center d-sm-flex justify-content-sm-start align-items-sm-center">
+            <a href="#offcanvas" @onclick="ShowCart" role="button" data-bs-toggle="offcanvas" aria-controls="offcanvas" class="nav-link  ms-lg-4 mt-sm-1 mt-3 d-flex align-items-center d-lg-flex justify-content-lg-center align-items-lg-center d-sm-flex justify-content-sm-start align-items-sm-center">
                 <i class="fa-solid fa-cart-shopping pe-2"></i>
                 <p class="m-0 position-relative">
                     Cart
@@ -98,9 +101,14 @@
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
-        @if (cartItems is not null )
+
+        @if (CartItems is null)
         {
-            @foreach (var item in cartItems)
+            <p>no items found</p>
+        }
+        else if (CartItems.Count() > 0)
+        {
+            @foreach (var item in CartItems)
             {
                 <div class="card mb-3" style="max-width: 540px;">
                     <div class="row g-0">
@@ -109,7 +117,7 @@
                         </div>
                         <div class="col-8">
                             <div class="card-body">
-                                <button type="button" class="btn-close" aria-label="Close"  @onclick="()=>Delete(item)"></button>
+                                <button type="button" class="btn-close" aria-label="Close" @onclick="() => DeleteFromCart(item)"></button>
                                 <h5 class="card-title d-flex justify-content-between">
                                     @item.name
                                     <span>@item.price</span>
@@ -121,10 +129,10 @@
                     </div>
                 </div>
             }
-        <p class="d-flex justify-content-between border-top pt-2">
-            Total Price
-            <span>@CalculateTotal()</span>
-        </p>
+            <p class="d-flex justify-content-between border-top pt-2">
+                Total Price
+                <span>@CalculateTotal()</span>
+            </p>
             <a href="/Checkout" class="mybtn mybtn--primary align-self-center">Checkout</a>
         }
         else

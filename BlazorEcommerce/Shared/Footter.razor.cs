@@ -1,16 +1,19 @@
 ﻿using BlazorEcommerce.Pages;
+using BlazorEcommerce.Services.Interface;
 using EcommerceLibrary.Models;
+using Microsoft.AspNetCore.Components;
 
 namespace BlazorEcommerce.Shared
 {
-    partial class Footter : MainBase
+    partial class Footter
     {
         protected List<CategoriesModel> Categories = new();
+        [Inject] public ICategoryService CategoryService { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
-            client = factory.CreateClient("api");
-            Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
+            
+            Categories = await CategoryService.GetCategories();
         }
     }
 }
