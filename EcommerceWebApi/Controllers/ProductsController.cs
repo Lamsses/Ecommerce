@@ -56,9 +56,7 @@ public class ProductsController : ControllerBase
     public async Task<ActionResult<ProductsModel>> Post([FromBody] ProductsModel products)
     {
         var output = await _products.Create
-            (products.name, decimal.Parse(products.price), products.quantity, products.img_url, products.description, products.category_id);
-
-
+            (products.name, decimal.Parse(products.price), products.quantity, products.img_url, products.description, products.category_id,products.coupon_id);
         return Ok(output);
 
     }
@@ -70,7 +68,7 @@ public class ProductsController : ControllerBase
         
          await _products.Update
             (id, products.name, decimal.Parse(products.price), 
-            products.quantity,  products.img_url,  products.description, products.category_id);
+            products.quantity,  products.img_url,  products.description, products.category_id,products.coupon_id);
 
         return Ok();
     }

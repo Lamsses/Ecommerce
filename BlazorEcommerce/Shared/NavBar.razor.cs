@@ -9,16 +9,14 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace BlazorEcommerce.Shared;
 
-
 partial class NavBar : CartBase
-
 {
     [Inject]
     public ICartService? CartService { get; set; }
     [Inject]
     public NavigationManager? NavigationManager { get; set; }
     [Inject] protected ILocalStorageService? LocalStorage { get; set; }
-    [Inject] public ISyncLocalStorageService SyncLocalStorage { get; set; }
+
 
     [Inject] protected AuthenticationStateProvider? AuthStateProvider { get; set; }
     [Inject]
@@ -38,8 +36,8 @@ partial class NavBar : CartBase
         client = factory.CreateClient("api");
         Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
         CartChanged += StateHasChanged;
-        //CartCount();
-        // await ShowCart();
+
+        await ShowCart();
 
     }
     public void Dispose()
@@ -82,8 +80,11 @@ partial class NavBar : CartBase
     }
     private int CartCount()
     {
-        var cart = SyncLocalStorage.GetItem<List<ProductsModel>>("cart");
-        return cart==null? 0 : cart.Count();
+        if(CartItems is not null) 
+        {
+            return CartItems.Count();
+        }
+        return 0;
     }
     private void HandleSearch(ProductsModel product)
     {

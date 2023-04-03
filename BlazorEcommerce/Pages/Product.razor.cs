@@ -12,8 +12,8 @@ partial class Product : CartBase
     public ProductsModel product = new();
     protected async override Task OnInitializedAsync()
     {
-
+    
         product = await ProductService.GetProductById(Id);
-
+    
     }
 }
