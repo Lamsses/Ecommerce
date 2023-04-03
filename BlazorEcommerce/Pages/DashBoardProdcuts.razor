@@ -27,7 +27,7 @@
     {
         @if (!OkayDisabled)
         {
-            <a>
+            <div class="d-flex justify-content-center">
                 <span>@item.name </span>
                 <span>@item.quantity </span>
                 <span>@item.img_url </span>
@@ -35,7 +35,7 @@
                 <button type="button" @onclick="()=>EditProduct(item.product_id)">Edit</button>
                 <button type="button" @onclick="()=>Enable(item.product_id)">Disable</button>
 
-            </a>
+            </div>
         }
        
 
@@ -52,6 +52,7 @@
         <InputText placeholder="price" @bind-Value="selectedProduct.price" class="form-control" />
         <InputNumber placeholder="quantity" @bind-Value="selectedProduct.quantity" class="form-control" />
         <InputNumber placeholder="category_id" @bind-Value="selectedProduct.category_id" class="form-control" />
+        <InputNumber placeholder="coupon_id" @bind-Value="selectedProduct.coupon_id" class="form-control" />
 
 
 
@@ -70,6 +71,7 @@
         <InputText placeholder="price" @bind-Value="editProduct.price" class="form-control" />
         <InputNumber placeholder="quantity" @bind-Value="editProduct.quantity" class="form-control" />
         <InputNumber placeholder="category_id" @bind-Value="editProduct.category_id" class="form-control" />
+        <InputNumber placeholder="coupon_id" @bind-Value="selectedProduct.coupon_id" class="form-control" />
 
 
 
