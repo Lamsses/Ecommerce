@@ -7,6 +7,10 @@
 	<UserSecretsId>73fce310-5884-45ee-99c8-5dc1b99b08aa</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
  
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="12.0.1" />

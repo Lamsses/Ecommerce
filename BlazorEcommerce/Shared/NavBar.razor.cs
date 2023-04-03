@@ -1,28 +1,65 @@
 ﻿using BlazorEcommerce.Pages;
+using BlazorEcommerce.Services.Interface;
+using Blazored.LocalStorage;
 using EcommerceLibrary.Models;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace BlazorEcommerce.Shared;
 
-partial class NavBar : MainBase 
-{
-    protected List<CategoriesModel> Categories = new();
 
-    private ProductsModel selectedProduct;
-    private HttpClient? client;
-    async Task ShowCart()
-    {
-        cartItems = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
-    }
+partial class NavBar : CartBase
+
+{
+    [Inject]
+    public ICartService? CartService { get; set; }
+    [Inject]
+    public NavigationManager? NavigationManager { get; set; }
+    [Inject] protected ILocalStorageService? LocalStorage { get; set; }
+    [Inject] public ISyncLocalStorageService SyncLocalStorage { get; set; }
+
+    [Inject] protected AuthenticationStateProvider? AuthStateProvider { get; set; }
+    [Inject]
+    private HttpClient? client { get; set; }
+    [Inject]
+    private IHttpClientFactory? factory {get; set; }
+    private ProductsModel? selectedProduct;
+    protected List<CategoriesModel> Categories = new();
+    private int _cartItemsCount = 0;
+
+
 
 
     protected async override Task OnInitializedAsync()
     {
+        
         client = factory.CreateClient("api");
         Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
-        await ShowCart();
+        CartChanged += StateHasChanged;
+        CartCount();
+        // await ShowCart();
+
     }
+    public void Dispose()
+    {
+        CartChanged -= StateHasChanged;
+
+    }
+
+    public async Task Logout()
+    {
+        NavigationManager!.NavigateTo("/", true);
+        await LocalStorage!.RemoveItemAsync("token");
+        await AuthStateProvider!.GetAuthenticationStateAsync();
+    }
+    async Task ShowCart()
+    {
+        CartItems = await CartService.GetCartItems();
+    }
+
+
 
 
     private async Task<IEnumerable<ProductsModel>> SearchProducts(string searchText)
@@ -36,9 +73,9 @@ partial class NavBar : MainBase
     private decimal  CalculateTotal()
     {
         decimal total=0;
-        if (cartItems is not null)
+        if (CartItems is not null)
         {
-            foreach (var item in cartItems)
+            foreach (var item in CartItems)
             {
                 total += (Convert.ToDecimal(item.price) * Convert.ToDecimal(item.ProductAmount));
 
@@ -48,30 +85,14 @@ partial class NavBar : MainBase
     }
     private int CartCount()
     {
-        if(cartItems is not null) 
-        {
-            return cartItems.Count();
-        }
-        return 0;
+        var cart = SyncLocalStorage.GetItem<List<ProductsModel>>("cart");
+        return cart==null? 0 : cart.Count();
     }
     private void HandleSearch(ProductsModel product)
     {
-        if (cartItems is null) return;
+        if (CartItems is null) return;
         selectedProduct= product;
         NavigationManager.NavigateTo($"p/{selectedProduct.product_id}",true);
     }
-    public async Task Delete(ProductsModel item)
-    {
-        var cart = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
 
-        var find = cart.Find(p => p.product_id == item.product_id);
-
-        cart.Remove(find);
-        await LocalStorage.SetItemAsync("cart", cart);
-        cartItems = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
-        await InvokeAsync(StateHasChanged);
-
-
-
-    }
 }

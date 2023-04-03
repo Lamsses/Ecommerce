@@ -20,7 +20,7 @@ partial class HomePage : MainBase
         client = factory.CreateClient("api");
         Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
         products = await client.GetFromJsonAsync<List<ProductsModel>>("Products");
-        cartItems = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
+        // cartItems = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
 
         await InvokeAsync(StateHasChanged);
     }
