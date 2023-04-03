@@ -77,8 +77,13 @@ public class CustomersController : ControllerBase
 
         return Ok(token);
     }
-
-
+    [HttpGet("Search/{CustomerEmail}")]
+    [AllowAnonymous]
+    public async Task<ActionResult<CustomersModel>> GetUsersByEmail(string CustomerEmail)
+    {
+        var output = await _customers.GetUsersByEmail(CustomerEmail);
+        return Ok(output);
+    }
     [HttpGet]
     [Authorize(Policy = "Admin")]
     [Authorize(Policy = "SuperAdmin")]

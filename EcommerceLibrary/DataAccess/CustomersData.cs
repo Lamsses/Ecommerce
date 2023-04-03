@@ -30,6 +30,12 @@ public class CustomersData : ICustomersData
 
         return result.FirstOrDefault();
     }
+    public async Task<IEnumerable<CustomersModel?>> GetUsersByEmail(string email)
+    {
+        var result = await _sql.Loaddata<CustomersModel, dynamic>("dbo.spCustomers_GetUsersByEmail", new { email }, "Default");
+
+        return result.Where(opts => opts.email.Contains(email));
+    }
 
     public async Task<CustomersModel?> Create(string first_name, string last_name, byte[] passwordHash, byte[] passwordSalt, string phone_number, string email, string city,int? role_id)
     {

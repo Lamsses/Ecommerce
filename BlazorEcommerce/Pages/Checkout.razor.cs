@@ -28,12 +28,5 @@ partial class Checkout
         }
         return total;
     }
-    private async Task Delete(ProductsModel product)
-    {
-
-        products.Remove(product);
-
-        LocalStorage.SetItemAsync("cart", products);
-
-    }
+ 
 }

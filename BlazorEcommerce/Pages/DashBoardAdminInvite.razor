@@ -1,0 +1,27 @@
+﻿@page "/inv"
+<h3>DashBoardAdminInvite</h3>
+
+@inherits MainBase
+
+
+<BlazoredTypeahead SearchMethod="MakeAdmin" @bind-Value ="Customers" >
+    <SelectedTemplate>
+        @context.email
+    </SelectedTemplate>
+    <ResultTemplate>
+        @context.email
+    </ResultTemplate>
+    <NotFoundTemplate>
+        get otta here
+    </NotFoundTemplate>
+</BlazoredTypeahead>
+@if (Customers is not null)
+{
+    <p>Selected Customer : @Customers.email</p>
+}
+
+@code
+{
+
+
+}
