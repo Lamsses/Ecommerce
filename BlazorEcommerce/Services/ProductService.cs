@@ -18,7 +18,7 @@ namespace BlazorEcommerce.Services
         {
             _client = _factory.CreateClient("api");
             var response = await _client.GetFromJsonAsync<List<ProductsModel>>("Products");
-    return response;
+             return response;
         }
         public async Task<ProductsModel> GetProductById(int productId)
         {

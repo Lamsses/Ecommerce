@@ -24,8 +24,11 @@ public class ProductsController : ControllerBase
 
     public async Task<ActionResult<IEnumerable<ProductsModel>>> Get()
     {
+       
        var output =await  _products.GetAll();
+    
         return Ok(output);
+
     }
 
     [HttpGet("{id}")]

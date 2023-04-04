@@ -18,6 +18,7 @@ partial class DashBoardProdcuts : MainBase
 
     }
     private ProductsModel selectedProduct = new();
+    private AdminLogsModel adminLogs = new ();
     private ProductsModel editProduct = new();
 
     private CategoriesModel category=new();
@@ -35,6 +36,20 @@ partial class DashBoardProdcuts : MainBase
     {
         client = factory.CreateClient("api");
         var response = await client.PostAsJsonAsync<ProductsModel>("Products", selectedProduct);
+        var result = await response.Content.ReadFromJsonAsync<ProductsModel>();
+        if (response.IsSuccessStatusCode)
+        {
+            var token = await LocalStorage.GetItemAsync<string>("token");
+
+            adminLogs = new AdminLogsModel
+            {
+                customer_id = GetUserIdFromToken(token),
+                log_msg = $"product {result.name} was Created"
+            };
+            var log = await client.PostAsJsonAsync<AdminLogsModel>("AdminLogs", adminLogs);
+
+        }
+
         products = await client.GetFromJsonAsync<List<ProductsModel>>("Products");
     }
     private async Task AddCategory()

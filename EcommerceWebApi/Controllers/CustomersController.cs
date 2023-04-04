@@ -148,4 +148,27 @@ public class CustomersController : ControllerBase
         return Ok();
     }
 
+    [HttpPatch("{email}")]
+    [Authorize(Policy = "Admin")]
+    public async Task<IActionResult> UpdateUserRole(string email, [FromBody] int? roleId)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            return BadRequest("Email is required.");
+        }
+
+        var customer = await _customers.GetUserByEmail(email);
+
+        if (customer == null)
+        {
+            return NotFound($"Customer with email {email} not found.");
+        }
+
+        await _customers.Update(customer.customer_id, customer.first_name, customer.last_name,
+            customer.passwordHash, customer.passwordSalt, customer.phone_number, customer.email,
+            customer.city, roleId);
+
+        return NoContent();
+    }
 }
+
