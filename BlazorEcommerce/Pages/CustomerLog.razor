@@ -1,0 +1,20 @@
+﻿@page "/CustomerLog"
+<h3>CustomerLog</h3>
+@inherits MainBase
+
+@foreach (var item in customerLog)
+{
+    <div>
+       <span>@item.log_msg</span>
+    </div>
+}
+@code {
+    private List<CustomerLogsModel> customerLog = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        client = factory.CreateClient("api");
+        customerLog = await client.GetFromJsonAsync<List<CustomerLogsModel>>("CustomerLogs");
+    }
+
+}

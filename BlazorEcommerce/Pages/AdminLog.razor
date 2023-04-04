@@ -1,0 +1,23 @@
+﻿
+@page "/log"
+@inherits MainBase
+<h3>AdminLog</h3>
+
+@foreach (var item in adminLog)
+{
+    <div>
+        @item.log_msg 
+    </div>
+}
+
+@code {
+    private  IEnumerable<AdminLogsModel> adminLog;
+
+    protected override async Task OnInitializedAsync()
+    {
+        client = factory.CreateClient("api");
+
+        adminLog = await client.GetFromJsonAsync<IEnumerable<AdminLogsModel>>("AdminLogs");
+    }
+
+}

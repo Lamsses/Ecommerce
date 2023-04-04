@@ -6,6 +6,7 @@ using System.Diagnostics.Metrics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using System.Security.Claims;
+using System.Security.Cryptography;
 
 namespace BlazorEcommerce.Pages;
 
@@ -54,14 +55,46 @@ public class MainBase : ComponentBase
         await LocalStorage!.RemoveItemAsync("token");
         await AuthStateProvider!.GetAuthenticationStateAsync();
     }
+    public string ReceiptGenrator()
+    {
+        Random random = new Random();
+        int uniqueNumber;
+
+        do
+        {
+            uniqueNumber = random.Next(10000, 99999);
+        } while (IsDuplicate(uniqueNumber));
+
+        return uniqueNumber.ToString();
+
+
+    }
+    private static List<int> generatedNumbers = new List<int>();
+
+    private static bool IsDuplicate(int number)
+    {
+        if (generatedNumbers.Contains(number))
+        {
+            return true;
+        }
+        else
+        {
+            generatedNumbers.Add(number);
+            return false;
+        }
+    }
     public async Task OrdersCheckout()
     {
+
         var token = await LocalStorage.GetItemAsync<string>("token");
 
         var order = new OrdersModel
         {
             order_date = DateTime.Now,
-            customer_id = GetUserIdFromToken(token)
+            customer_id = GetUserIdFromToken(token),
+            receipt = ReceiptGenrator()
+
+
         };
 
 
@@ -81,7 +114,14 @@ public class MainBase : ComponentBase
                 await client.PostAsJsonAsync("OrdersProducts", 
                     new OrdersProductsModel
                     { order_id = result.order_id ,product_id = item.product_id ,amount = item.ProductAmount , price = decimal.Parse( item.price)});
-                
+                var customerLogs = new CustomerLogsModel
+                {
+                    customer_id = GetUserIdFromToken(token),
+                    log_msg = $"You have bought {item.name}  for {item.price} your recipt: {order.receipt} "
+                };
+                var logResponse = await client.PostAsJsonAsync<CustomerLogsModel>("CustomerLogs", customerLogs);
+
+
             }
 
         }

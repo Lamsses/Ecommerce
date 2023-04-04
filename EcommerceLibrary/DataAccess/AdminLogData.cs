@@ -6,11 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace EcommerceLibrary.DataAccess;
-public class AdminLog : IAdminLog
+public class AdminLogData : IAdminLog
 {
     private readonly ISqlDataAccess _sql;
 
-    public AdminLog(ISqlDataAccess sql)
+    public AdminLogData(ISqlDataAccess sql)
     {
         _sql = sql;
     }

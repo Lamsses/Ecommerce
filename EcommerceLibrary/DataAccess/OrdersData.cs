@@ -28,16 +28,16 @@ public class OrdersData : IOrdersData
         return result.FirstOrDefault();
     }
 
-    public async Task<OrdersModel?> Create(DateTime order_date, int customer_id)
+    public async Task<OrdersModel?> Create(DateTime order_date, int customer_id, string receipt)
     {
-        var result = await _sql.Loaddata<OrdersModel, dynamic>("dbo.spOrders_Create", new { order_date, customer_id }, "Default");
+        var result = await _sql.Loaddata<OrdersModel, dynamic>("dbo.spOrders_Create", new { order_date, customer_id, receipt }, "Default");
 
         return result.FirstOrDefault();
     }
 
-    public Task Update(int order_id, DateTime order_date, int customer_id)
+    public Task Update(int order_id, DateTime order_date, int customer_id, string receipt)
     {
-        return _sql.SaveData<dynamic>("dbo.spOrders_Update", new { order_id, order_date, customer_id }, "Default");
+        return _sql.SaveData<dynamic>("dbo.spOrders_Update", new { order_id, order_date, customer_id , receipt }, "Default");
     }
     public Task Delete(int order_id)
     {

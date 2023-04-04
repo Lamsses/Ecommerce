@@ -9,11 +9,11 @@ namespace EcommerceWebApi.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [AllowAnonymous]
-public class AdminLogs : ControllerBase
+public class AdminLogsController : ControllerBase
 {
     private readonly IAdminLog _adminLog;
 
-    public AdminLogs(IAdminLog adminLog)
+    public AdminLogsController(IAdminLog adminLog)
     {
         _adminLog = adminLog;
     }

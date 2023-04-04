@@ -51,8 +51,6 @@ public class ProductsController : ControllerBase
 
 
     [HttpPost]
-  
-
     public async Task<ActionResult<ProductsModel>> Post([FromBody] ProductsModel products)
     {
         var output = await _products.Create

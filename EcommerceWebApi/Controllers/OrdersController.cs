@@ -43,7 +43,7 @@ public class OrdersController : ControllerBase
     public async Task<ActionResult<OrdersModel>> Post([FromBody] OrdersModel orders)
     {
 
-        var output = await _orders.Create(orders.order_date, orders.customer_id);
+        var output = await _orders.Create(orders.order_date, orders.customer_id, orders.receipt);
         return Ok(output);
 
     }
@@ -51,9 +51,9 @@ public class OrdersController : ControllerBase
     [HttpPut("{id}")]
     [Authorize(Policy = "Admin")]
     [Authorize(Policy = "SuperAdmin")]
-    public async Task<ActionResult<OrdersModel>> PutAsync(int id, DateTime order_date, int customer_id)
+    public async Task<ActionResult<OrdersModel>> PutAsync(int id, DateTime order_date, int customer_id, string receipt)
     {
-        await _orders.Update(id, order_date, customer_id = GetCustomerId());
+        await _orders.Update(id, order_date, customer_id = GetCustomerId(), receipt);
 
         return Ok();
     }
