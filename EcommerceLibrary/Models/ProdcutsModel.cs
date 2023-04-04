@@ -10,7 +10,7 @@ namespace EcommerceLibrary.Models
     {
         public int product_id { get; set; }
         public string? name { get; set; }
-        public string price { get; set; }
+        public string price { get; set; } 
         public int quantity { get; set; }
         public string? img_url { get; set; }
 
@@ -18,6 +18,7 @@ namespace EcommerceLibrary.Models
         public int category_id { get; set; }
 
         public int ProductAmount { get; set; } = 1;
+        
         public int? coupon_id { get; set; }
     }
 }

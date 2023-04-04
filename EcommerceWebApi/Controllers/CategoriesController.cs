@@ -34,7 +34,7 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<CategoriesModel>> Post(string name)
+    public async Task<ActionResult<CategoriesModel>> Post([FromBody]string name)
     {
         var output = await _categories.Create(name);
         return Ok(output);

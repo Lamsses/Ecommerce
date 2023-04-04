@@ -5,6 +5,7 @@ namespace EcommerceLibrary.Models;
 
 public class AuthenticationModel
 {
+ 
     public string first_name { get; set; }
     [MinLength(2)]
     [MaxLength(10)]

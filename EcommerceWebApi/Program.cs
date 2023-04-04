@@ -17,6 +17,7 @@ builder.Services.AddSingleton<IOrdersProductsData, OrdersProductsData>();
 builder.Services.AddSingleton<ICategoriesData, CategoriesData>();
 builder.Services.AddSingleton<ICustomersData, CustomersData>();
 builder.Services.AddSingleton<IOrdersData, OrdersData>();
+builder.Services.AddSingleton<ICouponData, CouponData>();
 
 
 
