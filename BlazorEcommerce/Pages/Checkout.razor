@@ -10,7 +10,7 @@
         <div class="row">
             <div class="col-12 col-lg-6 mt-4 pe-5 border-end">
                 <div class="card border-0  mb-3">
-                     @if (products is not null)
+                    @if (products is not null)
                     {
                         @foreach (var item in products)
                         {
@@ -22,7 +22,7 @@
                                     <div class="card-body pt-5">
                                         <h5 class="card-title d-flex justify-content-between">
                                             @item.name
-                                            <span>@item.price</span>
+                                            <span>@ProductTotal(@item)</span>
                                         </h5>
                                         <p>amount: @item.ProductAmount</p>
                                     </div>
@@ -31,8 +31,13 @@
                             <hr/>
                         }
                     }
+                </div >
+
+                <div class="col">
+                    <InputText @bind-Value="couponName" type="text" placeholder="coupon" class="form-control mb-2" id="coupon" />
+                <button @onclick="ApplyCoupon" class="btn btn-success ">Apply Coupon</button>
+
                 </div>
-               
                 <p class="d-flex justify-content-between  pt-2">
                     Total Price
                     <span>@CalculateTotal()</span>
