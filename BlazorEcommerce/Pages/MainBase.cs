@@ -111,9 +111,23 @@ public class MainBase : ComponentBase
 
             foreach (var item in cart)
             {
-                await client.PostAsJsonAsync("OrdersProducts", 
-                    new OrdersProductsModel
-                    { order_id = result.order_id ,product_id = item.product_id ,amount = item.ProductAmount , price = decimal.Parse( item.price)});
+                if (item.discounted_price <= 0)
+                {
+                    await client.PostAsJsonAsync("OrdersProducts",
+                               new OrdersProductsModel
+                               { order_id = result.order_id, product_id = item.product_id, amount = item.ProductAmount, price = decimal.Parse(item.price) });
+                }
+                else
+                {
+                    await client.PostAsJsonAsync("OrdersProducts",
+                               new OrdersProductsModel
+                               { order_id = result.order_id, product_id = item.product_id, amount = item.ProductAmount, price = item.discounted_price });
+
+                    item.discounted_price = 0;
+                    var a1 = await client.PutAsJsonAsync<ProductsModel>($"Products/{item.product_id}", item);
+                              
+                }
+
                 var customerLogs = new CustomerLogsModel
                 {
                     customer_id = GetUserIdFromToken(token),

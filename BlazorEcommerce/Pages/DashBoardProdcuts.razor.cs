@@ -88,7 +88,7 @@ partial class DashBoardProdcuts : MainBase
         Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
 
         }
-    }
+    
     public bool OkayDisabled = false;
 
     private void Enable(int id)
