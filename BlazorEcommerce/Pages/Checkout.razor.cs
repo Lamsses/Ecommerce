@@ -39,7 +39,7 @@ partial class Checkout
         client = factory.CreateClient("api");
         var coupon = await client.GetFromJsonAsync<CouponModel>($"Coupon/{couponName}");
         var token = await LocalStorage.GetItemAsync<string>("token");
-        var userId = GetUserIdFromToken(token);
+        var userId = customerService.GetUserIdFromToken(token);
 
         if (!couponName.IsNullOrEmpty())
         {
@@ -65,7 +65,7 @@ partial class Checkout
                             coupon.coupon_use -= 1;
                             await client.PutAsJsonAsync<CouponModel>($"Coupon/{coupon.coupon_id}", coupon);
                             await client.PostAsJsonAsync<CustomerCouponModel>($"CustomerCoupon", 
-                                new CustomerCouponModel { coupon_id = coupon.coupon_id , customer_id = GetUserIdFromToken(token)});
+                                new CustomerCouponModel { coupon_id = coupon.coupon_id , customer_id = userId });
                             return product.discounted_price;
                         }
 

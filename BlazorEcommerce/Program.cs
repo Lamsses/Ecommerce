@@ -17,6 +17,10 @@ builder.Services.AddScoped<AuthenticationStateProvider , CustomAuthStateProvider
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ICustomerService , CustomerService>();
+builder.Services.AddScoped<IAdminLogService, AdminLogService>();
+
+
 builder.Services.AddScoped<List<ProductsModel>>();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddBlazoredSessionStorage();

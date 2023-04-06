@@ -1,9 +1,14 @@
-﻿using EcommerceLibrary.Models;
+﻿using BlazorEcommerce.Services.Interface;
+using EcommerceLibrary.DataAccess;
+using EcommerceLibrary.Models;
+using Microsoft.AspNetCore.Components;
 
 namespace BlazorEcommerce.Pages;
 
 partial class DashBoardProdcuts : MainBase
 {
+    [Inject] IAdminLogService adminLog { get; set; }
+    [Inject] ICustomerService customerService { get; set; }
     protected List<ProductsModel> products= new();
     protected List<CategoriesModel> Categories= new();
     protected List<CouponModel> Coupons= new();
@@ -42,7 +47,7 @@ partial class DashBoardProdcuts : MainBase
         if (response.IsSuccessStatusCode)
         {
             var token = await LocalStorage.GetItemAsync<string>("token");
-            var userId = GetUserIdFromToken(token);
+            var userId = customerService.GetUserIdFromToken(token);
 
         }
 
@@ -51,27 +56,15 @@ partial class DashBoardProdcuts : MainBase
     {
         client = factory.CreateClient("api");
 
-            var productName = await client.GetFromJsonAsync<ProductsModel>($"Products/{id}");
+       
         var respons = await client.DeleteAsync($"OrdersProducts/{id}");
         var response = await client.DeleteAsync($"Products/{id}");
  
 
         if (response.IsSuccessStatusCode)
         {
-            var token = await LocalStorage.GetItemAsync<string>("token");
-            var userId = GetUserIdFromToken(token);
-            var getUserName = await client.GetFromJsonAsync<CustomersModel>($"Customers/{userId}");
-            var userResult = getUserName.first_name;
-
-            adminLogs = new AdminLogsModel
-            {
-                customer_id = GetUserIdFromToken(token),
-                log_msg = $"product ({productName.name})was Deleted By {userResult}"
-            };
-            var log = await client.PostAsJsonAsync<AdminLogsModel>("AdminLogs", adminLogs);
-
+            adminLog.DeleteLog(id);
         }
-
         products = await client.GetFromJsonAsync<List<ProductsModel>>("Products");
     }
     private async Task AddCategory()
@@ -106,7 +99,7 @@ partial class DashBoardProdcuts : MainBase
         if (response.IsSuccessStatusCode)
         {
             var token = await LocalStorage.GetItemAsync<string>("token");
-            var userId = GetUserIdFromToken(token);
+            var userId = customerService.GetUserIdFromToken(token);
             var productName = await client.GetFromJsonAsync<ProductsModel>($"Products/{id}");
             var getUserName = await client.GetFromJsonAsync<CustomersModel>($"Customers/{userId}");
             var userResult = getUserName.first_name;
