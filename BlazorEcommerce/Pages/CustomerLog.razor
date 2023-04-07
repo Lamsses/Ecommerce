@@ -1,20 +1,57 @@
 ﻿@page "/CustomerLog"
+@layout DashboardLayout
 <h3>CustomerLog</h3>
 @inherits MainBase
 
-@foreach (var item in customerLog)
-{
-    <div>
-       <span>@item.log_msg</span>
+
+<section class="customer-log">
+    <div class="container">
+        <div class="row mt-4">
+            <div class="col-6 col-lg-4 ">
+                <div class="accordion accordion-flush border" id="accordionFlushExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                                john cena 
+                                <span class="text-break ms-3">12345</span>
+                
+                            </button>
+                        </h2>
+                        <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                            <div class="accordion-body">
+                                <p class="text-break ">Razor Mouse $100</p>
+                
+                                <p>Redragon Keyboard $40</p>
+              
+                                <p>MousePad $20</p>
+              
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+            </div>
+
+        </div>
+    
     </div>
-}
+</section>
+@* @if (customerLog is not null) *@
+@* { *@
+@*     @foreach (var item in customerLog) *@
+@*     { *@
+@*         <div> *@
+@*             <span>@item.log_msg</span> *@
+@*         </div> *@
+@*     } *@
+@* } *@
 @code {
     private List<CustomerLogsModel> customerLog = new();
 
     protected override async Task OnInitializedAsync()
     {
         client = factory.CreateClient("api");
-        customerLog = await client.GetFromJsonAsync<List<CustomerLogsModel>>("CustomerLogs");
+        // customerLog = await client.GetFromJsonAsync<List<CustomerLogsModel>>("CustomerLogs");
     }
 
 }

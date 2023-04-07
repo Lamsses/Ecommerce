@@ -6,7 +6,7 @@
 
 
 
-<nav class="navbar navbar-expand-lg shadow sticky-top">
+<nav class="main-nav navbar navbar-expand-lg shadow sticky-top">
     <div class="container">
         <a class="navbar-brand" href="#">
             <img src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e86ab4c21faa7bc0bd90dd_Logo.svg"
@@ -30,12 +30,12 @@
                        role="button"
                        data-bs-toggle="dropdown"
                        aria-expanded="false">
-                        Category 
+                        Category
                     </a>
                     <ul class="dropdown-menu">
                         @foreach (var item in Categories)
                         {
-                        <li><a class="dropdown-item" href="/cat/@item.category_id">@item.Name</a></li>
+                            <li><a class="dropdown-item" href="/cat/@item.category_id">@item.Name</a></li>
 
                         }
 
@@ -47,13 +47,13 @@
             </ul>
             <form class="input-form ms-lg-5 d-flex" role="search">
 
-                <BlazoredTypeahead SearchMethod="@SearchProducts" 
-                TValue="ProductsModel"
-                TItem="ProductsModel"
-                Value="selectedProduct"
-                ValueChanged="HandleSearch"
-                ValueExpression="@(() => selectedProduct)"
-                placeholder="Search">
+                <BlazoredTypeahead SearchMethod="@SearchProducts"
+                                   TValue="ProductsModel"
+                                   TItem="ProductsModel"
+                                   Value="selectedProduct"
+                                   ValueChanged="HandleSearch"
+                                   ValueExpression="@(() => selectedProduct)"
+                                   placeholder="Search">
                     <SelectedTemplate>
                         @context.name
                     </SelectedTemplate>
@@ -66,21 +66,21 @@
                 </BlazoredTypeahead>
             </form>
 
-                <AuthorizeView>
-                    <Authorized>
+            <AuthorizeView>
+                <Authorized>
                     <a href="" class="nav-link mt-sm-2 mb-sm-2 ms-lg-auto mt-3 d-flex align-items-center d-lg-flex justify-content-lg-center align-items-lg-center d-sm-flex justify-content-sm-start align-items-sm-center">
                         <i class="fa-regular fa-user pe-2 ms-lg-3"></i>
                         <p class="m-0" @onclick="Logout">Logout</p>
-                        </a>
-                    </Authorized>
-                    <NotAuthorized>
-                    <a  href="/login" class="nav-link mt-sm-2 mb-sm-2 ms-lg-auto mt-3 d-flex align-items-center d-lg-flex justify-content-lg-center align-items-lg-center d-sm-flex justify-content-sm-start align-items-sm-center">
-                        <i class="fa-regular fa-user pe-2 ms-lg-3"></i>
-                        <p class="m-0" >Login</p>
                     </a>
-                    </NotAuthorized>
-                </AuthorizeView>
- 
+                </Authorized>
+                <NotAuthorized>
+                    <a href="/login" class="nav-link mt-sm-2 mb-sm-2 ms-lg-auto mt-3 d-flex align-items-center d-lg-flex justify-content-lg-center align-items-lg-center d-sm-flex justify-content-sm-start align-items-sm-center">
+                        <i class="fa-regular fa-user pe-2 ms-lg-3"></i>
+                        <p class="m-0">Login</p>
+                    </a>
+                </NotAuthorized>
+            </AuthorizeView>
+
             <a href="#offcanvas" @onclick="ShowCart" role="button" data-bs-toggle="offcanvas" aria-controls="offcanvas" class="nav-link  ms-lg-4 mt-sm-1 mt-3 d-flex align-items-center d-lg-flex justify-content-lg-center align-items-lg-center d-sm-flex justify-content-sm-start align-items-sm-center">
                 <i class="fa-solid fa-cart-shopping pe-2"></i>
                 <p class="m-0 position-relative">
