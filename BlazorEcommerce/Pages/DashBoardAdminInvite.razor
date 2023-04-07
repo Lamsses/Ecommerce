@@ -1,25 +1,51 @@
 ﻿@page "/inv"
-<h3>DashBoardAdminInvite</h3>
 
+@layout DashboardLayout
 @inherits MainBase
 
-
-<BlazoredTypeahead SearchMethod="MakeAdmin" @bind-Value ="Customers" >
-    <SelectedTemplate>
-        @context.email
-    </SelectedTemplate>
-    <ResultTemplate>
-        @context.email
-    </ResultTemplate>
-    <NotFoundTemplate>
-        get otta here
-    </NotFoundTemplate>
-</BlazoredTypeahead>
-@if (Customers is not null)
-{
-    <p>Selected Customer : @Customers.email</p>
-}
-<button @onclick="()=>GiveAdmin()">make</button>
+<div class="admin-inv container  d-flex justify-content-center mt-5  p-5">
+    <div class="row bg-body-secondary p-5">
+        <div class="col-12">
+            <h3 class="mb-3">Give Admin</h3>
+            <form class=" d-flex mt-3" >
+            <BlazoredTypeahead SearchMethod="MakeAdmin" @bind-Value ="Customers">
+                <SelectedTemplate>
+                    @context.email
+                </SelectedTemplate>
+                <ResultTemplate>
+                    @context.email
+                </ResultTemplate>
+                <NotFoundTemplate>
+                    get otta here
+                </NotFoundTemplate>
+            </BlazoredTypeahead>
+            </form>
+        </div>
+        <div class="col-12  mt-3 ">
+            @if (Customers is not null)
+            {
+                <p>Selected Customer : @Customers.email</p>
+            }
+            <button class="btn btn-dark " @onclick="()=>GiveAdmin()">Give</button>
+        </div>
+    </div>
+</div>
+@* <BlazoredTypeahead SearchMethod="MakeAdmin" @bind-Value ="Customers" > *@
+@*     <SelectedTemplate> *@
+@*         @context.email *@
+@*     </SelectedTemplate> *@
+@*     <ResultTemplate> *@
+@*         @context.email *@
+@*     </ResultTemplate> *@
+@*     <NotFoundTemplate> *@
+@*         get otta here *@
+@*     </NotFoundTemplate> *@
+@* </BlazoredTypeahead> *@
+@* @if (Customers is not null) *@
+@* { *@
+@*     <p>Selected Customer : @Customers.email</p> *@
+@* } *@
+@* <button @onclick="()=>GiveAdmin()">make</button> *@
 
 @code
 {

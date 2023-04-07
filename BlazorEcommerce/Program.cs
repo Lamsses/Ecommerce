@@ -19,6 +19,8 @@ builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICustomerService , CustomerService>();
 builder.Services.AddScoped<IAdminLogService, AdminLogService>();
+builder.Services.AddScoped<IOrderProductsService, OrderProductsService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 
 builder.Services.AddScoped<List<ProductsModel>>();

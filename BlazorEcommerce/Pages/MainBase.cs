@@ -19,6 +19,8 @@ public class MainBase : ComponentBase
     [Inject] public IHttpClientFactory? factory { get; set; }
     [Inject] public HttpClient? client { get; set; }
     [Inject] public ICustomerService customerService { get; set; }
+    [Inject] public IOrderService orderService { get; set; }
+    [Inject] public IOrderProductsService orderProductsService { get; set; }
     protected AuthenticationModel Authenticat = new();
     private OrdersModel orders;
 
@@ -99,11 +101,10 @@ public class MainBase : ComponentBase
 
         };
 
-
         client = factory.CreateClient("api");
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var response = await client.PostAsJsonAsync("Orders", order);
+        var response = await orderService.AddOrder(order);
         var result = await response.Content.ReadFromJsonAsync<OrdersModel>();
 
 
@@ -115,15 +116,14 @@ public class MainBase : ComponentBase
             {
                 if (item.discounted_price <= 0)
                 {
-                    await client.PostAsJsonAsync("OrdersProducts",
-                               new OrdersProductsModel
-                               { order_id = result.order_id, product_id = item.product_id, amount = item.ProductAmount, price = decimal.Parse(item.price) });
+                    
+                    await orderProductsService.Add(new OrdersProductsModel
+                        { order_id = result.order_id, product_id = item.product_id, amount = item.ProductAmount, price = decimal.Parse(item.price) });
                 }
                 else
                 {
-                    await client.PostAsJsonAsync("OrdersProducts",
-                               new OrdersProductsModel
-                               { order_id = result.order_id, product_id = item.product_id, amount = item.ProductAmount, price = item.discounted_price });
+                    await orderProductsService.Add(new OrdersProductsModel
+                            { order_id = result.order_id, product_id = item.product_id, amount = item.ProductAmount, price = item.discounted_price });
 
                     item.discounted_price = 0;
                     var a1 = await client.PutAsJsonAsync<ProductsModel>($"Products/{item.product_id}", item);
