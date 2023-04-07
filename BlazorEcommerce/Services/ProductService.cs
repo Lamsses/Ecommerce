@@ -44,10 +44,5 @@ namespace BlazorEcommerce.Services
             var response = await _client.DeleteAsync($"Products/{product}");
             return await response.Content.ReadFromJsonAsync<ProductsModel>();
         }
-
-        public Task<ProductsModel> PostProduct()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
