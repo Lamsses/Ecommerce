@@ -1,4 +1,5 @@
-﻿using Blazored.LocalStorage;
+﻿using BlazorEcommerce.Services.Interface;
+using Blazored.LocalStorage;
 using EcommerceLibrary.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -17,6 +18,7 @@ public class MainBase : ComponentBase
     [Inject] protected AuthenticationStateProvider? AuthStateProvider { get; set; }
     [Inject] public IHttpClientFactory? factory { get; set; }
     [Inject] public HttpClient? client { get; set; }
+    [Inject] public ICustomerService customerService { get; set; }
     protected AuthenticationModel Authenticat = new();
     private OrdersModel orders;
 
@@ -91,7 +93,7 @@ public class MainBase : ComponentBase
         var order = new OrdersModel
         {
             order_date = DateTime.Now,
-            customer_id = GetUserIdFromToken(token),
+            customer_id = customerService.GetUserIdFromToken(token),
             receipt = ReceiptGenrator()
 
 
@@ -111,12 +113,26 @@ public class MainBase : ComponentBase
 
             foreach (var item in cart)
             {
-                await client.PostAsJsonAsync("OrdersProducts", 
-                    new OrdersProductsModel
-                    { order_id = result.order_id ,product_id = item.product_id ,amount = item.ProductAmount , price = decimal.Parse( item.price)});
+                if (item.discounted_price <= 0)
+                {
+                    await client.PostAsJsonAsync("OrdersProducts",
+                               new OrdersProductsModel
+                               { order_id = result.order_id, product_id = item.product_id, amount = item.ProductAmount, price = decimal.Parse(item.price) });
+                }
+                else
+                {
+                    await client.PostAsJsonAsync("OrdersProducts",
+                               new OrdersProductsModel
+                               { order_id = result.order_id, product_id = item.product_id, amount = item.ProductAmount, price = item.discounted_price });
+
+                    item.discounted_price = 0;
+                    var a1 = await client.PutAsJsonAsync<ProductsModel>($"Products/{item.product_id}", item);
+                              
+                }
+
                 var customerLogs = new CustomerLogsModel
                 {
-                    customer_id = GetUserIdFromToken(token),
+                    customer_id = customerService.GetUserIdFromToken(token),
                     log_msg = $"You have bought {item.name}  for {item.price} your recipt: {order.receipt} "
                 };
                 var logResponse = await client.PostAsJsonAsync<CustomerLogsModel>("CustomerLogs", customerLogs);
@@ -128,15 +144,7 @@ public class MainBase : ComponentBase
 
 
     }
-    public static int GetUserIdFromToken(string token)
-    {
-        var handler = new JwtSecurityTokenHandler();
-        var decodedToken = handler.ReadJwtToken(token);
 
-        var userIdClaim = decodedToken.Claims.FirstOrDefault(c => c.Type == "sub");
-
-        return int.Parse( userIdClaim?.Value);
-    }
 
 }
 

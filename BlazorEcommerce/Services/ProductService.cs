@@ -32,8 +32,10 @@ namespace BlazorEcommerce.Services
         public async Task<ProductsModel> UpdateProduct(ProductsModel product)
         {
             _client = _factory.CreateClient("api");
-            var response = await _client.PutAsJsonAsync($"Produts",product);
+             var response = await _client.PutAsJsonAsync($"Produts",product);
             return await response.Content.ReadFromJsonAsync<ProductsModel>();
+
+
         }
         public async Task<ProductsModel> DeleteProduct(ProductsModel product)
         {

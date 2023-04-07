@@ -10,7 +10,9 @@ namespace EcommerceLibrary.Models
     {
         public int product_id { get; set; }
         public string? name { get; set; }
-        public string price { get; set; } 
+        public string price { get; set; }
+        public decimal discounted_price { get; set; }
+
         public int quantity { get; set; }
         public string? img_url { get; set; }
 
