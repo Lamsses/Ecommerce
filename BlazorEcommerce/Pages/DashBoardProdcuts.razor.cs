@@ -27,9 +27,9 @@ partial class DashBoardProdcuts : MainBase
     private AdminLogsModel adminLogs = new();
     private ProductsModel editProduct = new();
     private ProductsModel addProduct = new();
-
     private CategoriesModel category=new();
     private CouponModel coupon = new();
+    public int productId;
 
 
     private async Task<IEnumerable<ProductsModel>> SearchProducts(string searchText)
@@ -65,14 +65,14 @@ partial class DashBoardProdcuts : MainBase
         }
         products = await client.GetFromJsonAsync<List<ProductsModel>>("Products");
     }
-    private async Task EditProduct(int id)
+    private async Task EditProduct()
     {
         
-        var response = await client.PutAsJsonAsync($"Products/{id}", editProduct);
+        var response = await client.PutAsJsonAsync($"Products/{productId}", editProduct);
         var result =  response.Content.ReadFromJsonAsync<ProductsModel>();
         if (response.IsSuccessStatusCode)
         {
-            adminLog.UpdateLog(id);
+            adminLog.UpdateLog(productId);
         }
     }
     private async Task AddCategory()
@@ -98,31 +98,8 @@ partial class DashBoardProdcuts : MainBase
 
     }
 
-    public int productId;
-    private async Task EditProduct()
-    {
+    
   
-        client = factory.CreateClient("api");
-        var response = await client.PutAsJsonAsync($"Products/{productId}", editProduct);
-        var result =  response.Content.ReadFromJsonAsync<ProductsModel>();
-        if (response.IsSuccessStatusCode)
-        {
-            var token = await LocalStorage.GetItemAsync<string>("token");
-            var userId = customerService.GetUserIdFromToken(token);
-            var productName = await client.GetFromJsonAsync<ProductsModel>($"Products/{id}");
-            var getUserName = await client.GetFromJsonAsync<CustomersModel>($"Customers/{userId}");
-            var userResult = getUserName.first_name;
-
-            adminLogs = new AdminLogsModel
-            {
-                customer_id = userId,
-                log_msg = $"product ({productName.name})was edited By {userResult}"
-            };
-            var log = await client.PostAsJsonAsync<AdminLogsModel>("AdminLogs", adminLogs);
-        }
-        products = await client.GetFromJsonAsync<List<ProductsModel>>("Products");
-
-    }
 
     private async void GetProductId( int id)
     {
