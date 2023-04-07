@@ -1,131 +1,413 @@
-﻿@page "/Admin/products"
-
+﻿@page "/dash"
+@layout DashboardLayout
 @inherits MainBase
-<h2>DashBoardProdcuts</h2>
 
- <BlazoredTypeahead SearchMethod="@SearchProducts" 
-                TValue="ProductsModel"
-                TItem="ProductsModel"
-                Value="selectedProduct"
-                ValueExpression="@(() => selectedProduct)"
-                placeholder="Search">
-                    <SelectedTemplate>
-                        @context.name
-                    </SelectedTemplate>
-                    <ResultTemplate>
-                        @context.name
-                    </ResultTemplate>
-                    <NotFoundTemplate>
-                        get otta here
-                    </NotFoundTemplate>
-                </BlazoredTypeahead>
-<h3>Prodcuts</h3>
+<section class="admin-products pt-5">
+    <div class="container">
+        <!-- Search Input -->
+        <form class="input-form d-flex mt-3" role="search">
+            <BlazoredTypeahead SearchMethod="@SearchProducts"
+                           TValue="ProductsModel"
+                           TItem="ProductsModel"
+                           Value="selectedProduct"
+                           ValueExpression="@(() => selectedProduct)"
+                           placeholder="Search">
+                               <SelectedTemplate>
+                                   @context.name
+                               </SelectedTemplate>
+                               <ResultTemplate>
+                                   @context.name
+                               </ResultTemplate>
+                               <NotFoundTemplate>
+                                   get otta here
+                               </NotFoundTemplate>
+            </BlazoredTypeahead>
+        </form>
+        <!-- Add Buttons -->
+        <button class="mybtn mybtn--outline " data-bs-toggle="modal" data-bs-target="#product">Add Product</button>
+        <button class="mybtn mybtn--outline" data-bs-toggle="modal" data-bs-target="#category">Add Category</button>
+        <button class="mybtn mybtn--outline" data-bs-toggle="modal" data-bs-target="#coupon">Add Coupon</button>
+        <!-- Add Product -->
+        <div class="modal fade" id="product" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Product</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <EditForm Model="addProduct" OnValidSubmit="AddProduct" class="row g-3">
+                                <div class="col-md-6">
+                                <label for="inputProductName" class="form-label">Product Name</label>
+                                <InputText placeholder="" id="inputProductName" @bind-Value="addProduct.name" class="form-control" required />
+                                </div>
+                                <div class="col-md-6">
+                                <label for="inputPrice" class="form-label">Price</label>
+                                    <InputText placeholder="" id="inputPrice" @bind-Value="addProduct.price" class="form-control"/>
+                                </div>
+                                <div class="col-md-6">
+                                <label for="inputImg" class="form-label">Image</label>
+                                    <InputText placeholder="" id="inputImg" @bind-Value="addProduct.img_url" class="form-control"/>
+                                </div>
+                                <div class="col-md-6">
+                                <label for="inputQuantity" class="form-label">Quantity</label>
+                                    <InputNumber placeholder="" id="inputQuantity" @bind-Value="addProduct.quantity" class="form-control"/>
+                                </div>
+                                <div class="col-md-6">
+                                <label for="inputCategory" class="form-label">Category</label>
+                                    <InputSelect placeholder="" id="inputCategory" @bind-Value="addProduct.category_id" class="form-control">
+                                        <option  selected disabled>Choose Category</option>
+                                        @if (Categories is not null)
+                                        {
+                                            foreach (var item in Categories)
+                                            {
+                                                <option value="@item.category_id">@item.Name</option>
+                                    
+                                    
+                                            }
+                                        }
+                                    </InputSelect>
+                                </div>
+                                <div class="col-md-6">
+                                <label for="inputCoupon" class="form-label">Coupon</label>
+                                    <InputSelect placeholder="" id="inputCoupon" @bind-Value="addProduct.coupon_id" class="form-control" >
+                                        <option  selected disabled>Coupon</option> 
+                                        @if (Coupons is not null)
+                                        {
+                                            foreach (var item in Coupons)
+                                            {
+                                                <option value="@item.coupon_id">@item.coupon_name</option>
+                                    
+                                    
+                                            }
+                                        }
+                                    </InputSelect>
+                                </div>
 
-@if (products is not null)
-{
-    @foreach (var item in products)
-    {
-        @if (!OkayDisabled)
-        {
-            <div class="d-flex justify-content-center">
-                <span>@item.name </span>
-                <span>@item.quantity </span>
-                <span>@item.img_url </span>
-                <button type="button" @onclick="()=>Delete(item.product_id)">Delete</button>
-                <button type="button" @onclick="()=>EditProduct(item.product_id)">Edit</button>
-                <button type="button" @onclick="()=>Enable(item.product_id)">Disable</button>
+                            <InputTextArea placeholder="description" @bind-Value="addProduct.description" class="form-control" />
+                        
+                        
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn mybtn--primary">Add</button>
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                                </div>
 
+                            </EditForm>
+
+                    </div>
+                </div>
             </div>
-        }
-       
+        </div>
+        <!-- Edit Product -->
+        <div class="modal fade" id="editproduct" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Product</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
 
-    }
-    
-}
-<h3>AddPrdouct</h3>
-<div class="log-form container mt-5 mb-5">
-    <EditForm Model="selectedProduct" OnValidSubmit="AddProduct" class="row g-3">
+                        <EditForm Model="editProduct" OnValidSubmit="EditProduct" class="row g-3">
+                            <div class="col-md-6">
+                                <label for="inputName" class="form-label">Product Name</label>
+                                <InputText placeholder="name" id="inputName" @bind-Value="editProduct.name"  class="form-control" />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="inputPrice" class="form-label">Price</label>
+                                <InputText placeholder="price" id="inputPrice" @bind-Value="editProduct.price"  class="form-control" />
 
-        <InputText DisplayName="AA" placeholder="name" @bind-Value="selectedProduct.name" class="form-control"  />
-        <InputText placeholder="description" @bind-Value="selectedProduct.description" class="form-control" />
-        <InputText placeholder="img_url" @bind-Value="selectedProduct.img_url" class="form-control" />
-        <InputText placeholder="price" @bind-Value="selectedProduct.price" class="form-control" />
-        <InputNumber placeholder="quantity" @bind-Value="selectedProduct.quantity" class="form-control" />
-        <InputNumber placeholder="category_id" @bind-Value="selectedProduct.category_id" class="form-control" />
-        <InputNumber placeholder="coupon_id" @bind-Value="selectedProduct.coupon_id" class="form-control" />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="inputImg" class="form-label">Image</label>
+                                <InputText placeholder="img_url" id="inputImg" @bind-Value="editProduct.img_url"  class="form-control" />
+
+                            </div>
+                            <div class="col-md-6">
+                                <label for="inputQuantity" class="form-label">Quantity</label>
+                                <InputNumber placeholder="quantity" id="inputQuantity" @bind-Value="editProduct.quantity"  class="form-control" />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="inputCat" class="form-label">Category</label>
+                                <InputSelect placeholder="category_id" id="inputCat" @bind-Value="editProduct.category_id" class="form-control">
+                                            <option  selected disabled="">Choose Category</option>
+                                            @if (Categories is not null)
+                                            {
+                                                foreach (var item in Categories)
+                                                {
+                                                    <option value="@item.category_id">@item.Name</option>
+                                    
+                                    
+                                                }
+                                            }
+                                </InputSelect>
+
+                            </div>
+                            <div class="col-md-6">
+                                <label for="inputCoupon" class="form-label">Coupon</label>
+                                <InputSelect placeholder="coupon_id" id="inputCoupon" @bind-Value="selectedProduct.coupon_id" class="form-control">
+                                    <option  selected disabled="">Coupon</option> 
+                                            @if (Coupons is not null)
+                                            {
+                                                foreach (var item in Coupons)
+                                                {
+                                                    <option value="@item.coupon_id">@item.coupon_name</option>
+                                    
+                                    
+                                                }
+                                            }
+                                </InputSelect>
+                                
+                            </div>
+                            <div class="mb-3">
+                                <label for="inputDescription" class="form-label">Description</label>
+                                <InputTextArea  placeholder="description" id="inputDescription" @bind-Value="editProduct.description" class="form-control" />
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn mybtn--primary">Edit</button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Add Category -->
+        <div class="modal fade" id="category" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Category</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <EditForm Model="category" OnValidSubmit="AddCategory" class="row g-3">
+                            <div class="col-md-12">
+                                <label for="inputCatName" class="form-label">Category Name</label>
+                                <InputText type="text" @bind-Value="category.Name" class="form-control" id="inputCatName" required />
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn mybtn--primary">Add</button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Add Coupon -->
+        <div class="modal fade" id="coupon" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Coupons</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <EditForm Model="coupon" OnValidSubmit="AddCoupon" class="row g-3">
+                            <div class="col-md-6">
+                                <label for="inputCouponName" class="form-label">Coupon Name</label>
+                                <InputText  type="text" @bind-Value="coupon.coupon_name" class="form-control" id="inputCouponName" required/>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="inputUse" class="form-label">Coupon Use</label>
+                                <InputNumber TValue="int" type="number" @bind-Value="coupon.coupon_use" class="form-control" id="inputUse" required/>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="inputDiscount" class="form-label">Coupon Discount</label>
+                                <InputNumber  type="number" @bind-Value="coupon.coupon_discount" class="form-control" id="inputDiscount" required/>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="inputExpire" class="form-label">Coupon Expire</label>
+                                <InputDate  Type="InputDateType.Date" @bind-Value="coupon.coupon_expire" class="form-control" id="inputExpire" required/>
+                            </div>
 
 
+                            <div class="modal-footer">
+                                <button type="submit" class="btn mybtn--primary">Add</button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <button class="btn btn-success" type="submit">Add Product</button>
-    </EditForm>
-</div>
-
-<h3>EditProduct</h3>
-
-<div class="log-form container mt-5 mb-5">
-    <EditForm Model="editProduct"   class="row g-3">
-
-        <InputText placeholder="name" @bind-Value="editProduct.name" class="form-control" />
-        <InputText placeholder="description" @bind-Value="editProduct.description" class="form-control" />
-        <InputText placeholder="img_url" @bind-Value="editProduct.img_url" class="form-control" />
-        <InputText placeholder="price" @bind-Value="editProduct.price" class="form-control" />
-        <InputNumber placeholder="quantity" @bind-Value="editProduct.quantity" class="form-control" />
-        <InputNumber placeholder="category_id" @bind-Value="editProduct.category_id" class="form-control" />
-        <InputNumber placeholder="coupon_id" @bind-Value="selectedProduct.coupon_id" class="form-control" />
-
-
-
-        <button class="btn btn-success" type="submit">Edit Product</button>
-    </EditForm>
-
-</div>
-
-
-    <select class="form-select mt-2" aria-label="Default select example">
-        <option  selected>Choose Category</option>
-        @if (Categories is not null)
-        {
-            foreach (var item in Categories)
+        <div class="products-container row mt-4  ">
+            @if(products is not null) 
             {
-                <option value="1">@item.Name</option>
+                @foreach (var item in products)
+                {
+                   
+            <div class="col-12">
+                <div class="card border-0  mb-3">
 
+                    <div class="row g-0">
+                        <div class="col-4 col-lg-2 col-md-2">
+                            <img src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e8c4e68b497e229146b818_leptop%20sleeve-min.png" class="img-fluid rounded-start" alt="...">
+                        </div>
+                        <div class="col-8 col-lg-4 col-md-10">
+                            <div class="card-body pt-5">
+                                <h5 class="card-title d-flex justify-content-between">
+                                    @item.name
+                                    <span>$@item.price</span>
+                                </h5>
+                                <p>quantity:@item.quantity</p>
+                            </div>
+                        </div>
+                        <div class="col ">
+                            <div class="row justify-content-center  pt-lg-5">
+                                <div class="col-2   col-lg-2">
+                                            <button class="btn btn-dark" type="button" @onclick="()=>GetProductId(item.product_id)" data-bs-toggle="modal" data-bs-target="#editproduct">edit</button>
+                                </div>
+                                <div class="col-2 me-3 me-lg-4 col-lg-2">
+                                            <button class="btn btn-danger" type="button" @onclick="()=>Delete(item.product_id)">Delete</button>
+                                </div>
+                                <div class="col-2  col-lg-2">
+                                            <button type="button" class="btn btn-warning">disable</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <hr>
+            </div>
             
-            }
-        }
-    </select>
-
-<h3>Add Category</h3>
-<div class="log-form container mt-5 mb-5">
-    <EditForm Model="category"  OnValidSubmit="AddCategory" class="row g-3">
-        <InputText placeholder="name" @bind-Value="category.Name" class="form-control" />
-        <button  class="btn btn-success" type="submit">ADD</button>
-    </EditForm>
-</div> 
-
-
-
-<select class="form-select mt-2" aria-label="Default select example">
-        <option  selected>Coupon</option>
-        @if (Coupons is not null)
-        {
-            foreach (var item in Coupons)
-            {
-                <option value="1">@item.coupon_name</option>
-
             
-            }
-        }
-    </select>
+                }
+            
+             } 
+        </div>
+    </div>
 
-<h3>Add Coupon</h3>
-<div class="log-form container mt-5 mb-5">
-    <EditForm Model="coupon" OnValidSubmit="AddCoupon" class="row g-3">
-        <InputText placeholder="name" @bind-Value="coupon.coupon_name" class="form-control" />
-        <InputNumber placeholder="use" @bind-Value="coupon.coupon_use" class="form-control" />
-        <InputNumber placeholder="discount" @bind-Value="coupon.coupon_discount" class="form-control" />
-        @*<InputText placeholder="expire" @bind-Value="coupon.coupon_expire" class="form-control" />*@
-        <InputDate @bind-Value="coupon.coupon_expire" class="form-control"></InputDate>
-        <button id="" class="btn btn-success" type="submit">Add Coupon</button>
-    </EditForm>
-</div>
-
+</section>
+@*  <BlazoredTypeahead SearchMethod="@SearchProducts"  *@
+@*                 TValue="ProductsModel" *@
+@*                 TItem="ProductsModel" *@
+@*                 Value="selectedProduct" *@
+@*                 ValueExpression="@(() => selectedProduct)" *@
+@*                 placeholder="Search"> *@
+@*                     <SelectedTemplate> *@
+@*                         @context.name *@
+@*                     </SelectedTemplate> *@
+@*                     <ResultTemplate> *@
+@*                         @context.name *@
+@*                     </ResultTemplate> *@
+@*                     <NotFoundTemplate> *@
+@*                         get otta here *@
+@*                     </NotFoundTemplate> *@
+@*                 </BlazoredTypeahead> *@
+@* <h3>Prodcuts</h3> *@
+@* *@
+@* @if (products is not null) *@
+@* { *@
+@*     @foreach (var item in products) *@
+@*     { *@
+@*         @if (!OkayDisabled) *@
+@*         { *@
+@*             <div class="d-flex justify-content-center"> *@
+@*                 <span>@item.name </span> *@
+@*                 <span>@item.quantity </span> *@
+@*                 <span>@item.img_url </span> *@
+@*                 <button type="button" @onclick="()=>Delete(item.product_id)">Delete</button> *@
+@*                 <button type="button" @onclick="()=>EditProduct(item.product_id)">Edit</button> *@
+@*                 <button type="button" @onclick="()=>Enable(item.product_id)">Disable</button> *@
+@* *@
+@*             </div> *@
+@*         } *@
+@*         *@
+@* *@
+@*     } *@
+@*      *@
+@* } *@
+@* <h3>AddPrdouct</h3> *@
+@* <div class="log-form container mt-5 mb-5"> *@
+@*     <EditForm Model="selectedProduct" OnValidSubmit="AddProduct" class="row g-3"> *@
+@* *@
+@*         <InputText placeholder="name" @bind-Value="selectedProduct.name" class="form-control"  /> *@
+@*         <InputText placeholder="description" @bind-Value="selectedProduct.description" class="form-control" /> *@
+@*         <InputText placeholder="img_url" @bind-Value="selectedProduct.img_url" class="form-control" /> *@
+@*         <InputText placeholder="price" @bind-Value="selectedProduct.price" class="form-control" /> *@
+@*         <InputNumber placeholder="quantity" @bind-Value="selectedProduct.quantity" class="form-control" /> *@
+@*         <InputNumber placeholder="category_id" @bind-Value="selectedProduct.category_id" class="form-control" /> *@
+@*         <InputNumber placeholder="coupon_id" @bind-Value="selectedProduct.coupon_id" class="form-control" /> *@
+@* *@
+@* *@
+@* *@
+@*         <button class="btn btn-success" type="submit">Add Product</button> *@
+@*     </EditForm> *@
+@* </div> *@
+@* *@
+@* <h3>EditProduct</h3> *@
+@* *@
+@* <div class="log-form container mt-5 mb-5"> *@
+@*     <EditForm Model="editProduct"   class="row g-3"> *@
+@* *@
+@*         <InputText placeholder="name" @bind-Value="editProduct.name" class="form-control" /> *@
+@*         <InputText placeholder="description" @bind-Value="editProduct.description" class="form-control" /> *@
+@*         <InputText placeholder="img_url" @bind-Value="editProduct.img_url" class="form-control" /> *@
+@*         <InputText placeholder="price" @bind-Value="editProduct.price" class="form-control" /> *@
+@*         <InputNumber placeholder="quantity" @bind-Value="editProduct.quantity" class="form-control" /> *@
+@*         <InputNumber placeholder="category_id" @bind-Value="editProduct.category_id" class="form-control" /> *@
+@*         <InputNumber placeholder="coupon_id" @bind-Value="selectedProduct.coupon_id" class="form-control" /> *@
+@* *@
+@* *@
+@* *@
+@*         <button class="btn btn-success" type="submit">Edit Product</button> *@
+@*     </EditForm> *@
+@* *@
+@* </div> *@
+@* *@
+@* *@
+@*     <select class="form-select mt-2" aria-label="Default select example"> *@
+@*         <option  selected>Choose Category</option> *@
+@*         @if (Categories is not null) *@
+@*         { *@
+@*             foreach (var item in Categories) *@
+@*             { *@
+@*                 <option value="1">@item.Name</option> *@
+@* *@
+@*              *@
+@*             } *@
+@*         } *@
+@*     </select> *@
+@* *@
+@* <h3>Add Category</h3> *@
+@* <div class="log-form container mt-5 mb-5"> *@
+@*     <EditForm Model="category"  OnValidSubmit="AddCategory" class="row g-3"> *@
+@*         <InputText placeholder="name" @bind-Value="category.Name" class="form-control" /> *@
+@*         <button  class="btn btn-success" type="submit">ADD</button> *@
+@*     </EditForm> *@
+@* </div>  *@
+@* *@
+@* *@
+@* *@
+@* <select class="form-select mt-2" aria-label="Default select example"> *@
+@*         <option  selected>Coupon</option> *@
+@*         @if (Coupons is not null) *@
+@*         { *@
+@*             foreach (var item in Coupons) *@
+@*             { *@
+@*                 <option value="1">@item.coupon_name</option> *@
+@* *@
+@*              *@
+@*             } *@
+@*         } *@
+@*     </select> *@
+@* *@
+@* <h3>Add Coupon</h3> *@
+@* <div class="log-form container mt-5 mb-5"> *@
+@*     <EditForm Model="coupon" OnValidSubmit="AddCoupon" class="row g-3"> *@
+@*         <InputText placeholder="name" @bind-Value="coupon.coupon_name" class="form-control" /> *@
+@*         <InputNumber placeholder="use" @bind-Value="coupon.coupon_use" class="form-control" /> *@
+@*         <InputNumber placeholder="discount" @bind-Value="coupon.coupon_discount" class="form-control" /> *@
+@*         $1$<InputText placeholder="expire" @bind-Value="coupon.coupon_expire" class="form-control" />#1# *@
+@*         <InputDate @bind-Value="coupon.coupon_expire" class="form-control"></InputDate> *@
+@*         <button id="" class="btn btn-success" type="submit">Add Coupon</button> *@
+@*     </EditForm> *@
+@* </div> *@
+@* *@

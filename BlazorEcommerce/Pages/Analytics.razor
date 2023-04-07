@@ -1,0 +1,101 @@
+﻿@page "/anal"
+@layout DashboardLayout
+<div class="d-flex mt-5 ms-5">
+    <div class="dropdown me-3">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Get By
+        </button>
+        <ul class="dropdown-menu">
+            <li><a @onclick="GetToday"  class="dropdown-item">Today</a></li>
+            <li><a @onclick="Get7days" class="dropdown-item">LastWeek</a></li>
+            <li><a @onclick="Get30days" class="dropdown-item">LastMonth</a></li>
+            <li><a @onclick="GetAll" class="dropdown-item">Get All</a></li>
+        </ul>
+    </div>
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Sort By
+        </button>
+        <ul class="dropdown-menu">
+            <li><a @onclick="SortBySalesA" class="dropdown-item">Sales Acending</a></li>
+            <li><a @onclick="SortBySalesD" class="dropdown-item">Sales Deacending</a></li>
+        
+        </ul>
+    </div>
+</div>
+<div class="container">
+
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Quantity in Stock</th>
+        <th scope="col">Sold</th>
+        <th scope="col">TotalProfit</th>
+    </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Anal)
+{
+
+    <tr>
+        <td>@item.name</td>
+        <td>@item.quantity</td>
+        <td>@item.sold</td>
+        <td>$@item.total_profit</td>
+
+    </tr>
+
+}
+
+    </tbody>
+</table>
+</div>
+
+
+
+@code {
+    public IEnumerable<AnalyticsModel> Anal = Enumerable.Empty<AnalyticsModel>();
+    public string selectedDate;
+    [Inject] public IHttpClientFactory? factory { get; set; }
+    [Inject] public HttpClient? client { get; set; }
+    protected async override Task OnInitializedAsync()
+    {
+        client = factory.CreateClient("api");
+        Anal = await client.GetFromJsonAsync<List<AnalyticsModel>>("Analytics");
+    }
+
+    public async Task GetToday()
+    {
+        Anal = await client.GetFromJsonAsync<List<AnalyticsModel>>("/today");
+
+    }
+    public async Task GetAll()
+    {
+        Anal = await client.GetFromJsonAsync<List<AnalyticsModel>>("Analytics");
+
+
+    }
+    public async Task Get7days()
+    {
+        Anal = await client.GetFromJsonAsync<List<AnalyticsModel>>("/7day");
+
+
+    } 
+    public async Task Get30days()
+    {
+        
+        Anal = await client.GetFromJsonAsync<List<AnalyticsModel>>("/30day");
+
+    }
+
+    public async Task SortBySalesA()
+    {
+        Anal = Anal.OrderBy(a=>a.total_profit);
+    }
+    public async Task SortBySalesD()
+    {
+        Anal = Anal.OrderByDescending(a=>a.total_profit);
+    }
+
+}

@@ -20,6 +20,7 @@ partial class DashBoardProdcuts : MainBase
     private ProductsModel selectedProduct = new();
     private AdminLogsModel adminLogs = new();
     private ProductsModel editProduct = new();
+    private ProductsModel addProduct = new();
 
     private CategoriesModel category=new();
     private CouponModel coupon = new();
@@ -36,7 +37,7 @@ partial class DashBoardProdcuts : MainBase
     private async Task AddProduct()
     {
         client = factory.CreateClient("api");
-        var response = await client.PostAsJsonAsync<ProductsModel>("Products", selectedProduct);
+        var response = await client.PostAsJsonAsync<ProductsModel>("Products", addProduct);
         var result = await response.Content.ReadFromJsonAsync<ProductsModel>();
 
         if (response.IsSuccessStatusCode)
@@ -45,6 +46,8 @@ partial class DashBoardProdcuts : MainBase
             var userId = GetUserIdFromToken(token);
 
         }
+        products = await client.GetFromJsonAsync<List<ProductsModel>>("Products");
+
 
     }
     private async Task Delete(int id)
@@ -88,7 +91,7 @@ partial class DashBoardProdcuts : MainBase
         Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
 
         }
-    }
+    
     public bool OkayDisabled = false;
 
     private void Enable(int id)
@@ -98,16 +101,19 @@ partial class DashBoardProdcuts : MainBase
 
 
     }
-    private async Task EditProduct(int id)
+
+    public int productId;
+    private async Task EditProduct()
     {
+  
         client = factory.CreateClient("api");
-        var response = await client.PutAsJsonAsync($"Products/{id}", editProduct);
+        var response = await client.PutAsJsonAsync($"Products/{productId}", editProduct);
         var result =  response.Content.ReadFromJsonAsync<ProductsModel>();
         if (response.IsSuccessStatusCode)
         {
             var token = await LocalStorage.GetItemAsync<string>("token");
             var userId = GetUserIdFromToken(token);
-            var productName = await client.GetFromJsonAsync<ProductsModel>($"Products/{id}");
+            var productName = await client.GetFromJsonAsync<ProductsModel>($"Products/{productId}");
             var getUserName = await client.GetFromJsonAsync<CustomersModel>($"Customers/{userId}");
             var userResult = getUserName.first_name;
 
@@ -118,5 +124,15 @@ partial class DashBoardProdcuts : MainBase
             };
             var log = await client.PostAsJsonAsync<AdminLogsModel>("AdminLogs", adminLogs);
         }
+        products = await client.GetFromJsonAsync<List<ProductsModel>>("Products");
+
+    }
+
+    private async void GetProductId( int id)
+    {
+        productId = id;
+        client = factory.CreateClient("api");
+        editProduct = await client.GetFromJsonAsync<ProductsModel>($"Products/{productId}");
+        
     }
 }

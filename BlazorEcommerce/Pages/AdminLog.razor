@@ -1,14 +1,33 @@
 ﻿
 @page "/log"
+@layout DashboardLayout
 @inherits MainBase
-<h3>AdminLog</h3>
+<div class="container">
+    <h3>Admins Log</h3>
+    <table class="table">
+        <thead>
+
+        </thead>
+        <tbody>
+        @if (adminLog is not null)
+        {
+
 
 @foreach (var item in adminLog)
 {
-    <div>
-        @item.log_msg 
-    </div>
+    <tr>
+        @item.log_msg
+    </tr>
 }
+        }
+        else
+        {
+            <h3>Nothing added yet</h3>
+        }
+
+        </tbody>
+    </table>
+</div>
 
 @code {
     private  IEnumerable<AdminLogsModel> adminLog;

@@ -8,6 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Shared\DashboardNav.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Shared\DashboardNav.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="4.3.0" />
     <PackageReference Include="Blazored.SessionStorage" Version="2.3.0" />
     <PackageReference Include="Blazored.Typeahead" Version="4.7.0" />
