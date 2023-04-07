@@ -3,5 +3,8 @@
 namespace BlazorEcommerce.Services.Interface;
 public interface IAdminLogService
 {
-    Task DeleteLog(int productId);
+    Task DeleteLog(ProductsModel product);
+    Task AddLog(ProductsModel product);
+    Task UpdateLog(int id);
+
 }

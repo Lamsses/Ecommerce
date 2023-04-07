@@ -9,6 +9,7 @@ partial class DashBoardProdcuts : MainBase
 {
     [Inject] IAdminLogService adminLog { get; set; }
     [Inject] ICustomerService customerService { get; set; }
+    [Inject] IProductService productService { get; set; }
     protected List<ProductsModel> products= new();
     protected List<CategoriesModel> Categories= new();
     protected List<CouponModel> Coupons= new();
@@ -25,14 +26,12 @@ partial class DashBoardProdcuts : MainBase
     private ProductsModel selectedProduct = new();
     private AdminLogsModel adminLogs = new();
     private ProductsModel editProduct = new();
-
     private CategoriesModel category=new();
     private CouponModel coupon = new();
 
 
     private async Task<IEnumerable<ProductsModel>> SearchProducts(string searchText)
     {
-        client = factory.CreateClient("api");
 
         var response = await client.GetFromJsonAsync<IEnumerable<ProductsModel>>($"Products/Search/{searchText}");
 
@@ -40,43 +39,47 @@ partial class DashBoardProdcuts : MainBase
     }
     private async Task AddProduct()
     {
-        client = factory.CreateClient("api");
+
         var response = await client.PostAsJsonAsync<ProductsModel>("Products", selectedProduct);
         var result = await response.Content.ReadFromJsonAsync<ProductsModel>();
-
         if (response.IsSuccessStatusCode)
         {
-            var token = await LocalStorage.GetItemAsync<string>("token");
-            var userId = customerService.GetUserIdFromToken(token);
+          adminLog.AddLog(result);
 
         }
+        products = await client.GetFromJsonAsync<List<ProductsModel>>("Products");
 
     }
     private async Task Delete(int id)
     {
-        client = factory.CreateClient("api");
 
-       
-        var respons = await client.DeleteAsync($"OrdersProducts/{id}");
+        var product = await client.GetFromJsonAsync<ProductsModel>($"Products/{id}");
+        await client.DeleteAsync($"OrdersProducts/{id}");
         var response = await client.DeleteAsync($"Products/{id}");
- 
-
         if (response.IsSuccessStatusCode)
         {
-            adminLog.DeleteLog(id);
+            adminLog.DeleteLog(product);
         }
         products = await client.GetFromJsonAsync<List<ProductsModel>>("Products");
     }
+    private async Task EditProduct(int id)
+    {
+        
+        var response = await client.PutAsJsonAsync($"Products/{id}", editProduct);
+        var result =  response.Content.ReadFromJsonAsync<ProductsModel>();
+        if (response.IsSuccessStatusCode)
+        {
+            adminLog.UpdateLog(id);
+        }
+    }
     private async Task AddCategory()
     {
-        client = factory.CreateClient("api");
         var response = await client.PostAsJsonAsync("Categories", category.Name);
         Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
 
     }
     private async Task AddCoupon()
     {
-        client = factory.CreateClient("api");
         var response = await client.PostAsJsonAsync<CouponModel>("Coupon", coupon);
         Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
 
@@ -90,26 +93,5 @@ partial class DashBoardProdcuts : MainBase
         OkayDisabled = true;
 
 
-    }
-    private async Task EditProduct(int id)
-    {
-        client = factory.CreateClient("api");
-        var response = await client.PutAsJsonAsync($"Products/{id}", editProduct);
-        var result =  response.Content.ReadFromJsonAsync<ProductsModel>();
-        if (response.IsSuccessStatusCode)
-        {
-            var token = await LocalStorage.GetItemAsync<string>("token");
-            var userId = customerService.GetUserIdFromToken(token);
-            var productName = await client.GetFromJsonAsync<ProductsModel>($"Products/{id}");
-            var getUserName = await client.GetFromJsonAsync<CustomersModel>($"Customers/{userId}");
-            var userResult = getUserName.first_name;
-
-            adminLogs = new AdminLogsModel
-            {
-                customer_id = userId,
-                log_msg = $"product ({productName.name})was edited By {userResult}"
-            };
-            var log = await client.PostAsJsonAsync<AdminLogsModel>("AdminLogs", adminLogs);
-        }
     }
 }

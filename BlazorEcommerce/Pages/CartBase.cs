@@ -22,14 +22,12 @@ public class CartBase: ComponentBase
         var cart = await CartService.GetCartItems();
         if (cart is null)
         {
-
             cart = new List<ProductsModel>();
         }
         var find = cart.Find(p => p.product_id == product.product_id);
         if (find is null)
         {
             cart.Add(product);
-
         }
         else
         {
@@ -47,7 +45,6 @@ public class CartBase: ComponentBase
         var cart = await CartService.GetCartItems();
 
         var find = cart.Find(p => p.product_id == product.product_id);
-
         cart.Remove(find);
         await CartService.SetCartItems(cart);
         CartItems = await CartService.GetCartItems();

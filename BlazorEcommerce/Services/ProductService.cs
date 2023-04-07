@@ -14,6 +14,7 @@ namespace BlazorEcommerce.Services
             _factory = factory;
             _client = client;
         }
+        
         public async Task<List<ProductsModel>> GetProducts()
         {
             _client = _factory.CreateClient("api");
@@ -42,6 +43,11 @@ namespace BlazorEcommerce.Services
             _client = _factory.CreateClient("api");
             var response = await _client.DeleteAsync($"Products/{product}");
             return await response.Content.ReadFromJsonAsync<ProductsModel>();
+        }
+
+        public Task<ProductsModel> PostProduct()
+        {
+            throw new NotImplementedException();
         }
     }
 }
