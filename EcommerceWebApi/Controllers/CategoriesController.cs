@@ -42,11 +42,11 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<CategoriesModel>> PutAsync(int id, string name)
+    public async Task<ActionResult<CategoriesModel>> PutAsync(int id, [FromBody] CategoriesModel category)
     {
-        await _categories.Update(id, name);
+        await _categories.Update(id, category.Name);
 
-        return Ok();
+        return Ok(category);
     }
 
     [HttpDelete("{id}")]

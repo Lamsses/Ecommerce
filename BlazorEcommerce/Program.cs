@@ -5,6 +5,7 @@ using BlazorEcommerce.Services.Interface;
 using BlazorEcommerce.Shared;
 using Blazored.LocalStorage;
 using Blazored.SessionStorage;
+using Blazored.Toast;
 using EcommerceLibrary.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 
@@ -24,6 +25,7 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 
 
 builder.Services.AddScoped<List<ProductsModel>>();
+builder.Services.AddBlazoredToast();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddBlazoredSessionStorage();
 builder.Services.AddAuthorizationCore();

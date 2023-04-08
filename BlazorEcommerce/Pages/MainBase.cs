@@ -8,6 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using Blazored.Toast.Services;
 
 namespace BlazorEcommerce.Pages;
 
@@ -21,6 +22,7 @@ public class MainBase : ComponentBase
     [Inject] public ICustomerService customerService { get; set; }
     [Inject] public IOrderService orderService { get; set; }
     [Inject] public IOrderProductsService orderProductsService { get; set; }
+    [Inject] public IToastService ToastService { get; set; }
     protected AuthenticationModel Authenticat = new();
     private OrdersModel orders;
 
@@ -139,6 +141,9 @@ public class MainBase : ComponentBase
 
 
             }
+            ToastService.ShowSuccess("Order Successfuly Completed");
+            
+            NavigationManager.NavigateTo("/",true);
 
         }
 

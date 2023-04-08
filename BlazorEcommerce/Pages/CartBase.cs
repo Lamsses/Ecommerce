@@ -1,4 +1,5 @@
 ﻿using BlazorEcommerce.Services.Interface;
+using Blazored.Toast.Services;
 using EcommerceLibrary.Models;
 using Microsoft.AspNetCore.Components;
 
@@ -9,7 +10,8 @@ public class CartBase: ComponentBase
     [Inject] 
     public ICartService CartService { get; set; }
     public List<ProductsModel> CartItems = new();
-    public event Action CartChanged;
+    // public event Action CartChanged;
+    [Inject] public IToastService toastService { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -35,6 +37,7 @@ public class CartBase: ComponentBase
             product.ProductAmount = find.ProductAmount;
 
         }
+        toastService.ShowSuccess($"{product.name} Added To Cart");
 
         await CartService.SetCartItems(cart);
         

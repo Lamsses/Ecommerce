@@ -25,14 +25,14 @@
         </form>
         <!-- Add Buttons -->
         <button class="mybtn mybtn--outline " data-bs-toggle="modal" data-bs-target="#product">Add Product</button>
-        <button class="mybtn mybtn--outline" data-bs-toggle="modal" data-bs-target="#category">Add Category</button>
-        <button class="mybtn mybtn--outline" data-bs-toggle="modal" data-bs-target="#coupon">Add Coupon</button>
+        <button class="mybtn mybtn--outline" data-bs-toggle="modal" data-bs-target="#category">Manage Categories</button>
+        <button class="mybtn mybtn--outline" data-bs-toggle="modal" data-bs-target="#coupon">Manage Coupons</button>
         <!-- Add Product -->
-        <div class="modal fade" id="product" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="product" tabindex="-1" aria-labelledby="addProductLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Product</h1>
+                        <h1 class="modal-title fs-5" id="addProductLabel">Add Product</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -42,16 +42,16 @@
                                 <InputText placeholder="" id="inputProductName" @bind-Value="addProduct.name" class="form-control" required />
                                 </div>
                                 <div class="col-md-6">
-                                <label for="inputPrice" class="form-label">Price</label>
-                                    <InputText placeholder="" id="inputPrice" @bind-Value="addProduct.price" class="form-control"/>
+                                <label for="inputPricee" class="form-label">Price</label>
+                                    <InputText placeholder="" id="inputPricee" @bind-Value="addProduct.price" class="form-control"/>
                                 </div>
                                 <div class="col-md-6">
-                                <label for="inputImg" class="form-label">Image</label>
-                                    <InputText placeholder="" id="inputImg" @bind-Value="addProduct.img_url" class="form-control"/>
+                                <label for="inputImgg" class="form-label">Image</label>
+                                    <InputText placeholder="" id="inputImgg" @bind-Value="addProduct.img_url" class="form-control"/>
                                 </div>
                                 <div class="col-md-6">
-                                <label for="inputQuantity" class="form-label">Quantity</label>
-                                    <InputNumber placeholder="" id="inputQuantity" @bind-Value="addProduct.quantity" class="form-control"/>
+                                <label for="inputQuantityy" class="form-label">Quantity</label>
+                                    <InputNumber placeholder="" id="inputQuantityy" @bind-Value="addProduct.quantity" class="form-control"/>
                                 </div>
                                 <div class="col-md-6">
                                 <label for="inputCategory" class="form-label">Category</label>
@@ -69,8 +69,8 @@
                                     </InputSelect>
                                 </div>
                                 <div class="col-md-6">
-                                <label for="inputCoupon" class="form-label">Coupon</label>
-                                    <InputSelect placeholder="" id="inputCoupon" @bind-Value="addProduct.coupon_id" class="form-control" >
+                                <label for="inputCouponn" class="form-label">Coupon</label>
+                                    <InputSelect placeholder="" id="inputCouponn" @bind-Value="addProduct.coupon_id" class="form-control" >
                                         <option  selected disabled>Coupon</option> 
                                         @if (Coupons is not null)
                                         {
@@ -99,11 +99,11 @@
             </div>
         </div>
         <!-- Edit Product -->
-        <div class="modal fade" id="editproduct" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="editproduct" tabindex="-1" aria-labelledby="editProductLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Product</h1>
+                        <h1 class="modal-title fs-5" id="editProductLabel">Edit Product</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -173,30 +173,47 @@
                 </div>
             </div>
         </div>
-        <!-- Add Category -->
-        <div class="modal fade" id="category" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <!-- Manage Category -->
+        <div class="modal fade" id="category" tabindex="-1" aria-labelledby="categoryLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Category</h1>
+                        <h1 class="modal-title fs-5" id="categoryLabel">Add Category</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <EditForm Model="category" OnValidSubmit="AddCategory" class="row g-3">
+                        <EditForm Model="category"  class="row g-3">
                             <div class="col-md-12">
                                 <label for="inputCatName" class="form-label">Category Name</label>
                                 <InputText type="text" @bind-Value="category.Name" class="form-control" id="inputCatName" required />
                             </div>
+                            <div class="col-md-12">
+                                <label for="inputCatt" class="form-label">Category</label>
+                                <InputSelect placeholder="category_id" id="inputCatt" @bind-Value="category.category_id" class="form-control">
+                                    <option  selected disabled="">Choose Category</option>
+                                    @if (Categories is not null)
+                                    {
+                                        foreach (var item in Categories)
+                                        {
+                                            <option value="@item.category_id">@item.Name</option>
+                                    
+                                    
+                                        }
+                                    }
+                                </InputSelect>
+
+                            </div>
                             <div class="modal-footer">
-                                <button type="submit" class="btn mybtn--primary">Add</button>
-                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" @onclick="AddCategory" class="btn mybtn--primary">Add</button>
+                                <button type="submit" @onclick="EditCategory" class="btn mybtn--primary">Edit</button>
+                                <button type="submit" @onclick="DeleteCategory" class="btn btn-danger">Delete</button>
                             </div>
                         </EditForm>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Add Coupon -->
+        <!-- Manage Coupon -->
         <div class="modal fade" id="coupon" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -205,7 +222,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <EditForm Model="coupon" OnValidSubmit="AddCoupon" class="row g-3">
+                        <EditForm Model="coupon"  class="row g-3">
                             <div class="col-md-6">
                                 <label for="inputCouponName" class="form-label">Coupon Name</label>
                                 <InputText  type="text" @bind-Value="coupon.coupon_name" class="form-control" id="inputCouponName" required/>
@@ -224,10 +241,26 @@
                                 <InputDate  Type="InputDateType.Date" @bind-Value="coupon.coupon_expire" class="form-control" id="inputExpire" required/>
                             </div>
 
-
+                            <div class="col-md-12">
+                                <label for="inputCoupon2" class="form-label">Coupon</label>
+                                <InputSelect placeholder="coupon_id" id="inputCoupon2" @bind-Value="coupon.coupon_id" class="form-control">
+                                    <option  selected disabled="">Coupon</option> 
+                                    @if (Coupons is not null)
+                                    {
+                                        foreach (var item in Coupons)
+                                        {
+                                            <option value="@item.coupon_id">@item.coupon_name</option>
+                                    
+                                    
+                                        }
+                                    }
+                                </InputSelect>
+                                
+                            </div>
                             <div class="modal-footer">
-                                <button type="submit" class="btn mybtn--primary">Add</button>
-                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" @onclick="AddCoupon" class="btn mybtn--primary">Add</button>
+                                <button type="submit" @onclick="EditCoupon" class="btn btn-dark">Edit</button>
+                                <button type="submit" @onclick="DeleteCoupon" class="btn btn-danger">Delete</button>
                             </div>
                         </EditForm>
                     </div>
@@ -246,7 +279,7 @@
 
                     <div class="row g-0">
                         <div class="col-4 col-lg-2 col-md-2">
-                            <img src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e8c4e68b497e229146b818_leptop%20sleeve-min.png" class="img-fluid rounded-start" alt="...">
+                            <img src="@item.img_url" class="img-fluid rounded-start" alt="...">
                         </div>
                         <div class="col-8 col-lg-4 col-md-10">
                             <div class="card-body pt-5">

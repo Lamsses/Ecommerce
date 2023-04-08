@@ -1,12 +1,12 @@
 ﻿@using Microsoft.JSInterop.Implementation
 @using Pages
 @inherits CartBase
-@implements IDisposable
 
 
 
 
-<nav class="main-nav navbar navbar-expand-lg shadow sticky-top">
+
+<nav class="main-nav navbar navbar-expand-lg shadow ">
     <div class="container">
         <a class="navbar-brand" href="#">
             <img src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e86ab4c21faa7bc0bd90dd_Logo.svg"
@@ -42,7 +42,8 @@
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link" href="#">Deals</a>
+                    <a  class="nav-link" onclick="document.getElementById('deals').scrollIntoView({behavior:'smooth'})">Deals</a>
+
                 </li>
             </ul>
             <form class="input-form ms-lg-5 d-flex" role="search">
@@ -81,12 +82,12 @@
                 </NotAuthorized>
             </AuthorizeView>
 
-            <a href="#offcanvas" @onclick="ShowCart" role="button" data-bs-toggle="offcanvas" aria-controls="offcanvas" class="nav-link  ms-lg-4 mt-sm-1 mt-3 d-flex align-items-center d-lg-flex justify-content-lg-center align-items-lg-center d-sm-flex justify-content-sm-start align-items-sm-center">
+            <a href="#offcanvas" id="cart" @onclick="ShowCart" role="button" data-bs-toggle="offcanvas" aria-controls="offcanvas" class="nav-link  ms-lg-4 mt-sm-1 mt-3 d-flex align-items-center d-lg-flex justify-content-lg-center align-items-lg-center d-sm-flex justify-content-sm-start align-items-sm-center">
                 <i class="fa-solid fa-cart-shopping pe-2"></i>
                 <p class="m-0 position-relative">
                     Cart
                     <span class="position-absolute top-0 start-100 translate-middle-y badge rounded-pill bg-danger">
-                        @* @CartCount() *@
+                        @CartCount()
 
                         <span class="visually-hidden">unread messages</span>
                     </span>

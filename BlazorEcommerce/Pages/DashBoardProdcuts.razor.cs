@@ -85,9 +85,36 @@ partial class DashBoardProdcuts : MainBase
         Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
 
     }
+
+    private async Task EditCategory()
+    {
+        var response = await client.PutAsJsonAsync($"Categories/{category.category_id}", category);
+        Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
+
+
+
+    }
+    private async Task DeleteCategory()
+    {
+        var response = await client.DeleteAsync($"Categories/{category.category_id}");
+        Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
+
+
+
+    }
     private async Task AddCoupon()
     {
         var response = await client.PostAsJsonAsync<CouponModel>("Coupon", coupon);
+        Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
+
+        }private async Task EditCoupon()
+    {
+        var response = await client.PutAsJsonAsync($"Coupon/{coupon.coupon_id}", coupon);
+        Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
+
+        }private async Task DeleteCoupon()
+    {
+        var response = await client.DeleteAsync($"Coupon/{coupon.coupon_id}");
         Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
 
         }

@@ -35,16 +35,12 @@ partial class NavBar : CartBase
         
         client = factory.CreateClient("api");
         Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
-        CartChanged += StateHasChanged;
+        
 
         await ShowCart();
 
     }
-    public void Dispose()
-    {
-        CartChanged -= StateHasChanged;
-
-    }
+    
 
     public async Task Logout()
     {
