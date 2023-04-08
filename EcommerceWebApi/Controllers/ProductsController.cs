@@ -44,8 +44,20 @@ public class ProductsController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<ProductsModel>> Get(string searchText)
     {
-        var output = await _products.SearchProducts(searchText);
-        return Ok(output);
+
+
+        try
+        {
+            var output = await _products.SearchProducts(searchText);
+            return Ok(output);
+
+        }
+        catch (Exception)
+        {
+
+            return BadRequest("Not Found");
+           
+        }
 
     }
 

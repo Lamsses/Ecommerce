@@ -5,7 +5,11 @@ using EcommerceLibrary.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Rendering;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.JSInterop;
 
 namespace BlazorEcommerce.Shared;
 
@@ -25,6 +29,7 @@ partial class NavBar : CartBase
     private IHttpClientFactory? factory {get; set; }
     private ProductsModel? selectedProduct;
     protected List<CategoriesModel> Categories = new();
+     JSRuntime JSRuntime;
     private int _cartItemsCount = 0;
 
 
@@ -60,9 +65,18 @@ partial class NavBar : CartBase
     private async Task<IEnumerable<ProductsModel>> SearchProducts(string searchText)
     {
         client = factory.CreateClient("api");
-  
-        var response = await client.GetFromJsonAsync<IEnumerable<ProductsModel>>($"Products/Search/{searchText}");
-        return response;
+
+        try
+        {
+            var response = await client.GetFromJsonAsync<IEnumerable<ProductsModel>>($"Products/Search/{searchText}");
+            return response;
+        }
+        catch (Exception ex)
+        {
+            return Enumerable.Empty<ProductsModel>() ;
+        }
+
+
     }
 
     private decimal  CalculateTotal()

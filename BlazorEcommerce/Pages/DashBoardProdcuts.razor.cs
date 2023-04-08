@@ -42,16 +42,21 @@ partial class DashBoardProdcuts : MainBase
     private async Task AddProduct()
     {
         client = factory.CreateClient("api");
-        var response = await client.PostAsJsonAsync<ProductsModel>("Products", addProduct);
-        var result = await response.Content.ReadFromJsonAsync<ProductsModel>();
-        if (response.IsSuccessStatusCode)
+        var product = products.Where(p => p.name == addProduct.name).FirstOrDefault();
+        if (product == null)
         {
-          adminLog.AddLog(result);
-
+            var response = await client.PostAsJsonAsync<ProductsModel>("Products", addProduct);
+            var result = await response.Content.ReadFromJsonAsync<ProductsModel>();
+            if (response.IsSuccessStatusCode)
+            {
+                adminLog.AddLog(result);
+            }
+            products = await client.GetFromJsonAsync<List<ProductsModel>>("Products");
         }
-        products = await client.GetFromJsonAsync<List<ProductsModel>>("Products");
-
-
+        else
+        {
+            Console.WriteLine("");
+        }
     }
     private async Task Delete(int id)
     {
@@ -69,7 +74,6 @@ partial class DashBoardProdcuts : MainBase
     {
         
         var response = await client.PutAsJsonAsync($"Products/{productId}", editProduct);
-        var result =  response.Content.ReadFromJsonAsync<ProductsModel>();
         if (response.IsSuccessStatusCode)
         {
             adminLog.UpdateLog(productId);
@@ -79,27 +83,18 @@ partial class DashBoardProdcuts : MainBase
     {
         var response = await client.PostAsJsonAsync("Categories", category.Name);
         Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
+        if(response.IsSuccessStatusCode)
+        {
+            adminLog.AddCategeoryLog(category.Name);
+        }
 
     }
     private async Task AddCoupon()
     {
-        var response = await client.PostAsJsonAsync<CouponModel>("Coupon", coupon);
+        await client.PostAsJsonAsync<CouponModel>("Coupon", coupon);
         Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
-
-        }
-    
-    public bool OkayDisabled = false;
-
-    private void Enable(int id)
-    {
-
-        OkayDisabled = true;
-
-
     }
-
     
-  
 
     private async void GetProductId( int id)
     {
@@ -108,4 +103,5 @@ partial class DashBoardProdcuts : MainBase
         editProduct = await client.GetFromJsonAsync<ProductsModel>($"Products/{productId}");
         
     }
+   
 }
