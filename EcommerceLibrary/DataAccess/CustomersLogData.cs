@@ -16,7 +16,7 @@ public class CustomersLogData : ICustomersLogData
     }
     public Task<List<CustomerLogsModel>> GetAll()
     {
-        return _sql.Loaddata<CustomerLogsModel>("dbo.spCustomersLog_GetAll", "Default");
+        return _sql.Loaddata<CustomerLogsModel>("dbo.spCustomerLog_GetAll", "Default");
     }
     public async Task<CustomerLogsModel?> Create(int customer_id, string log_msg)
     {

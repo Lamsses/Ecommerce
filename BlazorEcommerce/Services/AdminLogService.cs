@@ -21,33 +21,33 @@ public class AdminLogService : IAdminLogService
         _factory = factory;
         _customerService = customerService;
     }
+
     public async Task AddLog(ProductsModel product)
     {
         _client = _factory.CreateClient("api");
-        var token = await _localStorage.GetItemAsync<string>("token");
-        var userId = _customerService.GetUserIdFromToken(token);
-        var getUserName = await _client.GetFromJsonAsync<CustomersModel>($"Customers/{userId}");
-        var userResult = getUserName.first_name;
-        adminLogs = new AdminLogsModel
-        {
-            customer_id = userId,
-            log_msg = $"product {product.name} was Created By {userResult}"
-        };
-        var log = await _client.PostAsJsonAsync<AdminLogsModel>("AdminLogs", adminLogs);
-    }
-    public async Task UpdateLog(int id)
-    {
-        _client = _factory.CreateClient("api");
-        var token = await _localStorage.GetItemAsync<string>("token");
-        var userId = _customerService.GetUserIdFromToken(token);
-        var productName = await _client.GetFromJsonAsync<ProductsModel>($"Products/{id}");
-        var getUserName = await _client.GetFromJsonAsync<CustomersModel>($"Customers/{userId}");
-        var userResult = getUserName.first_name;
+        var userId = await _customerService.GetUserIdFromToken();
+        var getUserName = await _customerService.GetUserNameFromToken();
 
         adminLogs = new AdminLogsModel
         {
             customer_id = userId,
-            log_msg = $"product ({productName.name})was edited By {userResult}"
+            log_msg = $"product {product.name} was Created By {getUserName}"
+        };
+        var log = await _client.PostAsJsonAsync<AdminLogsModel>("AdminLogs", adminLogs);
+
+    }
+    public async Task UpdateLog(int id)
+    {
+        _client = _factory.CreateClient("api");
+        var userId = await _customerService.GetUserIdFromToken();
+        var getUserName = await _customerService.GetUserNameFromToken();
+        var productName = await _client.GetFromJsonAsync<ProductsModel>($"Products/{id}");
+
+
+        adminLogs = new AdminLogsModel
+        {
+            customer_id = userId,
+            log_msg = $"product ({productName.name})was edited By {getUserName}"
         };
         var log = await _client.PostAsJsonAsync<AdminLogsModel>("AdminLogs", adminLogs);
 
@@ -56,18 +56,26 @@ public class AdminLogService : IAdminLogService
     public async Task DeleteLog(ProductsModel product)
     {
         _client = _factory.CreateClient("api");
-        var token = await _localStorage.GetItemAsync<string>("token");
-        var userId = _customerService.GetUserIdFromToken(token);
-        var getUserName = await _client.GetFromJsonAsync<CustomersModel>($"Customers/{userId}");
-        var userResult = getUserName.first_name;
+        var userId = await _customerService.GetUserIdFromToken();
+        var getUserName = await _customerService.GetUserNameFromToken();
 
         adminLogs = new AdminLogsModel
         {
-            customer_id = _customerService.GetUserIdFromToken(token),
-            log_msg = $"product ({product.name})was Deleted By {userResult}"
+            customer_id = await _customerService.GetUserIdFromToken(),
+            log_msg = $"product ({product.name})was Deleted By {getUserName}"
         };
         var log = await _client.PostAsJsonAsync<AdminLogsModel>("AdminLogs", adminLogs);
     }
-
+    public async Task AddCategeoryLog(string name)
+    {
+        _client = _factory.CreateClient("api");
+        var getUserName = await _customerService.GetUserNameFromToken();
+        adminLogs = new AdminLogsModel
+        {
+            customer_id = await _customerService.GetUserIdFromToken(),
+            log_msg = $"product ({name})was Deleted By {getUserName}"
+        };
+        var log = await _client.PostAsJsonAsync<AdminLogsModel>("AdminLogs", adminLogs);
+    }
 
 }

@@ -7,12 +7,16 @@ using System.Threading.Tasks;
 namespace EcommerceLibrary.Models;
 public class CustomerLogsModel
 {
-    public int customerlog_id { get; set; }
+    public int order_id { get; set; }
 
-    public int customer_id { get; set; }
+    public string first_name { get; set; }
+
+    public int receipt { get; set; }
+
+    public int product_id { get; set; }
+    public int amount { get; set; }
 
 
-    public string log_msg { get; set; }
 
-
+    public decimal total { get; set; }
 }

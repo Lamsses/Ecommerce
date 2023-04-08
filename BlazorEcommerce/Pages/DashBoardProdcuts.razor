@@ -55,14 +55,13 @@
                                 </div>
                                 <div class="col-md-6">
                                 <label for="inputCategory" class="form-label">Category</label>
-                                    <InputSelect placeholder="" id="inputCategory" @bind-Value="addProduct.category_id" class="form-control">
-                                        <option  selected disabled>Choose Category</option>
+                                <InputSelect placeholder=""  @bind-Value="addProduct.category_id" class="form-control" required>
+                                        <option  selected >Choose Category</option>
                                         @if (Categories is not null)
                                         {
                                             foreach (var item in Categories)
                                             {
                                                 <option value="@item.category_id">@item.Name</option>
-                                    
                                     
                                             }
                                         }
@@ -81,10 +80,11 @@
                                     
                                             }
                                         }
+                                        
                                     </InputSelect>
                                 </div>
 
-                            <InputTextArea placeholder="description" @bind-Value="addProduct.description" class="form-control" />
+                            <InputTextArea placeholder="description" @bind-Value="addProduct.description" class="form-control" required />
                         
                         
                                 <div class="modal-footer">
@@ -111,25 +111,25 @@
                         <EditForm Model="editProduct" OnValidSubmit="EditProduct" class="row g-3">
                             <div class="col-md-6">
                                 <label for="inputName" class="form-label">Product Name</label>
-                                <InputText placeholder="name" id="inputName" @bind-Value="editProduct.name"  class="form-control" />
+                                <InputText placeholder="name" id="inputName" @bind-Value="editProduct.name" class="form-control" required />
                             </div>
                             <div class="col-md-6">
                                 <label for="inputPrice" class="form-label">Price</label>
-                                <InputText placeholder="price" id="inputPrice" @bind-Value="editProduct.price"  class="form-control" />
+                                <InputText placeholder="price" id="inputPrice" @bind-Value="editProduct.price" class="form-control" required />
 
                             </div>
                             <div class="col-md-6">
                                 <label for="inputImg" class="form-label">Image</label>
-                                <InputText placeholder="img_url" id="inputImg" @bind-Value="editProduct.img_url"  class="form-control" />
+                                <InputText placeholder="img_url" id="inputImg" @bind-Value="editProduct.img_url" class="form-control" required />
 
                             </div>
                             <div class="col-md-6">
                                 <label for="inputQuantity" class="form-label">Quantity</label>
-                                <InputNumber placeholder="quantity" id="inputQuantity" @bind-Value="editProduct.quantity"  class="form-control" />
+                                <InputNumber placeholder="quantity" id="inputQuantity" @bind-Value="editProduct.quantity" class="form-control" required />
                             </div>
                             <div class="col-md-6">
                                 <label for="inputCat" class="form-label">Category</label>
-                                <InputSelect placeholder="category_id" id="inputCat" @bind-Value="editProduct.category_id" class="form-control">
+                                <InputSelect placeholder="category_id" id="inputCat" @bind-Value="editProduct.category_id" class="form-control" required>
                                             <option  selected disabled="">Choose Category</option>
                                             @if (Categories is not null)
                                             {
@@ -161,7 +161,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="inputDescription" class="form-label">Description</label>
-                                <InputTextArea  placeholder="description" id="inputDescription" @bind-Value="editProduct.description" class="form-control" />
+                                <InputTextArea placeholder="description" id="inputDescription" @bind-Value="editProduct.description" class="form-control" required />
 
                             </div>
                             <div class="modal-footer">

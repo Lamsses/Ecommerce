@@ -2,5 +2,6 @@
 
 public interface ICustomerService
 {
-    int GetUserIdFromToken(string token);
+    Task<int> GetUserIdFromToken();
+    Task<string> GetUserNameFromToken();
 }

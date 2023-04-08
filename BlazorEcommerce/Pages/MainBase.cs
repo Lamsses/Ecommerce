@@ -97,10 +97,8 @@ public class MainBase : ComponentBase
         var order = new OrdersModel
         {
             order_date = DateTime.Now,
-            customer_id = customerService.GetUserIdFromToken(token),
+            customer_id =await customerService.GetUserIdFromToken(),
             receipt = ReceiptGenrator()
-
-
         };
 
         client = factory.CreateClient("api");
@@ -108,7 +106,6 @@ public class MainBase : ComponentBase
 
         var response = await orderService.AddOrder(order);
         var result = await response.Content.ReadFromJsonAsync<OrdersModel>();
-
 
         if (response.IsSuccessStatusCode) 
         {
@@ -132,12 +129,7 @@ public class MainBase : ComponentBase
                               
                 }
 
-                var customerLogs = new CustomerLogsModel
-                {
-                    customer_id = customerService.GetUserIdFromToken(token),
-                    log_msg = $"You have bought {item.name}  for {item.price} your recipt: {order.receipt} "
-                };
-                var logResponse = await client.PostAsJsonAsync<CustomerLogsModel>("CustomerLogs", customerLogs);
+
 
 
             }

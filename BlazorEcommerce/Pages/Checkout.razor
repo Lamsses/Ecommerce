@@ -34,6 +34,7 @@
                 </div >
 
                 <div class="col">
+
                     <InputText @bind-Value="couponName" type="text" placeholder="coupon" class="form-control mb-2" id="coupon" />
                 <button @onclick="ApplyCoupon" class="btn btn-success ">Apply Coupon</button>
 
@@ -69,7 +70,7 @@
                     </div>
 
                     <div class="col-12">
-                                <button type="submit" class="mybtn mybtn--primary" @onclick="()=>OrdersCheckout()">Checkout</button>
+                                <button  class="mybtn mybtn--primary" @onclick="()=>OrdersCheckout()">Checkout</button>
                     </div>
                 </form>
             </div>
