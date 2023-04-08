@@ -12,9 +12,9 @@ partial class DashBoardProdcuts : MainBase
     [Inject] ICustomerService customerService { get; set; }
     [Inject] IProductService productService { get; set; }
     [Inject] IOrderProductsService orderProductsService { get; set; }
-    protected List<ProductsModel> products= new();
-    protected List<CategoriesModel> Categories= new();
-    protected List<CouponModel> Coupons= new();
+    protected List<ProductsModel> products = new();
+    protected List<CategoriesModel> Categories = new();
+    protected List<CouponModel> Coupons = new();
     protected override async Task OnInitializedAsync()
     {
         client = factory.CreateClient("api");
@@ -29,7 +29,7 @@ partial class DashBoardProdcuts : MainBase
     private AdminLogsModel adminLogs = new();
     private ProductsModel editProduct = new();
     private ProductsModel addProduct = new();
-    private CategoriesModel category=new();
+    private CategoriesModel category = new();
     private CouponModel coupon = new();
     public int productId;
 
@@ -47,30 +47,19 @@ partial class DashBoardProdcuts : MainBase
         var product = products.Where(p => p.name == addProduct.name).FirstOrDefault();
         if (product == null)
         {
-            var response = await client.PostAsJsonAsync<ProductsModel>("Products", addProduct);
+            var response = await productService.AddProduct(addProduct);
             var result = await response.Content.ReadFromJsonAsync<ProductsModel>();
             if (response.IsSuccessStatusCode)
             {
                 adminLog.AddLog(result);
+                products = await productService.GetProducts();
+
             }
-            products = await client.GetFromJsonAsync<List<ProductsModel>>("Products");
+            else
+            {
+                Console.WriteLine("");
+            }
         }
-        else
-        {
-            Console.WriteLine("");
-        }
-    }
-        var response = await productService.AddProduct(addProduct);
-        var result = await response.Content.ReadFromJsonAsync<ProductsModel>();
-        if (response.IsSuccessStatusCode)
-        {
-          adminLog.AddLog(result);
-
-        }
-
-        products = await productService.GetProducts();
-
-
     }
     private async Task Delete(int id)
     {
@@ -86,9 +75,9 @@ partial class DashBoardProdcuts : MainBase
     }
     private async Task EditProduct()
     {
-        
+
         var response = await productService.UpdateProduct(editProduct);
-        var result =  response.Content.ReadFromJsonAsync<ProductsModel>();
+        var result = response.Content.ReadFromJsonAsync<ProductsModel>();
         if (response.IsSuccessStatusCode)
         {
             adminLog.UpdateLog(productId);
@@ -100,7 +89,7 @@ partial class DashBoardProdcuts : MainBase
     {
         var response = await client.PostAsJsonAsync("Categories", category.Name);
         Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
-        if(response.IsSuccessStatusCode)
+        if (response.IsSuccessStatusCode)
         {
             adminLog.AddCategeoryLog(category.Name);
         }
@@ -111,14 +100,14 @@ partial class DashBoardProdcuts : MainBase
         await client.PostAsJsonAsync<CouponModel>("Coupon", coupon);
         Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
     }
-    
 
-    private async void GetProductId( int id)
+
+    private async void GetProductId(int id)
     {
         productId = id;
         client = factory.CreateClient("api");
         editProduct = await productService.GetProductById(id);
-        
+
     }
-   
+
 }
