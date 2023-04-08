@@ -299,10 +299,11 @@ a {
     }
 }
 
-/* Admin NavMenu */
-
+/* Admin Invite */
+.admin-inv .row {
+    border-radius: 30px;
+}
 /* Admin Products */
-
 @media (min-width: 992px) {
     .admin-products .products-container {
         width: 60%;

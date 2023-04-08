@@ -28,21 +28,28 @@ namespace BlazorEcommerce.Services
             return response;
         }
 
-
-
-        public async Task<ProductsModel> UpdateProduct(ProductsModel product)
+        public async Task<HttpResponseMessage> AddProduct(ProductsModel product)
         {
             _client = _factory.CreateClient("api");
-             var response = await _client.PutAsJsonAsync($"Produts",product);
-            return await response.Content.ReadFromJsonAsync<ProductsModel>();
+            var response = await _client.PostAsJsonAsync("Products", product);
+            return response;
+        }
+
+
+        public async Task<HttpResponseMessage> UpdateProduct(ProductsModel product)
+        {
+            _client = _factory.CreateClient("api");
+             var response = await _client.PutAsJsonAsync($"Products/{product.product_id}",product);
+            return  response;
 
 
         }
-        public async Task<ProductsModel> DeleteProduct(ProductsModel product)
+        public async Task<HttpResponseMessage> DeleteProduct(int productId)
         {
             _client = _factory.CreateClient("api");
-            var response = await _client.DeleteAsync($"Products/{product}");
-            return await response.Content.ReadFromJsonAsync<ProductsModel>();
+            var response = await _client.DeleteAsync($"Products/{productId}");
+            return response;
         }
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using BlazorEcommerce.Services.Interface;
+﻿using BlazorEcommerce.Services;
+using BlazorEcommerce.Services.Interface;
 using EcommerceLibrary.DataAccess;
 using EcommerceLibrary.Models;
 using Microsoft.AspNetCore.Components;
@@ -10,6 +11,7 @@ partial class DashBoardProdcuts : MainBase
     [Inject] IAdminLogService adminLog { get; set; }
     [Inject] ICustomerService customerService { get; set; }
     [Inject] IProductService productService { get; set; }
+    [Inject] IOrderProductsService orderProductsService { get; set; }
     protected List<ProductsModel> products= new();
     protected List<CategoriesModel> Categories= new();
     protected List<CouponModel> Coupons= new();
@@ -58,26 +60,41 @@ partial class DashBoardProdcuts : MainBase
             Console.WriteLine("");
         }
     }
+        var response = await productService.AddProduct(addProduct);
+        var result = await response.Content.ReadFromJsonAsync<ProductsModel>();
+        if (response.IsSuccessStatusCode)
+        {
+          adminLog.AddLog(result);
+
+        }
+
+        products = await productService.GetProducts();
+
+
+    }
     private async Task Delete(int id)
     {
 
-        var product = await client.GetFromJsonAsync<ProductsModel>($"Products/{id}");
-        await client.DeleteAsync($"OrdersProducts/{id}");
-        var response = await client.DeleteAsync($"Products/{id}");
+        var product = await productService.GetProductById(id);
+        await orderProductsService.Delete(id);
+        var response = await productService.DeleteProduct(id);
         if (response.IsSuccessStatusCode)
         {
             adminLog.DeleteLog(product);
         }
-        products = await client.GetFromJsonAsync<List<ProductsModel>>("Products");
+        products = await productService.GetProducts();
     }
     private async Task EditProduct()
     {
         
-        var response = await client.PutAsJsonAsync($"Products/{productId}", editProduct);
+        var response = await productService.UpdateProduct(editProduct);
+        var result =  response.Content.ReadFromJsonAsync<ProductsModel>();
         if (response.IsSuccessStatusCode)
         {
             adminLog.UpdateLog(productId);
         }
+        products = await productService.GetProducts();
+
     }
     private async Task AddCategory()
     {
@@ -100,7 +117,7 @@ partial class DashBoardProdcuts : MainBase
     {
         productId = id;
         client = factory.CreateClient("api");
-        editProduct = await client.GetFromJsonAsync<ProductsModel>($"Products/{productId}");
+        editProduct = await productService.GetProductById(id);
         
     }
    
