@@ -29,7 +29,6 @@ partial class NavBar : CartBase
     private IHttpClientFactory? factory {get; set; }
     private ProductsModel? selectedProduct;
     protected List<CategoriesModel> Categories = new();
-     JSRuntime JSRuntime;
     private int _cartItemsCount = 0;
 
 
