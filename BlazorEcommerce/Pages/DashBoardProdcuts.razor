@@ -1,6 +1,7 @@
 ﻿@page "/dash"
 @layout DashboardLayout
 @inherits MainBase
+<AuthorizeView Context="AAXX" Policy="Admin">
 
 <section class="admin-products pt-5">
     <div class="container">
@@ -11,8 +12,9 @@
                            TItem="ProductsModel"
                            Value="selectedProduct"
                            ValueExpression="@(() => selectedProduct)"
-                           placeholder="Search">
-                               <SelectedTemplate>
+                               ValueChanged="HandleSearch"
+                               placeholder="Search">
+                               <SelectedTemplate >
                                    @context.name
                                </SelectedTemplate>
                                <ResultTemplate>
@@ -269,6 +271,50 @@
         </div>
 
         <div class="products-container row mt-4  ">
+              @if (selectedProduct.product_id != 0)
+            {
+                <div class="col-12">
+                    <div class="card border-0  mb-3">
+
+                        <div class="row g-0">
+                            <div class="col-4 col-lg-2 col-md-2">
+                                <img src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e8c4e68b497e229146b818_leptop%20sleeve-min.png" class="img-fluid rounded-start" alt="...">
+                            </div>
+                            <div class="col-8 col-lg-4 col-md-10">
+                                <div class="card-body pt-5">
+                                    <h5 class="card-title d-flex justify-content-between">
+                                        @selectedProduct.name
+                                        <span>$@selectedProduct.price</span>
+                                    </h5>
+                                    <p>quantity:@selectedProduct.quantity</p>
+                                </div>
+                            </div>
+                            <div class="col ">
+                                <div class="row justify-content-center  pt-lg-5">
+                                    <div class="col-2   col-lg-2">
+                                        <button class="btn btn-dark" type="button" @onclick="()=>GetProductId(selectedProduct.product_id)" data-bs-toggle="modal" data-bs-target="#editproduct">edit</button>
+                                    </div>
+                                    <div class="col-2 me-3 me-lg-4 col-lg-2">
+                                        <button class="btn btn-danger" type="button" @onclick="()=>Delete(selectedProduct.product_id)">Delete</button>
+                                    </div>
+                                    <div class="col-2  col-lg-2">
+                                        <button type="button" class="btn btn-warning">disable</button>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <hr>
+                </div>
+
+            }
+            else
+            {
+                
+            
             @if(products is not null) 
             {
                 @foreach (var item in products)
@@ -314,10 +360,14 @@
                 }
             
              } 
+             }
         </div>
     </div>
 
 </section>
+
+   </AuthorizeView>
+ 
 @*  <BlazoredTypeahead SearchMethod="@SearchProducts"  *@
 @*                 TValue="ProductsModel" *@
 @*                 TItem="ProductsModel" *@

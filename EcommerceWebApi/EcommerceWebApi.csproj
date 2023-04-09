@@ -13,6 +13,7 @@
 
  
 	<ItemGroup>
+		<PackageReference Include="AspNetCoreRateLimit" Version="5.0.0" />
 		<PackageReference Include="AutoMapper" Version="12.0.1" />
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.3" />
@@ -25,6 +26,11 @@
  
 	<ItemGroup>
 	  <ProjectReference Include="..\EcommerceLibrary\EcommerceLibrary.csproj" />
+	</ItemGroup>
+
+ 
+	<ItemGroup>
+	  <Folder Include="Properties\PublishProfiles\" />
 	</ItemGroup>
 
 </Project>

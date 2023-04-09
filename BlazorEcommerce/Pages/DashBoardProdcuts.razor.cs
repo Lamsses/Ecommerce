@@ -2,9 +2,11 @@
 using BlazorEcommerce.Services.Interface;
 using EcommerceLibrary.DataAccess;
 using EcommerceLibrary.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorEcommerce.Pages;
+
 
 partial class DashBoardProdcuts : MainBase
 {
@@ -147,5 +149,14 @@ partial class DashBoardProdcuts : MainBase
         editProduct = await productService.GetProductById(id);
 
     }
+  
+    private void HandleSearch(ProductsModel product)
+    {
+        if (product == null) return;
+        selectedProduct = product;
+
+    }
+
+
 
 }

@@ -92,6 +92,7 @@ public class MainBase : ComponentBase
     public async Task OrdersCheckout()
     {
 
+        var cart =  await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
         var token = await LocalStorage.GetItemAsync<string>("token");
 
         var order = new OrdersModel
@@ -109,7 +110,6 @@ public class MainBase : ComponentBase
 
         if (response.IsSuccessStatusCode) 
         {
-            var cart =  await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
 
             foreach (var item in cart)
             {
@@ -133,10 +133,13 @@ public class MainBase : ComponentBase
 
 
             }
+
             ToastService.ShowSuccess("Order Successfuly Completed");
+            await Task.Delay(1000);
+            LocalStorage.RemoveItemAsync("cart");
+            
             
             NavigationManager.NavigateTo("/",true);
-
         }
 
 

@@ -1,5 +1,6 @@
 ﻿using EcommerceLibrary.DataAccess;
 using EcommerceLibrary.Models;
+using EcommerceLibrary.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace EcommerceWebApi.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-[AllowAnonymous]
+
 public class CustomerCouponController : ControllerBase
 {
     private readonly ICustomerCouponData _customerCouponData;
@@ -32,6 +33,7 @@ public class CustomerCouponController : ControllerBase
 
 
     [HttpPost]
+
     public async Task<ActionResult<CustomerCouponModel>> Post([FromBody] CustomerCouponModel customerCouponData)
     {
         var output = await _customerCouponData.Create(customerCouponData.customer_id, customerCouponData.coupon_id);

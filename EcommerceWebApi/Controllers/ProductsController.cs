@@ -1,5 +1,6 @@
 ﻿using EcommerceLibrary.DataAccess;
 using EcommerceLibrary.Models;
+using EcommerceLibrary.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -9,7 +10,6 @@ namespace EcommerceApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[AllowAnonymous]
 
 
 public class ProductsController : ControllerBase
@@ -21,7 +21,7 @@ public class ProductsController : ControllerBase
         _products = products;
     }
     [HttpGet]
-
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<ProductsModel>>> Get()
     {
        
@@ -32,6 +32,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [AllowAnonymous]
 
     public async Task<ActionResult<ProductsModel>> Get(int id)
     {
@@ -51,6 +52,7 @@ public class ProductsController : ControllerBase
 
 
     [HttpPost]
+    [Authorize(Policy = PolicyConstants.Admin)]
     public async Task<ActionResult<ProductsModel>> Post([FromBody] ProductsModel products)
     {
         var output = await _products.Create
@@ -72,6 +74,8 @@ public class ProductsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Policy = PolicyConstants.Admin)]
+
 
     public async Task<IActionResult> DeleteAsync(int id)
     {

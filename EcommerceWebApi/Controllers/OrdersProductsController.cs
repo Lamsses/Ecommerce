@@ -1,12 +1,14 @@
 ﻿using EcommerceLibrary.DataAccess;
 using EcommerceLibrary.Models;
+using EcommerceLibrary.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EcommerceWebApi.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-[AllowAnonymous]
+
+
 
 public class OrdersProductsController : ControllerBase
 {
@@ -17,6 +19,7 @@ public class OrdersProductsController : ControllerBase
         _ordersProducts = ordersProducts;
     }
     [HttpGet]
+    [Authorize(Policy = PolicyConstants.Admin)]
 
     public async Task<ActionResult<IEnumerable<OrdersProductsModel>>> Get()
     {
@@ -25,6 +28,7 @@ public class OrdersProductsController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Policy = PolicyConstants.Admin)]
 
     public async Task<ActionResult<OrdersProductsModel>> Get(int id)
     {
@@ -34,7 +38,6 @@ public class OrdersProductsController : ControllerBase
     }
 
     [HttpPost]
-
 
     public async Task<ActionResult<OrdersProductsModel>> Post(OrdersProductsModel model)
     {
@@ -48,7 +51,7 @@ public class OrdersProductsController : ControllerBase
     }
 
     [HttpPut("{id}")]
-
+    [Authorize(Policy = PolicyConstants.Admin)]
     public async Task<ActionResult<OrdersProductsModel>> PutAsync(OrdersProductsModel orders)
     {
         await _ordersProducts.Update(orders.order_id ,orders.product_id,orders.amount,orders.price);
@@ -57,6 +60,7 @@ public class OrdersProductsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Policy = PolicyConstants.Admin)]
 
     public async Task<IActionResult> DeleteAsync(int id)
     {

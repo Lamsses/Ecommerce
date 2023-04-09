@@ -1,5 +1,6 @@
 ﻿using EcommerceLibrary.DataAccess;
 using EcommerceLibrary.Models;
+using EcommerceLibrary.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace EcommerceWebApi.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-[AllowAnonymous]
+
+
 public class CouponController : ControllerBase
 {
     private readonly ICouponData _coupons;
@@ -17,6 +19,7 @@ public class CouponController : ControllerBase
         _coupons = coupons;
     }
     [HttpGet]
+    [Authorize(Policy = PolicyConstants.Admin)]
 
     public async Task<ActionResult<IEnumerable<CouponModel>>> Get()
     {
@@ -31,6 +34,7 @@ public class CouponController : ControllerBase
         return Ok(output);
     }
     [HttpPost]
+    [Authorize(Policy = PolicyConstants.Admin)]
 
 
     public async Task<ActionResult<CouponModel>> Post([FromBody] CouponModel coupons)
@@ -50,11 +54,10 @@ public class CouponController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-
+    [Authorize(Policy = PolicyConstants.Admin)]
     public async Task<IActionResult> DeleteAsync(int id)
     {
         await _coupons.Delete(id);
-
         return Ok();
     }
 }

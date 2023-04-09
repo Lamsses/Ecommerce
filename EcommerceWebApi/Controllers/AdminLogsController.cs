@@ -1,5 +1,6 @@
 ﻿using EcommerceLibrary.DataAccess;
 using EcommerceLibrary.Models;
+using EcommerceLibrary.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,7 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace EcommerceWebApi.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-[AllowAnonymous]
+[Authorize(Policy = PolicyConstants.Admin)]
+
 public class AdminLogsController : ControllerBase
 {
     private readonly IAdminLog _adminLog;
