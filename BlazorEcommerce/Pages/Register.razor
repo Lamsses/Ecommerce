@@ -3,29 +3,42 @@
 
 <div class="reg-form container mt-5 mb-5">
     <EditForm Model="Authenticat" OnValidSubmit="HandleRegisteration" class="row g-3">
+        <DataAnnotationsValidator/>
         <div class="col-md-6">
             <label for="inputFirstName" class="form-label">First Name</label>
             <InputText @bind-Value="Authenticat.first_name" class="form-control" id="inputFirstName" />
+            <ValidationMessage For="@(() => Authenticat.first_name)" />
+
         </div>
         <div class="col-md-6">
             <label for="inputLastName" class="form-label">Last Name</label>
             <InputText @bind-Value="Authenticat.last_name" class="form-control" id="inputLastName" />
+            <ValidationMessage For="@(() => Authenticat.last_name)" />
+
         </div>
         <div class="col-md-12">
             <label for="inputEmail" class="form-label">Email</label>
             <InputText @bind-Value="Authenticat.email" class="form-control" id="inputEmail" />
+            <ValidationMessage For="@(() => Authenticat.email)" />
         </div>
         <div class="col-md-12">
             <label for="inputPassword" class="form-label">Password</label>
             <InputText type="password" @bind-Value="Authenticat.password" class="form-control" id="inputPassword" />
-        </div>
+            <ValidationMessage For="@(() => Authenticat.password)" />
+
+               
+            </div>
         <div class="col-md-12">
             <label for="inputPhone" class="form-label">Phone Number</label>
             <InputText @bind-Value="Authenticat.phone_number" class="form-control" id="inputPhone" />
+            <ValidationMessage For="@(() => Authenticat.phone_number)"/>
         </div>
         <div class="col-md-12">
             <label for="inputCity" class="form-label">City</label>
             <InputText @bind-Value="Authenticat.city" class="form-control" id="inputCity" />
+            <ValidationMessage For="@(() => Authenticat.city)" />
+
+            
         </div>
 
         <button class="btn btn-success" type="submit">Register</button>

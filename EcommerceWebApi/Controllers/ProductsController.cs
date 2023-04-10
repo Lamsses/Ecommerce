@@ -55,9 +55,18 @@ public class ProductsController : ControllerBase
     [Authorize(Policy = PolicyConstants.Admin)]
     public async Task<ActionResult<ProductsModel>> Post([FromBody] ProductsModel products)
     {
-        var output = await _products.Create
-            (products.name, decimal.Parse(products.price), products.quantity, products.img_url, products.description, products.category_id,products.coupon_id, products.discounted_price);
-        return Ok(output);
+        try
+        {
+            var output = await _products.Create
+                (products.name, decimal.Parse(products.price), products.quantity, products.img_url, products.description, products.category_id, products.coupon_id, products.discounted_price);
+            return Ok(output);
+        }
+        catch (Exception e)
+        {
+
+             return StatusCode(StatusCodes.Status500InternalServerError,
+                "Error retrieving data from the database");
+        }
 
     }
 

@@ -1,11 +1,15 @@
 ﻿using BlazorEcommerce.Services;
 using BlazorEcommerce.Services.Interface;
+using Blazored.Toast.Services;
 using EcommerceLibrary.DataAccess;
 using EcommerceLibrary.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Net.Http.Headers;
+using System.Net;
+using System.Text.Json;
+
 
 namespace BlazorEcommerce.Pages;
 
@@ -16,6 +20,7 @@ partial class DashBoardProdcuts : MainBase
     [Inject] ICustomerService customerService { get; set; }
     [Inject] IProductService productService { get; set; }
     [Inject] IOrderProductsService orderProductsService { get; set; }
+    [Inject] IToastService toastService { get; set; }
     protected List<ProductsModel> products = new();
     protected List<CategoriesModel> Categories = new();
     protected List<CouponModel> Coupons = new();
@@ -57,58 +62,147 @@ partial class DashBoardProdcuts : MainBase
 
         return response;
     }
-    private async Task AddProduct()
+    private async Task<HttpResponseMessage> AddProduct()
     {
-        client = factory.CreateClient("api");
-        var product = products.Where(p => p.name == addProduct.name).FirstOrDefault();
-        if (product == null)
+
+        try
         {
-            var response = await productService.AddProduct(addProduct);
-            var result = await response.Content.ReadFromJsonAsync<ProductsModel>();
+            client = factory.CreateClient("api");
+            var product = products.Where(p => p.name == addProduct.name).FirstOrDefault();
+            if (product == null)
+            {
+                var response = await productService.AddProduct(addProduct);
+                var result = await response.Content.ReadFromJsonAsync<ProductsModel>();
+                if (response.IsSuccessStatusCode)
+                {
+                    toastService.ShowSuccess("Product Added Successfully");
+                    adminLog.AddLog(result);
+                    products = await productService.GetProducts();
+
+                }
+                else
+                {
+                    toastService.ShowError("An error occurred Please try again");
+                }
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            toastService.ShowError("An error occurred Please try again");
+
+            return new HttpResponseMessage(HttpStatusCode.BadRequest)
+            {
+                Content = new StringContent("An error occurred while making an HTTP request to add a product. Please try again later.")
+            };
+        }
+        catch (JsonException ex)
+        {
+            toastService.ShowError("There are Missing Inputs");
+
+
+            // Return an informative error response
+            return new HttpResponseMessage(HttpStatusCode.BadRequest)
+            {
+                Content = new StringContent("The JSON data for adding a product is invalid. Please check the input data and try again.")
+            };
+        }
+
+        return new HttpResponseMessage(HttpStatusCode.OK);
+
+    }
+    private async Task<HttpResponseMessage> Delete()
+    {
+
+        try
+        {
+            var product = await productService.GetProductById(productId);
+            var d = await orderProductsService.Delete(productId);
+            var response = await productService.DeleteProduct(productId);
             if (response.IsSuccessStatusCode)
             {
-                adminLog.AddLog(result);
-                products = await productService.GetProducts();
-
+                adminLog.DeleteLog(product);
+                ToastService.ShowSuccess("Item Deleted Successfully");
             }
             else
             {
-                Console.WriteLine("");
+                ToastService.ShowError("Something Went Wrong Please try again");
             }
+            products = await productService.GetProducts();
         }
-    }
-    private async Task Delete(int id)
-    {
-
-        var product = await productService.GetProductById(id);
-        await orderProductsService.Delete(id);
-        var response = await productService.DeleteProduct(id);
-        if (response.IsSuccessStatusCode)
+        catch (HttpRequestException ex)
         {
-            adminLog.DeleteLog(product);
+            toastService.ShowError("An error occurred Please try again");
+
+            return new HttpResponseMessage(HttpStatusCode.BadRequest)
+            {
+                Content = new StringContent("An error occurred while making an HTTP request to add a product. Please try again later.")
+            };
         }
-        products = await productService.GetProducts();
+        catch (JsonException ex)
+        {
+            toastService.ShowError("An error occurred Please try again");
+
+
+            // Return an informative error response
+            return new HttpResponseMessage(HttpStatusCode.BadRequest)
+            {
+                Content = new StringContent("The JSON data for adding a product is invalid. Please check the input data and try again.")
+            };
+        }
+
+        return new HttpResponseMessage(HttpStatusCode.OK);
     }
-    private async Task EditProduct()
+    private async Task<HttpResponseMessage> EditProduct()
     {
 
         var response = await productService.UpdateProduct(editProduct);
         var result = response.Content.ReadFromJsonAsync<ProductsModel>();
-        if (response.IsSuccessStatusCode)
+        try
         {
-            adminLog.UpdateLog(productId);
+            if (response.IsSuccessStatusCode)
+            {
+                toastService.ShowSuccess("Product Edited Successfully");
+
+                adminLog.UpdateLog(productId);
+            }
+            else
+            {
+                toastService.ShowError("Something Wrong Happened Pleas Try again");
+            }
+            products = await productService.GetProducts();
         }
-        products = await productService.GetProducts();
+        catch (HttpRequestException ex)
+        {
+            toastService.ShowError("An error occurred Please try again");
+
+            return new HttpResponseMessage(HttpStatusCode.BadRequest)
+            {
+                Content = new StringContent("An error occurred while making an HTTP request to add a product. Please try again later.")
+            };
+        }
+        catch (JsonException ex)
+        {
+            toastService.ShowError("An error occurred Please try again");
+
+
+            // Return an informative error response
+            return new HttpResponseMessage(HttpStatusCode.BadRequest)
+            {
+                Content = new StringContent("The JSON data for adding a product is invalid. Please check the input data and try again.")
+            };
+        }
+
+        return new HttpResponseMessage(HttpStatusCode.OK);
 
     }
     private async Task AddCategory()
     {
         var response = await client.PostAsJsonAsync("Categories", category.Name);
         Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
-        if (response.IsSuccessStatusCode)
-        {
-            adminLog.AddCategeoryLog(category.Name);
-        }
+        // if (response.IsSuccessStatusCode)
+        // {
+        //      adminLog.AddCategeoryLog(category.Name);
+        // }
 
     }
 
@@ -144,16 +238,7 @@ partial class DashBoardProdcuts : MainBase
         Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
 
         }
-    
-    public bool OkayDisabled = false;
 
-    private void Enable(int id)
-    {
-
-        OkayDisabled = true;
-
-
-    }
 
 
     private async void GetProductId(int id)

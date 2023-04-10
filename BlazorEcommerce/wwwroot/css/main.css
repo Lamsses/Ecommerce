@@ -319,8 +319,19 @@ a {
   .admin-products .img-fl
   
 } */
-/* Importnant Shit */
 
+
+
+.blazored-toast-container[b-y65zu6vhcs] {
+    z-index: 1055 !important;
+}
+
+.validation-message {
+    color: red;
+    margin-top: 5px;
+}
+
+/* Importnant Shit */
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;

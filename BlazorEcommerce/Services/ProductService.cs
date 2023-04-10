@@ -1,4 +1,6 @@
-﻿using BlazorEcommerce.Services.Interface;
+﻿using System.Net;
+using System.Text.Json;
+using BlazorEcommerce.Services.Interface;
 using EcommerceLibrary.Models;
 using Microsoft.AspNetCore.Components;
 
@@ -30,9 +32,11 @@ namespace BlazorEcommerce.Services
 
         public async Task<HttpResponseMessage> AddProduct(ProductsModel product)
         {
-            _client = _factory.CreateClient("api");
-            var response = await _client.PostAsJsonAsync("Products", product);
-            return response;
+
+                _client = _factory.CreateClient("api");
+                var response = await _client.PostAsJsonAsync("Products", product);
+                return response;
+
         }
 
 

@@ -61,17 +61,18 @@ public class CustomersController : ControllerBase
     public async Task<ActionResult<string>> Login([FromBody] LoginInput userInput)
     {
         var user = await _customers.GetUserByEmail(userInput.email);
-        if (user == null) return BadRequest(ModelState);
+        if (user == null) return BadRequest("Wrong username or password");
         if (userInput.email == string.Empty && userInput.password == string.Empty)
         {
             return BadRequest("please enter user name and password");
         }
-        else if (user.email != userInput.email)
-            return BadRequest("Wrong Username");
-        else if (!_customers.VerifyPasswordHash(userInput.password, user.passwordHash!, user.passwordSalt!))
-            return BadRequest("Wrong Password");
 
-        string token = GenerateToken(user);
+        if (user.email != userInput.email)
+            return BadRequest("Wrong username or password");
+        if (!_customers.VerifyPasswordHash(userInput.password, user.passwordHash!, user.passwordSalt!))
+            return BadRequest("Wrong username or password");
+
+        var token = GenerateToken(user);
 
         return Ok(token);
     }
@@ -108,6 +109,10 @@ public class CustomersController : ControllerBase
         var customerModel = _mapper.Map<CustomersModel>(customer);
 
         var existingCustomer = await _customers.GetUserByEmail(customer.email);
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
 
         if (existingCustomer != null)
         {

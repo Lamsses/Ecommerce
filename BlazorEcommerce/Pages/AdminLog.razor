@@ -4,11 +4,13 @@
 @layout DashboardLayout
 @inherits MainBase
 
+
 @attribute [Authorize(Policy ="Admin")]
 
-<div class="container">
-    <h3>Admins Log</h3>
-    <table class="table">
+<div class="container  mt-5">
+
+    <table class="table table-striped" >
+
         <thead>
 
         </thead>
@@ -19,8 +21,11 @@
 
 @foreach (var item in adminLog)
 {
-    <tr>
+    <tr class="">
+        <td class="fs-5 table-striped">
         @item.log_msg
+
+        </td>
     </tr>
 }
         }

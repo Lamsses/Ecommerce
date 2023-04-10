@@ -22,6 +22,7 @@ public class MainBase : ComponentBase
     [Inject] public ICustomerService customerService { get; set; }
     [Inject] public IOrderService orderService { get; set; }
     [Inject] public IOrderProductsService orderProductsService { get; set; }
+    [Inject] public IProductService ProductService { get; set; }
     [Inject] public IToastService ToastService { get; set; }
     protected AuthenticationModel Authenticat = new();
     private OrdersModel orders;
@@ -75,7 +76,7 @@ public class MainBase : ComponentBase
 
 
     }
-    private static List<int> generatedNumbers = new List<int>();
+    private static List<int> generatedNumbers = new();
 
     private static bool IsDuplicate(int number)
     {
@@ -94,6 +95,8 @@ public class MainBase : ComponentBase
 
         var cart =  await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
         var token = await LocalStorage.GetItemAsync<string>("token");
+        var cart = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
+
 
         var order = new OrdersModel
         {
@@ -105,45 +108,70 @@ public class MainBase : ComponentBase
         client = factory.CreateClient("api");
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var response = await orderService.AddOrder(order);
-        var result = await response.Content.ReadFromJsonAsync<OrdersModel>();
-
-        if (response.IsSuccessStatusCode) 
+        if (cart is not null)
         {
 
-            foreach (var item in cart)
+            var response = await orderService.AddOrder(order);
+            var result = await response.Content.ReadFromJsonAsync<OrdersModel>();
+
+            if (response.IsSuccessStatusCode)
             {
-                if (item.discounted_price <= 0)
+
+
+
+
+                foreach (var item in cart)
                 {
-                    
-                    await orderProductsService.Add(new OrdersProductsModel
-                        { order_id = result.order_id, product_id = item.product_id, amount = item.ProductAmount, price = decimal.Parse(item.price) });
+                    if (item.discounted_price <= 0)
+                    {
+
+                        await orderProductsService.Add(new OrdersProductsModel
+                        {
+                            order_id = result.order_id, product_id = item.product_id, amount = item.ProductAmount,
+                            price = decimal.Parse(item.price)
+                        });
+                        item.quantity -= item.ProductAmount;
+                        await ProductService.UpdateProduct(item);
+
+                    }
+                    else
+                    {
+                        await orderProductsService.Add(new OrdersProductsModel
+                        {
+                            order_id = result.order_id, product_id = item.product_id, amount = item.ProductAmount,
+                            price = item.discounted_price
+                        });
+                        item.quantity -= item.ProductAmount;
+                        await ProductService.UpdateProduct(item);
+
+                        item.discounted_price = 0;
+                        var a1 = await client.PutAsJsonAsync<ProductsModel>($"Products/{item.product_id}", item);
+
+                    }
+
                 }
-                else
-                {
-                    await orderProductsService.Add(new OrdersProductsModel
-                            { order_id = result.order_id, product_id = item.product_id, amount = item.ProductAmount, price = item.discounted_price });
-
-                    item.discounted_price = 0;
-                    var a1 = await client.PutAsJsonAsync<ProductsModel>($"Products/{item.product_id}", item);
-                              
-                }
 
 
-
-
+                ToastService.ShowSuccess("Order Successfuly Completed");
+                await LocalStorage.RemoveItemAsync("cart");
+                Thread.Sleep(1500);
+                NavigationManager.NavigateTo("/", true);
             }
 
-            ToastService.ShowSuccess("Order Successfuly Completed");
-            await Task.Delay(1000);
-            LocalStorage.RemoveItemAsync("cart");
-            
-            
-            NavigationManager.NavigateTo("/",true);
+
+        }
+        else
+        {
+            ToastService.ShowError("Add Some Items to your cart first!!");
+
         }
 
 
+
     }
+
+
+    
 
 
 }

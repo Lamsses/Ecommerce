@@ -3,14 +3,13 @@
 @inherits CartBase
 
 
+
 <AuthorizeView Context="AAXX" Policy="Admin">
     <Authorized>
-        <a href="/dash">cone here baby</a>
+        <a href="/dash">come here baby</a>
     </Authorized>
  
 </AuthorizeView>
-    
-
 
 <nav class="main-nav navbar navbar-expand-lg shadow ">
     <div class="container">
@@ -74,7 +73,7 @@
             </form>
 
             <AuthorizeView>
-                <Authorized>
+                <Authorized >
                     <a href="" class="nav-link mt-sm-2 mb-sm-2 ms-lg-auto mt-3 d-flex align-items-center d-lg-flex justify-content-lg-center align-items-lg-center d-sm-flex justify-content-sm-start align-items-sm-center">
                         <i class="fa-regular fa-user pe-2 ms-lg-3"></i>
                         <p class="m-0" @onclick="Logout">Logout</p>
