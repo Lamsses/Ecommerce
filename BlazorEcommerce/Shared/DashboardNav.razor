@@ -1,4 +1,6 @@
-﻿<nav class="main-nav navbar navbar-expand-lg shadow sticky-top">
+﻿<AuthorizeView  Context="A" Policy="Admin">
+    
+<nav class="main-nav navbar navbar-expand-lg shadow sticky-top">
     <div class="container">
         <a class="navbar-brand" href="#">
             Dashboard
@@ -21,21 +23,22 @@
                 <li class="nav-item me-2">
                     <a class="nav-link" href="anal">Analytics</a>
                 </li>
+           
                 <li class="nav-item me-2">
                     <a class="nav-link" href="log">AdminLog</a>
-                </li><li class="nav-item me-2">
+                </li>
+
+                <li class="nav-item me-2">
                     <a class="nav-link" href="CustomerLog">CustomerLog</a>
                 </li>
+                <AuthorizeView Policy="SuperAdmin">
                 <li class="nav-item me-2">
                     <a class="nav-link" href="inv">Admin Invite</a>
                 </li>
+                    </AuthorizeView>
             </ul>
-
-
-
-
-
         </div>
 
     </div>
 </nav>
+</AuthorizeView>

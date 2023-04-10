@@ -1,7 +1,8 @@
 ﻿@page "/dash"
 @layout DashboardLayout
 @inherits MainBase
-<AuthorizeView Context="AAXX" Policy="Admin">
+
+@attribute [Authorize(Policy = "Admin")]
 
 <section class="admin-products pt-5">
     <div class="container">
@@ -366,7 +367,6 @@
 
 </section>
 
-   </AuthorizeView>
  
 @*  <BlazoredTypeahead SearchMethod="@SearchProducts"  *@
 @*                 TValue="ProductsModel" *@
@@ -494,3 +494,5 @@
 @*     </EditForm> *@
 @* </div> *@
 @* *@
+
+

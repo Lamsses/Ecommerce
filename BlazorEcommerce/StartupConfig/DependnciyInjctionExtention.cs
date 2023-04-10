@@ -41,17 +41,20 @@ public static class DependnciyInjctionExtention
     {
         builder.Services.AddAuthorization(opts =>
         {
-
+            
             opts.AddPolicy("Admin", policy =>
             {
-                policy.RequireClaim("role_id");
+                policy.RequireClaim("role_id","2","1");
 
             });
             opts.AddPolicy("SuperAdmin", policy =>
             {
                 policy.RequireClaim("role_id", "1");
 
-            });
+
+            }
+            );
+            
         });
     }
     public static void AddHttpClientService(this WebApplicationBuilder builder)

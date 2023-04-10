@@ -1,9 +1,14 @@
 ﻿@page "/CustomerLog"
+@using System.Net.Http.Headers;
 @layout DashboardLayout
 @inherits MainBase
 
-
-<section class="customer-log">
+    @if (string.IsNullOrEmpty(errorMsg))
+    {
+        <h1>@errorMsg</h1>
+    }
+<AuthorizeView  Policy="Admin">
+    <section class="customer-log">
     <div class="container">
         <div class="row mt-4">
             @foreach (var item in customerLog)
@@ -49,6 +54,7 @@
     
     </div>
 </section>
+</AuthorizeView>
 @* @if (customerLog is not null) *@
 @* { *@
 @*     @foreach (var item in customerLog) *@
@@ -62,11 +68,23 @@
     private List<CustomerLogsModel> customerLog = new();
     private List<OrdersModel> orders = new();
     private List<IEnumerable<CustomerLogsModel>> orderProducts;
+    private string errorMsg;
     protected override async Task OnInitializedAsync()
     {
         client = factory.CreateClient("api");
-        customerLog = await client.GetFromJsonAsync<List<CustomerLogsModel>>("CustomerLogs");
-        orders = await client.GetFromJsonAsync<List<OrdersModel>>("Orders");
+        var token = await LocalStorage.GetItemAsync<string>("token");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
+        try
+        {
+            customerLog = await client.GetFromJsonAsync<List<CustomerLogsModel>>("CustomerLogs");
+            orders = await client.GetFromJsonAsync<List<OrdersModel>>("Orders");
+            errorMsg = "";
+        }
+        catch (Exception ex)
+        {
+
+            errorMsg = ex.Message;
+        }
         foreach (var item in orders)
         {
             orderProducts.Add(customerLog.Where(x => x.order_id == item.order_id));

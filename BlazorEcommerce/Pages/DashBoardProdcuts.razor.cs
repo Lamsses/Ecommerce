@@ -4,6 +4,8 @@ using EcommerceLibrary.DataAccess;
 using EcommerceLibrary.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
+using System.Net.Http.Headers;
 
 namespace BlazorEcommerce.Pages;
 
@@ -17,15 +19,27 @@ partial class DashBoardProdcuts : MainBase
     protected List<ProductsModel> products = new();
     protected List<CategoriesModel> Categories = new();
     protected List<CouponModel> Coupons = new();
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
-        client = factory.CreateClient("api");
+        if (authenticationState is not null)
+        {
 
-        products = await client.GetFromJsonAsync<List<ProductsModel>>("Products");
-        Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
-        Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
+            var authState = await authenticationState;
+            var user = authState?.User;
 
+    
+                client = factory.CreateClient("api");
+                var token = await LocalStorage.GetItemAsync<string>("token");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
 
+                products = await client.GetFromJsonAsync<List<ProductsModel>>("Products");
+                Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
+                Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
+            
+        }
     }
     private ProductsModel selectedProduct = new();
     private AdminLogsModel adminLogs = new();

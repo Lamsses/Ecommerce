@@ -34,18 +34,40 @@ public static class DependnciyInjctionExtention
     }
     public static void AddAuthServices(this WebApplicationBuilder builder)
     {
-      
+
         builder.Services.AddAuthorization(opts =>
         {
             opts.AddPolicy("Admin", policy =>
             {
-                policy.RequireClaim("role_id");
+                policy.RequireClaim("role_id","2","1");
+
             });
             opts.AddPolicy("SuperAdmin", policy =>
             {
                 policy.RequireClaim("role_id", "1");
+
             });
+            opts.FallbackPolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build();
         });
+
+        builder.Services.AddAuthentication("Bearer")
+                   .AddJwtBearer(opts =>
+                   {
+                       opts.TokenValidationParameters = new()
+                       {
+                           ValidateIssuer = true,
+                           ValidateAudience = true,
+                           ValidateIssuerSigningKey = true,
+                           ValidIssuer = builder.Configuration.GetValue<string>("Authentication:Issuer"),
+                           ValidAudience = builder.Configuration.GetValue<string>("Authentication:Audience"),
+                           IssuerSigningKey = new SymmetricSecurityKey(
+                               Encoding.ASCII.GetBytes(
+                               builder.Configuration.GetValue<string>("Authentication:SecretKey")))
+                       };
+                   });
+
     }
     public static void AddRateLimitServices(this WebApplicationBuilder builder)
     {

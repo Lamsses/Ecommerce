@@ -9,7 +9,6 @@ namespace EcommerceWebApi.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 
-
 public class CouponController : ControllerBase
 {
     private readonly ICouponData _coupons;
