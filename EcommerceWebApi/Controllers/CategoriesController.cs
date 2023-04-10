@@ -1,5 +1,6 @@
 ﻿using EcommerceLibrary.DataAccess;
 using EcommerceLibrary.Models;
+using EcommerceLibrary.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,7 +8,7 @@ namespace EcommerceWebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[AllowAnonymous]
+
 
 
 public class CategoriesController : ControllerBase
@@ -19,6 +20,7 @@ public class CategoriesController : ControllerBase
         _categories = categories;
     }
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<CategoriesModel>>> Get()
     {
         var output = await _categories.GetAll();
@@ -26,6 +28,7 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public async Task<ActionResult<CategoriesModel>> Get(int id)
     {
         var output = await _categories.GetOne(id);
@@ -34,6 +37,7 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = PolicyConstants.Admin)]
     public async Task<ActionResult<CategoriesModel>> Post([FromBody]string name)
     {
         var output = await _categories.Create(name);
@@ -42,6 +46,9 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Policy = PolicyConstants.Admin)]
+
+
     public async Task<ActionResult<CategoriesModel>> PutAsync(int id, [FromBody] CategoriesModel category)
     {
         await _categories.Update(id, category.Name);
@@ -50,6 +57,7 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Policy =PolicyConstants.Admin)]
     public async Task<IActionResult> DeleteAsync(int id)
     {
         await _categories.Delete(id);

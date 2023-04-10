@@ -2,7 +2,10 @@
 @layout DashboardLayout
 @inherits MainBase
 
+@attribute [Authorize(Policy = "Admin")]
+
 <section class="admin-products pt-5">
+
 <div class="container">
 <!-- Search Input -->
 <form class="input-form d-flex mt-3" role="search">
@@ -10,6 +13,7 @@
                        TValue="ProductsModel"
                        TItem="ProductsModel"
                        Value="selectedProduct"
+                       ValueChanged="HandleSearch"
                        ValueExpression="@(() => selectedProduct)"
                        placeholder="Search">
         <SelectedTemplate>
@@ -19,7 +23,7 @@
             @context.name
         </ResultTemplate>
         <NotFoundTemplate>
-            get otta here
+            No Results
         </NotFoundTemplate>
     </BlazoredTypeahead>
 </form>
@@ -40,6 +44,7 @@
                     <div class="col-md-6">
                         <label for="inputProductName" class="form-label">Product Name</label>
                         <InputText placeholder="" id="inputProductName" @bind-Value="addProduct.name" class="form-control" required />
+
                     </div>
                     <div class="col-md-6">
                         <label for="inputPricee" class="form-label">Price</label>
@@ -265,6 +270,7 @@
                 </EditForm>
             </div>
         </div>
+
     </div>
 </div>
 <!-- Confirm Delete -->
@@ -287,6 +293,49 @@
 </div>
 <!-- Product List -->
 <div class="products-container row mt-4  ">
+              @if (selectedProduct.product_id != 0)
+            {
+                <div class="col-12">
+                    <div class="card border-0  mb-3">
+
+                        <div class="row g-0">
+                            <div class="col-4 col-lg-2 col-md-2">
+                                <img src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e8c4e68b497e229146b818_leptop%20sleeve-min.png" class="img-fluid rounded-start" alt="...">
+                            </div>
+                            <div class="col-8 col-lg-4 col-md-10">
+                                <div class="card-body pt-5">
+                                    <h5 class="card-title d-flex justify-content-between">
+                                        @selectedProduct.name
+                                        <span>$@selectedProduct.price</span>
+                                    </h5>
+                                    <p>quantity:@selectedProduct.quantity</p>
+                                </div>
+                            </div>
+                            <div class="col ">
+                                <div class="row justify-content-center  pt-lg-5">
+                                    <div class="col-2   col-lg-2">
+                                        <button class="btn btn-dark" type="button" @onclick="()=>GetProductId(selectedProduct.product_id)" data-bs-toggle="modal" data-bs-target="#editproduct">edit</button>
+                                    </div>
+                                    <div class="col-2 me-3 me-lg-4 col-lg-2">
+                                        <button class="btn btn-danger" type="button" @onclick="()=>Delete(selectedProduct.product_id)">Delete</button>
+                                    </div>
+                                    <div class="col-2  col-lg-2">
+                                        <button type="button" class="btn btn-warning">disable</button>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <hr>
+                </div>
+
+            }
+            else
+            {
+                
     @if(products is not null) 
     {
         @foreach (var item in products)
@@ -329,135 +378,11 @@
             
         }
             
-    } 
-</div>
-</div>
+
+             } 
+             }
+        </div>
+    </div>
 
 </section>
 
-@*  <BlazoredTypeahead SearchMethod="@SearchProducts"  *@
-@*                 TValue="ProductsModel" *@
-@*                 TItem="ProductsModel" *@
-@*                 Value="selectedProduct" *@
-@*                 ValueExpression="@(() => selectedProduct)" *@
-@*                 placeholder="Search"> *@
-@*                     <SelectedTemplate> *@
-@*                         @context.name *@
-@*                     </SelectedTemplate> *@
-@*                     <ResultTemplate> *@
-@*                         @context.name *@
-@*                     </ResultTemplate> *@
-@*                     <NotFoundTemplate> *@
-@*                         get otta here *@
-@*                     </NotFoundTemplate> *@
-@*                 </BlazoredTypeahead> *@
-@* <h3>Prodcuts</h3> *@
-@* *@
-@* @if (products is not null) *@
-@* { *@
-@*     @foreach (var item in products) *@
-@*     { *@
-@*         @if (!OkayDisabled) *@
-@*         { *@
-@*             <div class="d-flex justify-content-center"> *@
-@*                 <span>@item.name </span> *@
-@*                 <span>@item.quantity </span> *@
-@*                 <span>@item.img_url </span> *@
-@*                 <button type="button" @onclick="()=>Delete(item.product_id)">Delete</button> *@
-@*                 <button type="button" @onclick="()=>EditProduct(item.product_id)">Edit</button> *@
-@*                 <button type="button" @onclick="()=>Enable(item.product_id)">Disable</button> *@
-@* *@
-@*             </div> *@
-@*         } *@
-@*         *@
-@* *@
-@*     } *@
-@*      *@
-@* } *@
-@* <h3>AddPrdouct</h3> *@
-@* <div class="log-form container mt-5 mb-5"> *@
-@*     <EditForm Model="selectedProduct" OnValidSubmit="AddProduct" class="row g-3"> *@
-@* *@
-@*         <InputText placeholder="name" @bind-Value="selectedProduct.name" class="form-control"  /> *@
-@*         <InputText placeholder="description" @bind-Value="selectedProduct.description" class="form-control" /> *@
-@*         <InputText placeholder="img_url" @bind-Value="selectedProduct.img_url" class="form-control" /> *@
-@*         <InputText placeholder="price" @bind-Value="selectedProduct.price" class="form-control" /> *@
-@*         <InputNumber placeholder="quantity" @bind-Value="selectedProduct.quantity" class="form-control" /> *@
-@*         <InputNumber placeholder="category_id" @bind-Value="selectedProduct.category_id" class="form-control" /> *@
-@*         <InputNumber placeholder="coupon_id" @bind-Value="selectedProduct.coupon_id" class="form-control" /> *@
-@* *@
-@* *@
-@* *@
-@*         <button class="btn btn-success" type="submit">Add Product</button> *@
-@*     </EditForm> *@
-@* </div> *@
-@* *@
-@* <h3>EditProduct</h3> *@
-@* *@
-@* <div class="log-form container mt-5 mb-5"> *@
-@*     <EditForm Model="editProduct"   class="row g-3"> *@
-@* *@
-@*         <InputText placeholder="name" @bind-Value="editProduct.name" class="form-control" /> *@
-@*         <InputText placeholder="description" @bind-Value="editProduct.description" class="form-control" /> *@
-@*         <InputText placeholder="img_url" @bind-Value="editProduct.img_url" class="form-control" /> *@
-@*         <InputText placeholder="price" @bind-Value="editProduct.price" class="form-control" /> *@
-@*         <InputNumber placeholder="quantity" @bind-Value="editProduct.quantity" class="form-control" /> *@
-@*         <InputNumber placeholder="category_id" @bind-Value="editProduct.category_id" class="form-control" /> *@
-@*         <InputNumber placeholder="coupon_id" @bind-Value="selectedProduct.coupon_id" class="form-control" /> *@
-@* *@
-@* *@
-@* *@
-@*         <button class="btn btn-success" type="submit">Edit Product</button> *@
-@*     </EditForm> *@
-@* *@
-@* </div> *@
-@* *@
-@* *@
-@*     <select class="form-select mt-2" aria-label="Default select example"> *@
-@*         <option  selected>Choose Category</option> *@
-@*         @if (Categories is not null) *@
-@*         { *@
-@*             foreach (var item in Categories) *@
-@*             { *@
-@*                 <option value="1">@item.Name</option> *@
-@* *@
-@*              *@
-@*             } *@
-@*         } *@
-@*     </select> *@
-@* *@
-@* <h3>Add Category</h3> *@
-@* <div class="log-form container mt-5 mb-5"> *@
-@*     <EditForm Model="category"  OnValidSubmit="AddCategory" class="row g-3"> *@
-@*         <InputText placeholder="name" @bind-Value="category.Name" class="form-control" /> *@
-@*         <button  class="btn btn-success" type="submit">ADD</button> *@
-@*     </EditForm> *@
-@* </div>  *@
-@* *@
-@* *@
-@* *@
-@* <select class="form-select mt-2" aria-label="Default select example"> *@
-@*         <option  selected>Coupon</option> *@
-@*         @if (Coupons is not null) *@
-@*         { *@
-@*             foreach (var item in Coupons) *@
-@*             { *@
-@*                 <option value="1">@item.coupon_name</option> *@
-@* *@
-@*              *@
-@*             } *@
-@*         } *@
-@*     </select> *@
-@* *@
-@* <h3>Add Coupon</h3> *@
-@* <div class="log-form container mt-5 mb-5"> *@
-@*     <EditForm Model="coupon" OnValidSubmit="AddCoupon" class="row g-3"> *@
-@*         <InputText placeholder="name" @bind-Value="coupon.coupon_name" class="form-control" /> *@
-@*         <InputNumber placeholder="use" @bind-Value="coupon.coupon_use" class="form-control" /> *@
-@*         <InputNumber placeholder="discount" @bind-Value="coupon.coupon_discount" class="form-control" /> *@
-@*         $1$<InputText placeholder="expire" @bind-Value="coupon.coupon_expire" class="form-control" />#1# *@
-@*         <InputDate @bind-Value="coupon.coupon_expire" class="form-control"></InputDate> *@
-@*         <button id="" class="btn btn-success" type="submit">Add Coupon</button> *@
-@*     </EditForm> *@
-@* </div> *@
-@* *@

@@ -10,12 +10,14 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using EcommerceLibrary.Dto;
 using Microsoft.AspNetCore.Http.HttpResults;
+using EcommerceLibrary.Constants;
 
 namespace EcommerceWebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[AllowAnonymous]
+
+
 
 public class CustomersController : ControllerBase
 {
@@ -40,8 +42,6 @@ public class CustomersController : ControllerBase
 
         List<Claim> claims = new();
         claims.Add(new(JwtRegisteredClaimNames.Sub, user.customer_id.ToString()));
-        claims.Add(new(JwtRegisteredClaimNames.GivenName, user.first_name));
-        claims.Add(new(JwtRegisteredClaimNames.FamilyName, user.last_name));
         claims.Add(new("role_id", user.role_id.ToString()));
 
         
@@ -50,10 +50,8 @@ public class CustomersController : ControllerBase
         var token = new JwtSecurityToken(
             _config.GetValue<string>("Authentication:Issuer"),
             _config.GetValue<string>("Authentication:Audience"),
-            claims,
-            DateTime.UtcNow,
-            DateTime.UtcNow.AddMinutes(1),
-            signingCredentials);
+            claims
+            );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
@@ -78,6 +76,7 @@ public class CustomersController : ControllerBase
 
         return Ok(token);
     }
+
     [HttpGet("Search/{CustomerEmail}")]
     [AllowAnonymous]
     public async Task<ActionResult<CustomersModel>> GetUsersByEmail(string CustomerEmail)
@@ -86,8 +85,8 @@ public class CustomersController : ControllerBase
         return Ok(output);
     }
     [HttpGet]
-    [Authorize(Policy = "Admin")]
-    [Authorize(Policy = "SuperAdmin")]
+    [Authorize(Policy = PolicyConstants.Admin)]
+
     public async Task<ActionResult<IEnumerable<CustomersModel>>> Get()
     {
         var output = await _customers.GetAll();
@@ -95,8 +94,7 @@ public class CustomersController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [Authorize(Policy = "Admin")]
-    [Authorize(Policy = "SuperAdmin")]
+
     public async Task<ActionResult<CustomersModel>> Get(int id)
     {
         var output = await _customers.GetOne(id);
@@ -106,7 +104,6 @@ public class CustomersController : ControllerBase
 
     [HttpPost]
     [AllowAnonymous]
-
     public async Task<ActionResult<CustomersModel>> Post([FromBody] AuthenticationModel customer)
     {
         var customerModel = _mapper.Map<CustomersModel>(customer);
@@ -134,6 +131,8 @@ public class CustomersController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Policy = PolicyConstants.Admin)]
+
     public async Task<ActionResult<CustomersModel>> PutAsync(int id, [FromBody] AuthenticationModel customer)
     {
         var customerModel = _mapper.Map<CustomersModel>(customer);
@@ -146,6 +145,8 @@ public class CustomersController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Policy = PolicyConstants.Admin)]
+
     public async Task<IActionResult> DeleteAsync(int id)
     {
         await _customers.Delete(id);
@@ -154,7 +155,9 @@ public class CustomersController : ControllerBase
     }
 
     [HttpPatch("{email}")]
-    [Authorize(Policy = "Admin")]
+    [Authorize(Policy = PolicyConstants.SuperAdmin)]
+
+
     public async Task<IActionResult> UpdateUserRole(string email, [FromBody] int? roleId)
     {
         if (string.IsNullOrWhiteSpace(email))

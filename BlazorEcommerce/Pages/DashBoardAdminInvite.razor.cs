@@ -2,6 +2,7 @@
 using EcommerceLibrary.Models;
 using System.Text.Json;
 using System.Text;
+using System.Net.Http.Headers;
 
 namespace BlazorEcommerce.Pages;
 
@@ -11,19 +12,23 @@ partial class DashBoardAdminInvite : MainBase
     protected CustomersModel CustomerFound = new();
     private async Task<IEnumerable<CustomersModel>> MakeAdmin(string CustomerEmail)
     {
+
         try
         {
             client = factory.CreateClient("api");
+            var token = await LocalStorage.GetItemAsync<string>("token");
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
             var response = await client.GetFromJsonAsync<IEnumerable<CustomersModel>>($"Customers/Search/{CustomerEmail}");
             CustomerFound = response.FirstOrDefault();
-
-            return response;
+       
+        return response;
         }
         catch (Exception)
         {
 
             return Enumerable.Empty<CustomersModel>();
         }
+
 
     }
     private async Task GiveAdmin()

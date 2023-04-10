@@ -30,4 +30,8 @@
     <ProjectReference Include="..\EcommerceLibrary\EcommerceLibrary.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Properties\PublishProfiles\" />
+  </ItemGroup>
+
 </Project>

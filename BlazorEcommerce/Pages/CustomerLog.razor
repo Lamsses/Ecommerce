@@ -1,9 +1,11 @@
 ﻿@page "/CustomerLog"
+@using System.Net.Http.Headers;
 @layout DashboardLayout
 @inherits MainBase
 
 
-<section class="customer-log">
+<AuthorizeView  Policy="Admin">
+    <section class="customer-log">
     <div class="container">
         <div class="row mt-4">
 
@@ -70,5 +72,3 @@
 
     </div>
 </section>
-
-

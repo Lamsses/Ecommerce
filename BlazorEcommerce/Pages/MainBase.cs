@@ -93,6 +93,7 @@ public class MainBase : ComponentBase
     public async Task OrdersCheckout()
     {
 
+        var cart =  await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
         var token = await LocalStorage.GetItemAsync<string>("token");
         var cart = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
 
@@ -109,10 +110,9 @@ public class MainBase : ComponentBase
 
         if (cart is not null)
         {
+
             var response = await orderService.AddOrder(order);
             var result = await response.Content.ReadFromJsonAsync<OrdersModel>();
-
-
 
             if (response.IsSuccessStatusCode)
             {
@@ -163,6 +163,7 @@ public class MainBase : ComponentBase
         else
         {
             ToastService.ShowError("Add Some Items to your cart first!!");
+
         }
 
 

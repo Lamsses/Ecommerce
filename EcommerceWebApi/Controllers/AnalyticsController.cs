@@ -1,12 +1,14 @@
 ﻿using EcommerceLibrary.DataAccess;
 using EcommerceLibrary.Models;
+using EcommerceLibrary.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EcommerceWebApi.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-[AllowAnonymous]
+[Authorize(Policy = PolicyConstants.Admin)]
+
 public class AnalyticsController : ControllerBase
 {
     private readonly IAnalyticsData _analyticsData;
