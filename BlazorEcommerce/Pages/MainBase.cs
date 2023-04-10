@@ -95,7 +95,7 @@ public class MainBase : ComponentBase
 
         var cart =  await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
         var token = await LocalStorage.GetItemAsync<string>("token");
-        var cart = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
+
 
 
         var order = new OrdersModel
@@ -131,7 +131,7 @@ public class MainBase : ComponentBase
                             price = decimal.Parse(item.price)
                         });
                         item.quantity -= item.ProductAmount;
-                        await ProductService.UpdateProduct(item);
+                        var a = await ProductService.UpdateProduct(item);
 
                     }
                     else

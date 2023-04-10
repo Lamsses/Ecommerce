@@ -4,6 +4,7 @@ using EcommerceLibrary.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualBasic;
+using System.Net.Http.Headers;
 
 namespace BlazorEcommerce.Pages;
 
@@ -28,6 +29,10 @@ partial class Checkout
     protected async override Task OnInitializedAsync()
     {
         client = factory.CreateClient("api");
+
+        var token = await LocalStorage.GetItemAsync<string>("token");
+        client.DefaultRequestHeaders.Authorization = 
+            new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));       
         products = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
         Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
 
@@ -37,8 +42,11 @@ partial class Checkout
     public async Task<decimal> ApplyCoupon()
     {
         client = factory.CreateClient("api");
-        var coupon = await client.GetFromJsonAsync<CouponModel>($"Coupon/{couponName}");
         var token = await LocalStorage.GetItemAsync<string>("token");
+        client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
+        var coupon = await client.GetFromJsonAsync<CouponModel>($"Coupon/{couponName}");
+
         var userId = await customerService.GetUserIdFromToken();
 
         if (!couponName.IsNullOrEmpty())

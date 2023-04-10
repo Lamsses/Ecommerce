@@ -39,7 +39,6 @@ partial class DashBoardProdcuts : MainBase
                 client = factory.CreateClient("api");
                 var token = await LocalStorage.GetItemAsync<string>("token");
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
-
                 products = await client.GetFromJsonAsync<List<ProductsModel>>("Products");
                 Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
                 Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
@@ -112,6 +111,7 @@ partial class DashBoardProdcuts : MainBase
     }
     private async Task<HttpResponseMessage> Delete()
     {
+    
 
         try
         {
@@ -197,6 +197,9 @@ partial class DashBoardProdcuts : MainBase
     }
     private async Task AddCategory()
     {
+        client = factory.CreateClient("api");
+        var token = await LocalStorage.GetItemAsync<string>("token");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
         var response = await client.PostAsJsonAsync("Categories", category.Name);
         Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
         // if (response.IsSuccessStatusCode)
@@ -234,6 +237,9 @@ partial class DashBoardProdcuts : MainBase
 
         }private async Task DeleteCoupon()
     {
+        client = factory.CreateClient("api");
+        var token = await LocalStorage.GetItemAsync<string>("token");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
         var response = await client.DeleteAsync($"Coupon/{coupon.coupon_id}");
         Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
 

@@ -42,7 +42,7 @@ public class OrdersController : ControllerBase
     }
   
     [HttpPost]
-    
+    [AllowAnonymous]
     public async Task<ActionResult<OrdersModel>> Post([FromBody] OrdersModel orders)
     {
 

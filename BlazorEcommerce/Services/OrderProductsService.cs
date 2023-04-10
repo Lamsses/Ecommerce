@@ -1,5 +1,8 @@
 ﻿using BlazorEcommerce.Services.Interface;
+using Blazored.LocalStorage;
 using EcommerceLibrary.Models;
+using Microsoft.AspNetCore.Components;
+using System.Net.Http.Headers;
 
 namespace BlazorEcommerce.Services;
 
@@ -7,10 +10,12 @@ public class OrderProductsService : IOrderProductsService
 {
     private IHttpClientFactory? _factory;
     private HttpClient? _client;
+    private ILocalStorageService _localStorage;
 
-    public OrderProductsService(HttpClient client, IHttpClientFactory factory)
+    public OrderProductsService(HttpClient client, IHttpClientFactory factory, ILocalStorageService localStorage)
     {
         _factory = factory;
+        _localStorage = localStorage;
         _client = client;
         
     }
@@ -39,6 +44,9 @@ public class OrderProductsService : IOrderProductsService
     public async Task<HttpResponseMessage> Delete(int id)
     {
         _client = _factory.CreateClient("api");
+
+        var token = await _localStorage.GetItemAsync<string>("token");
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
         var response = await _client.DeleteAsync($"api/OrdersProducts/{id}");
         return response;
 

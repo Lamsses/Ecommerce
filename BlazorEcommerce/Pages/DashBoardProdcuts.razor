@@ -317,7 +317,7 @@
                                         <button class="btn btn-dark" type="button" @onclick="()=>GetProductId(selectedProduct.product_id)" data-bs-toggle="modal" data-bs-target="#editproduct">edit</button>
                                     </div>
                                     <div class="col-2 me-3 me-lg-4 col-lg-2">
-                                        <button class="btn btn-danger" type="button" @onclick="()=>Delete(selectedProduct.product_id)">Delete</button>
+                                        <button class="btn btn-danger" type="button"  data-bs-toggle="modal" data-bs-target="#confirmDelete">Delete</button>
                                     </div>
                                     <div class="col-2  col-lg-2">
                                         <button type="button" class="btn btn-warning">disable</button>

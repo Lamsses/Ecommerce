@@ -1,6 +1,7 @@
 ﻿using BlazorEcommerce.Services.Interface;
 using EcommerceLibrary.Models;
 using Microsoft.AspNetCore.Components;
+using System.Net.Http.Headers;
 
 namespace BlazorEcommerce.Pages;
 
@@ -41,6 +42,9 @@ partial class CustomerLog
     protected override async Task OnInitializedAsync()
     {
         client = factory.CreateClient("api");
+        client = factory.CreateClient("api");
+        var token = await LocalStorage.GetItemAsync<string>("token");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
         customerLog = await client.GetFromJsonAsync<List<CustomerLogsModel>>("CustomerLogs");
         orders = await client.GetFromJsonAsync<List<OrdersModel>>("Orders");
         Customers = await client.GetFromJsonAsync<List<CustomersModel>>("Customers");

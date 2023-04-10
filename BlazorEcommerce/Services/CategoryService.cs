@@ -16,6 +16,7 @@ public class CategoryService : ICategoryService
     public async Task<List<CategoriesModel>> GetCategories()
     {
         _client = _factory.CreateClient("api");
+
             var response = await _client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
             return response;
     }

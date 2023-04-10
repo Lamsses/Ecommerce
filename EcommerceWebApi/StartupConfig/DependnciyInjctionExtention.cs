@@ -39,7 +39,7 @@ public static class DependnciyInjctionExtention
         {
             opts.AddPolicy("Admin", policy =>
             {
-                policy.RequireClaim("role_id","2","1");
+                policy.RequireClaim("role_id","2");
 
             });
             opts.AddPolicy("SuperAdmin", policy =>

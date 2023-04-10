@@ -60,7 +60,7 @@ public class OrdersProductsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [Authorize(Policy = PolicyConstants.Admin)]
+    [Authorize(Policy = "SuperAdmin")]
 
     public async Task<IActionResult> DeleteAsync(int id)
     {

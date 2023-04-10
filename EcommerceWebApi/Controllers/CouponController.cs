@@ -18,7 +18,7 @@ public class CouponController : ControllerBase
         _coupons = coupons;
     }
     [HttpGet]
-    [Authorize(Policy = PolicyConstants.Admin)]
+
 
     public async Task<ActionResult<IEnumerable<CouponModel>>> Get()
     {
