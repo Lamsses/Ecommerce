@@ -9,9 +9,18 @@
                 <ul class="category-taps nav nav-pills" id="pills-tab" role="tablist">
                     @foreach (var item in Categories)
                     {
-                        <li class="nav-item" role="presentation" >
-                            <button role="tab" class="nav-link ms-2 mt-2" aria-selected="false" data-bs-toggle="pill" @onclick="()=>ShowCategoryProducts(item.category_id)">@item.Name</button>
-                        </li>
+                        if (item is not null)
+                        {
+
+
+
+
+
+
+                            <li class="nav-item" role="presentation">
+                                <button role="tab" class="nav-link ms-2 mt-2" aria-selected="false" data-bs-toggle="pill" @onclick="() => ShowCategoryProducts(item.category_id)">@item.Name</button>
+                            </li>
+                        }
                     }
         
                 </ul>
@@ -20,22 +29,25 @@
             {
 
                 <Virtualize TItem="ProductsModel" Items="@CategoryProducts" Context="item">
-            <div class="col col-6 col-xl-3 col-lg-4 col-sm-6  mb-3">
-                <div class="card">
-                    <a href="/p/@item.product_id">
-                        <img  src="@item.img_url" class="card-img-top" alt="...">
-                    </a>
-                    <div class="card-body">
-                        <h5 class="card-title d-flex justify-content-between">@item.name
-                            <span class="">@item.price</span>
+                    @if (item.quantity > 0)
+                    {
+                        <div class="col col-6 col-xl-3 col-lg-4 col-sm-6  mb-3">
+                            <div class="card">
+                                <a href="/p/@item.product_id">
+                                    <img src="@item.img_url" class="card-img-top" alt="...">
+                                </a>
+                                <div class="card-body">
+                                    <h5 class="card-title d-flex justify-content-between">@item.name
+                                        <span class="">@item.price</span>
 
-                        </h5>
-                        <p class="card-text">@item.description</p>
-                                <button @onclick="(() => AddToCart(item))" class="btn mybtn--outline">Add To Cart</button>
-                    </div>
-                </div>
-            </div>
-                    </Virtualize>
+                                    </h5>
+                                    <p class="card-text">@item.description</p>
+                                    <button @onclick="(() => AddToCart(item))" class="btn mybtn--outline">Add To Cart</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </Virtualize>
                 
             }
 
@@ -46,13 +58,29 @@
 
 </section>
 @code {
+
     public ProductBase ProductBase = new();
     public List<CategoriesModel> Categories = new();
     public ICollection<ProductsModel> CategoryProducts;
+    public List<ProductsModel> Products = new();
     protected override async Task OnInitializedAsync()
     {
         CategoryProducts = await ProductService.GetProducts();
-        Categories = await CategoryService.GetCategories();
+        Products = await ProductService.GetProducts();
+        foreach (var item in Products)
+        {
+            var category = (await CategoryService.GetCategories()).FirstOrDefault(c => c.category_id == item.category_id);
+
+         
+            if (category != null && !Categories.Exists(c=> c.category_id == category.category_id))
+            {
+                Categories.Add(category);
+            }
+
+            
+        }
+            Categories = Categories.Distinct().ToList();
+        
     }
 
     public async Task ShowCategoryProducts(int id)

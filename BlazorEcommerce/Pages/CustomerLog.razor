@@ -6,73 +6,69 @@
 <section class="customer-log">
     <div class="container">
         <div class="row mt-4">
-            @foreach (var item in customerLog)
+
+            @if (CustomersOrders is not null)
             {
-                
-               @if(item is not null) {
-            <div class="col-6 col-lg-4 ">
-                <div class="accordion accordion-flush border" id="accordionFlushExample">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                                @item.first_name
-                                <span class="text-break ms-3">@item.receipt</span>
-                
-                            </button>
-                        </h2>
-                        @foreach (var item2 in orderProducts)
+                            <div class="accordion" id="accordionExample">
+                    <div class="row">
+                        @foreach (var item in CustomersOrders)
+                {
+
+                            <div class="col-6 col-lg-4">
+
+                        <div class="accordion-item mb-3">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button"  type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne{@item.receipt}" aria-expanded="false" aria-controls="collapseOne{@item.receipt}">
+                                    @item.first_name
+                                    <span class="text-break ms-3">@item.receipt</span>
+                                </button>
+                            </h2>
+
+
+
+                                    @if (ProductsOrders is not null)
+                            {
+
+
+                                @foreach (var product in ProductsOrders)
                                 {
-
-                                    @foreach (var product in item2)
+                                    @if (product.order_id == item.order_id)
                                     {
-                                        @if (product is not null)
-                                        {
+                                        
+                                    
 
+                                        <div id="collapseOne{@item.receipt}" class="accordion-collapse collapse" data-bs-parent="#accordionExample" style="">
+                                            <div class="accordion-body">
+                                                <table class="table">
+                                                    <tbody>
 
-                                            <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
-                                                <div class="accordion-body">
-                                                    <p class="text-break ">@product.product_id @product.amount @product.total</p>
+                                                <tr>
+                                                    <td>@product.name</td>
+                                                    <td>@product.amount</td>
+                                                    <td>$@product.total</td>
+                                                </tr>
+                                                    </tbody>
+                                                </table>
 
-
-                                                </div>
                                             </div>
-                                        }
+                                        </div>
                                     }
-                                }
-                    </div>
-                </div>
 
-            </div>
-            }
+                                    
+                                }
+                            }
+                        </div>
+                            </div>
+
+
+                    
+                }
+                    </div>
+                        </div>
             }
         </div>
-    
+
     </div>
 </section>
-@* @if (customerLog is not null) *@
-@* { *@
-@*     @foreach (var item in customerLog) *@
-@*     { *@
-@*         <div> *@
-@*             <span>@item.log_msg</span> *@
-@*         </div> *@
-@*     } *@
-@* } *@
-@code {
-    private List<CustomerLogsModel> customerLog = new();
-    private List<OrdersModel> orders = new();
-    private List<IEnumerable<CustomerLogsModel>> orderProducts;
-    protected override async Task OnInitializedAsync()
-    {
-        client = factory.CreateClient("api");
-        customerLog = await client.GetFromJsonAsync<List<CustomerLogsModel>>("CustomerLogs");
-        orders = await client.GetFromJsonAsync<List<OrdersModel>>("Orders");
-        foreach (var item in orders)
-        {
-            orderProducts.Add(customerLog.Where(x => x.order_id == item.order_id));
-        }
-        
-    }
-    
 
-}
+

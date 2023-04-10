@@ -6,17 +6,19 @@
 
 <div class="log-form container mt-5 mb-5">
 
-    <EditForm Model="Authenticat" OnValidSubmit="HandleValidLogIn" class="row g-3">
-        <div class="col-md-12">
+    <EditForm Model="user" OnValidSubmit="HandleValidLogIn" class="row g-3">
+        <div class="col-md-12 ">
             <label for="inputEmail" class="form-label">Email</label>
-            <InputText @bind-Value="Authenticat.email" class="form-control" id="inputEmail" />
+            <InputText @bind-Value="user.email" class="form-control" id="inputEmail" required/>
         </div>
+        
         <div class="col-md-12">
             <label for="inputPassword" class="form-label">Password</label>
-            <InputText type="password" @bind-Value="Authenticat.password" class="form-control" id="inputPassword" />
+            <InputText type="password" @bind-Value="user.password" class="form-control" id="inputPassword" required/>
         </div>
+
         <p>New Customer? <a href="/register" >Create New Account</a> </p>
-        <button class="btn btn-success" type="submit">Log in</button>
+        <button class="btn btn-success" >Log in</button>
     </EditForm>
 </div>
 

@@ -10,12 +10,20 @@ namespace BlazorEcommerce.Pages
             var client = factory.CreateClient("api");
 
             var info = await client.PostAsJsonAsync<AuthenticationModel>("Customers", Authenticat);
-
+            var response = await info.Content.ReadAsStringAsync();
             await InvokeAsync(StateHasChanged);
             if(info.IsSuccessStatusCode)
-            {
-              NavigationManager.NavigateTo("/login", true);
 
+            {
+                ToastService.ShowSuccess("Account Created Successfully");
+                await Task.Delay(3000);
+
+                NavigationManager.NavigateTo("/login", true);
+
+            }
+            else
+            {
+                ToastService.ShowError(response);
             }
 
         }
