@@ -1,6 +1,6 @@
 
-﻿<AuthorizeView  Context="A" Policy="Admin">
-    
+
+@attribute [Authorize(Policy ="Admin")]
 <nav class="main-nav navbar navbar-expand-lg shadow sticky-top">
 
     <div class="container">
@@ -43,4 +43,3 @@
 
     </div>
 </nav>
-</AuthorizeView>

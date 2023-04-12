@@ -36,6 +36,8 @@ public class OrderProductsService : IOrderProductsService
     public async Task<HttpResponseMessage> Add(OrdersProductsModel model)
     {
         _client = _factory.CreateClient("api");
+        var token = await _localStorage.GetItemAsync<string>("token");
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
         var response = await _client.PostAsJsonAsync("OrdersProducts",model);
         return response;
 

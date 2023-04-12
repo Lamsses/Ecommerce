@@ -1,7 +1,9 @@
 ﻿@page "/anal"
 @using System.Net.Http.Headers;
 @layout DashboardLayout
-<AuthorizeView  Policy="Admin">
+@attribute [Authorize(Policy = "Admin")]
+
+<div class="container">
 <div class="d-flex mt-5 ms-5 ">
     <div class="dropdown me-3">
         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -25,7 +27,6 @@
         </ul>
     </div>
 </div>
-<div class="container">
 
 <table class="table">
     <thead>
@@ -53,7 +54,7 @@
     </tbody>
 </table>
 </div>
-</AuthorizeView>
+
 
 
 @code {

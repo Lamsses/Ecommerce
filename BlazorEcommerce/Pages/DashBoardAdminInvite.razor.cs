@@ -35,8 +35,16 @@ partial class DashBoardAdminInvite : MainBase
     {
         if (CustomerFound is not null)
         {
-            var roleId = CustomerFound.role_id = 1;
+            var roleId = CustomerFound.role_id = 2;
             var a = await client.PatchAsJsonAsync($"Customers/{CustomerFound.email}", roleId);
+            if (a.IsSuccessStatusCode)
+            {
+                ToastService.ShowSuccess("User Promoted Successfully");
+            }
+            else
+            {
+                ToastService.ShowError("Something Went Wrong");
+            }
             //var json = JsonSerializer.Serialize(CustomerFound);
             //var content = new StringContent(roleId.ToString(), Encoding.UTF8, "application/json");
             //var a = await client.PatchAsync($"Customers/{CustomerFound.email}", content);

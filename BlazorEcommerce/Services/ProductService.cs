@@ -25,7 +25,7 @@ namespace BlazorEcommerce.Services
         {
             _client = _factory.CreateClient("api");
             var token = await localStorage.GetItemAsync<string>("token");
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
+            // _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
             var response = await _client.GetFromJsonAsync<List<ProductsModel>>("Products");
              return response;
         }

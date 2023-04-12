@@ -4,12 +4,6 @@
 
 
 
-<AuthorizeView Context="AAXX" Policy="Admin">
-    <Authorized>
-        <a href="/dash">come here baby</a>
-    </Authorized>
- 
-</AuthorizeView>
 
 <nav class="main-nav navbar navbar-expand-lg shadow ">
     <div class="container">
@@ -50,6 +44,16 @@
                     <a  class="nav-link" onclick="document.getElementById('deals').scrollIntoView({behavior:'smooth'})">Deals</a>
 
                 </li>
+                <AuthorizeView Context="AAXX" Policy="Admin">
+                    <Authorized>
+
+                <li class="nav-item dropdown">
+                    <a  class="nav-link" href="dash" >Dashboard</a>
+
+                </li>
+                    </Authorized>
+ 
+                </AuthorizeView>
             </ul>
             <form class="input-form ms-lg-5 d-flex" role="search">
 
