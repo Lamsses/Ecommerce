@@ -20,7 +20,8 @@ partial class NavBar : CartBase
     [Inject]
     public NavigationManager? NavigationManager { get; set; }
     [Inject] protected ILocalStorageService? LocalStorage { get; set; }
-
+    private bool IsOnCheckout => NavigationManager.Uri.Contains("/Checkout");
+    public bool IsHomeLinkDisabled { get; set; }
 
     [Inject] protected AuthenticationStateProvider? AuthStateProvider { get; set; }
     [Inject]
@@ -39,12 +40,23 @@ partial class NavBar : CartBase
         
         client = factory.CreateClient("api");
         Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
-        
+        var uri = new Uri(NavigationManager.Uri);
+        IsHomeLinkDisabled = uri.AbsolutePath.ToLower() == "/Checkout";
 
         await ShowCart();
 
     }
-    
+
+    public void ToCheckout()
+    {
+        NavigationManager.NavigateTo("/Checkout",true);
+    }
+
+    public void ToHome()
+    {
+        NavigationManager.NavigateTo("/", true);
+
+    }
 
     public async Task Logout()
     {

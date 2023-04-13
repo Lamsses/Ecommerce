@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 using BlazorEcommerce.Services.Interface;
 using Blazored.LocalStorage;
 using EcommerceLibrary.Models;
@@ -30,8 +31,11 @@ public class CustomerService : ICustomerService
     }
     public async Task<string> GetUserNameFromToken()
     {
-        _client = _factory.CreateClient("api");
         var token = await _localStorage.GetItemAsync<string>("token");
+        _client = _factory.CreateClient("api");
+
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
+
         var userId = await GetUserIdFromToken();
         var getUserName = await _client.GetFromJsonAsync<CustomersModel>($"Customers/{userId}");
         return  getUserName.first_name;

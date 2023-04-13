@@ -32,8 +32,8 @@ namespace BlazorEcommerce.Services
         public async Task<ProductsModel> GetProductById(int productId)
         {
             _client = _factory.CreateClient("api");
-            var token = await localStorage.GetItemAsync<string>("token");
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
+            // var token = await localStorage.GetItemAsync<string>("token");
+            // _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
             var response = await _client.GetFromJsonAsync<ProductsModel>($"Products/{productId}");
             return response;
         }
@@ -58,7 +58,7 @@ namespace BlazorEcommerce.Services
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
             var response = await _client.PutAsJsonAsync($"Products/{product.product_id}",product);
             return  response;
-
+    
 
         }
         public async Task<HttpResponseMessage> DeleteProduct(int productId)

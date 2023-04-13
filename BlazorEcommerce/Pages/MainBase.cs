@@ -142,7 +142,7 @@ public class MainBase : ComponentBase
                             price = item.discounted_price
                         });
                         item.quantity -= item.ProductAmount;
-                        await ProductService.UpdateProduct(item);
+                        //await ProductService.UpdateProduct(item);
 
                         item.discounted_price = 0;
                         var a1 = await client.PutAsJsonAsync<ProductsModel>($"Products/{item.product_id}", item);
