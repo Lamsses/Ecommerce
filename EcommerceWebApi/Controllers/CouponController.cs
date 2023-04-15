@@ -30,6 +30,10 @@ public class CouponController : ControllerBase
     public async Task<ActionResult<CouponModel>> GetByName(string name)
     {
         var output = await _coupons.GetCouponByName(name);
+        if (output is null)
+        {
+            return BadRequest();
+        }
         return Ok(output);
     }
     [HttpPost]

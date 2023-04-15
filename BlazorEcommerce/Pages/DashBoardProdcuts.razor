@@ -150,7 +150,7 @@
                     </div>
                     <div class="col-md-6">
                         <label for="inputCoupon" class="form-label">Coupon</label>
-                        <InputSelect placeholder="coupon_id" id="inputCoupon" @bind-Value="selectedProduct.coupon_id" class="form-control">
+                        <InputSelect placeholder="coupon_id" id="inputCoupon" @bind-Value="editProduct.coupon_id" class="form-control">
                             <option  selected ="">Choose Coupon</option> 
                             @if (Coupons is not null)
                             {

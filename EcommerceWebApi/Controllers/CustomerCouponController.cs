@@ -22,6 +22,7 @@ public class CustomerCouponController : ControllerBase
     public async Task<ActionResult<IEnumerable<CustomerCouponModel>>> Get(int customer_id, int coupon_id )
     {
         var output = await _customerCouponData.GetAll(customer_id, coupon_id );
+        
         if ( output.Count == 0 )
         {
             return BadRequest();

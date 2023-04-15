@@ -7,10 +7,10 @@
 
 <nav class="main-nav navbar navbar-expand-lg shadow ">
     <div class="container">
-        <a class="navbar-brand" href="#">
+        <NavLink class="navbar-brand" href="" @onclick="ToHome" Match="NavLinkMatch.All">
             <img src="https://uploads-ssl.webflow.com/63e857eaeaf853471d5335ff/63e86ab4c21faa7bc0bd90dd_Logo.svg"
                  alt="" />
-        </a>
+        </NavLink>
         <button class="navbar-toggler"
                 type="button"
                 data-bs-toggle="collapse"
@@ -90,18 +90,20 @@
                     </a>
                 </NotAuthorized>
             </AuthorizeView>
+            @if (!IsOnCheckout)
+            {
+                <NavLink disabled="@IsHomeLinkDisabled" href="#offcanvas" id="cart" @onclick="ShowCart" role="button" data-bs-toggle="offcanvas" aria-controls="offcanvas" class="nav-link  ms-lg-4 mt-sm-1 mt-3 d-flex align-items-center d-lg-flex justify-content-lg-center align-items-lg-center d-sm-flex justify-content-sm-start align-items-sm-center">
+                    <i class="fa-solid fa-cart-shopping pe-2"></i>
+                    <p class="m-0 position-relative">
+                        Cart
+                        <span class="position-absolute top-0 start-100 translate-middle-y badge rounded-pill bg-danger">
+                            @CartCount()
 
-            <a href="#offcanvas" id="cart" @onclick="ShowCart" role="button" data-bs-toggle="offcanvas" aria-controls="offcanvas" class="nav-link  ms-lg-4 mt-sm-1 mt-3 d-flex align-items-center d-lg-flex justify-content-lg-center align-items-lg-center d-sm-flex justify-content-sm-start align-items-sm-center">
-                <i class="fa-solid fa-cart-shopping pe-2"></i>
-                <p class="m-0 position-relative">
-                    Cart
-                    <span class="position-absolute top-0 start-100 translate-middle-y badge rounded-pill bg-danger">
-                        @CartCount()
-
-                        <span class="visually-hidden">unread messages</span>
-                    </span>
-                </p>
-            </a>
+                            <span class="visually-hidden">unread messages</span>
+                        </span>
+                    </p>
+                </NavLink>
+            }
         </div>
     </div>
 </nav>
@@ -143,7 +145,7 @@
                 Total Price
                 <span>@CalculateTotal()</span>
             </p>
-            <a href="/Checkout" class="mybtn mybtn--primary align-self-center">Checkout</a>
+            <button @onclick="ToCheckout" class="mybtn mybtn--primary align-self-center">Checkout</button>
         }
         else
         {

@@ -2,6 +2,7 @@
 using BlazorEcommerce.Services.Interface;
 using Blazored.LocalStorage;
 using EcommerceLibrary.Models;
+using System.Net.Http.Headers;
 
 namespace BlazorEcommerce.Services;
 
@@ -24,7 +25,11 @@ public class AdminLogService : IAdminLogService
 
     public async Task AddLog(ProductsModel product)
     {
+
         _client = _factory.CreateClient("api");
+        var token = await _localStorage.GetItemAsync<string>("token");
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
+
         var userId = await _customerService.GetUserIdFromToken();
         var getUserName = await _customerService.GetUserNameFromToken();
 
@@ -38,7 +43,10 @@ public class AdminLogService : IAdminLogService
     }
     public async Task UpdateLog(int id)
     {
+        var token = await _localStorage.GetItemAsync<string>("token");
         _client = _factory.CreateClient("api");
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
+
         var userId = await _customerService.GetUserIdFromToken();
         var getUserName = await _customerService.GetUserNameFromToken();
         var productName = await _client.GetFromJsonAsync<ProductsModel>($"Products/{id}");
@@ -55,7 +63,10 @@ public class AdminLogService : IAdminLogService
 
     public async Task DeleteLog(ProductsModel product)
     {
+        var token = await _localStorage.GetItemAsync<string>("token");
         _client = _factory.CreateClient("api");
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
+
         var userId = await _customerService.GetUserIdFromToken();
         var getUserName = await _customerService.GetUserNameFromToken();
 
