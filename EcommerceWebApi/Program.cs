@@ -2,7 +2,9 @@
 using AspNetCoreRateLimit;
 using EcommerceLibrary.DataAccess;
 using EcommerceWebApi.StartupConfig;
-
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
