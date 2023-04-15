@@ -1,5 +1,6 @@
 ﻿using BlazorEcommerce.Services;
 using BlazorEcommerce.Services.Interface;
+using Blazored.Toast;
 using EcommerceLibrary.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.IdentityModel.Tokens;
@@ -45,12 +46,17 @@ partial class Checkout
         var token = await LocalStorage.GetItemAsync<string>("token");
         client.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
-        var coupon = await client.GetFromJsonAsync<CouponModel>($"Coupon/{couponName}");
 
         var userId = await customerService.GetUserIdFromToken();
 
         if (!couponName.IsNullOrEmpty())
         {
+            var result = await client.GetAsync($"Coupon/{couponName}");
+            if (result.StatusCode.Equals(200))
+            {
+                var coupon = await result.Content.ReadFromJsonAsync<CouponModel>();
+
+            
             if (coupon != null)
             {
                 var customerCoupon = await client.GetAsync
@@ -70,14 +76,20 @@ partial class Checkout
                             await client.PutAsJsonAsync<CouponModel>($"Coupon/{coupon.coupon_id}", coupon);
                             await client.PostAsJsonAsync<CustomerCouponModel>($"CustomerCoupon",
                                 new CustomerCouponModel { coupon_id = coupon.coupon_id, customer_id = userId });
+                                ToastService.ShowSuccess("Coupon Apllied successfully");
                             return product.discounted_price;
                         }
 
                     }
                 }
             }
+            }
+            else
+            {
+                ToastService.ShowError("Worng code");
+            }
         }
-        couponName = coupon.coupon_name;
+
         products = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
         return 0;
 
@@ -111,34 +123,23 @@ partial class Checkout
         {
             foreach (var item in products)
             {
-                if (!couponName.IsNullOrEmpty())
+
+                if (item.discounted_price > 0)
                 {
-                    var coupon = Coupons.Where(c => c.coupon_name == couponName).FirstOrDefault();
-
-                    if (item.coupon_id == coupon.coupon_id && coupon is not null)
-                    {
-                        if (item.discounted_price > 0)
-                        {
-                            var newPrice = ((Convert.ToDecimal(coupon.coupon_discount) / 100) *
-                                                (Convert.ToDecimal(item.price) * Convert.ToDecimal(item.ProductAmount))).ToString();
-                            total += Decimal.Parse(newPrice);
-
-                        }
-                    }
-                    else
-                    {
-                        total += (Convert.ToDecimal(item.price) * Convert.ToDecimal(item.ProductAmount));
-                    }
+                    var newPrice = (Convert.ToDecimal(item.discounted_price) * Convert.ToDecimal(item.ProductAmount)).ToString();
+                    total += Decimal.Parse(newPrice);
 
                 }
+
                 else
                 {
                     total += (Convert.ToDecimal(item.price) * Convert.ToDecimal(item.ProductAmount));
                 }
 
+
+
             }
         }
         return total;
     }
-
 }
