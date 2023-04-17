@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualBasic;
 using System.Net.Http.Headers;
+using System;
 
 namespace BlazorEcommerce.Pages;
 
@@ -38,69 +39,89 @@ partial class Checkout
 
     public async Task ApplyCoupon()
     {
-        client = factory.CreateClient("api");
-        var token = await LocalStorage.GetItemAsync<string>("token");
-        client.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
-
-        var userId = await customerService.GetUserIdFromToken();
-
-        if (!string.IsNullOrEmpty(couponName))
+        try
         {
+            var token = await LocalStorage.GetItemAsync<string>("token");
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
+
+            var userId = await customerService.GetUserIdFromToken();
+         
+
+            if (string.IsNullOrEmpty(couponName))
+            {
+                ToastService.ShowError("Invalid coupon name.");
+                return;
+            }
+
             var result = await client.GetAsync($"Coupon/{couponName}");
-            if (result.StatusCode == HttpStatusCode.OK)
+            if (!result.IsSuccessStatusCode)
             {
-                var coupon = await result.Content.ReadFromJsonAsync<CouponModel>();
-                if (coupon != null)
-                {
-                    var customerCoupon = await client.GetAsync
-                        ($"CustomerCoupon/{userId}/{coupon.coupon_id}");
-                    if (!customerCoupon.IsSuccessStatusCode)
-                    {
-                        if (coupon.coupon_use > 0 && coupon.coupon_expire > DateTime.Today)
-                        {
-                            foreach (var item in products)
-                            {
-
-
-                                // var product = products.Where(p => p.coupon_id == coupon.coupon_id).FirstOrDefault();
-                                if (item.coupon_id == coupon.coupon_id)
-                                {
-                                    item.discounted_price = ((Convert.ToDecimal(coupon.coupon_discount) / 100) *
-                                                                (Convert.ToDecimal(item.price)
-                                                                 * Convert.ToDecimal(item.ProductAmount)));
-                                    await LocalStorage.SetItemAsync("cart", products);
-                                    //var response = await client.PutAsJsonAsync($"Products/{product.product_id}", product);
-                                    coupon.coupon_use -= 1;
-                                    await client.PutAsJsonAsync<CouponModel>($"Coupon/{coupon.coupon_id}", coupon);
-                                    await client.PostAsJsonAsync<CustomerCouponModel>($"CustomerCoupon",
-                                        new CustomerCouponModel { coupon_id = coupon.coupon_id, customer_id = userId });
-                                    ToastService.ShowSuccess("Coupon Apllied successfully");
-
-                                }
-
-
-
-                            }
-                        }
-                    }
-
-                }
+                ToastService.ShowError("Coupon not found.");
+                return;
             }
-            }
-            else
+
+            var coupon = await result.Content.ReadFromJsonAsync<CouponModel>();
+            if (coupon == null)
             {
-                ToastService.ShowError("Wrong Coupon");
+                ToastService.ShowError("Invalid coupon data.");
+                return;
             }
+
+            var customerCoupon = await client.GetAsync($"CustomerCoupon/{userId}/{coupon.coupon_id}");
+            if (!customerCoupon.IsSuccessStatusCode)
+            {
+                ToastService.ShowError("Coupon already used.");
+                return;
+            }
+
+            if (coupon.coupon_use == 0 || coupon.coupon_expire <= DateTime.Today)
+            {
+                ToastService.ShowError("Coupon expired or limit reached.");
+                return;
+            }
+
+            var cart = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
+            if (cart == null || !cart.Any())
+            {
+                ToastService.ShowError("Cart is empty.");
+                return;
+            }
+
+            var productsWithCoupon = cart.Where(p => p.coupon_id == coupon.coupon_id).ToList();
+            if (!productsWithCoupon.Any())
+            {
+                ToastService.ShowError("No products with this coupon.");
+                return;
+            }
+
+            foreach (var product in productsWithCoupon)
+            {
+                var discountedPrice = (Convert.ToDecimal(product.price) * product.ProductAmount) - ((Convert.ToDecimal(coupon.coupon_discount) / 100) * (Convert.ToDecimal(product.price) * product.ProductAmount));
+                discountedPrice = Math.Round(discountedPrice, 2);
+                product.discounted_price = discountedPrice;
+
+                await client.PutAsJsonAsync($"Products/{product.product_id}", product);
+            }
+
+            coupon.coupon_use -= 1;
+            await client.PutAsJsonAsync($"Coupon/{coupon.coupon_id}", coupon);
+            await client.PostAsJsonAsync($"CustomerCoupon", new CustomerCouponModel { coupon_id = coupon.coupon_id, customer_id = userId });
+            ToastService.ShowSuccess("Coupon applied successfully.");
         }
-        products = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
-
-
-
-
-
-
+        catch (Exception ex)
+        {
+            // Handle exceptions
+            ToastService.ShowError("Error applying coupon.");
+        }
+        finally
+        {
+            products = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
+        }
     }
+
+
+
+
 
 
     //public  decimal ProductTotal(ProductsModel product)
@@ -133,22 +154,19 @@ partial class Checkout
                 {
                     // var newPrice = (Convert.ToDecimal(item.discounted_price) * Convert.ToDecimal(item.ProductAmount));
                     total += item.discounted_price;
-                            var newPrice = ((Convert.ToDecimal(coupon.coupon_discount) / 100) *
+
                 }
+     
+              
+                else
                     {
-                else
-                {
-                    total += (Convert.ToDecimal(item.price) * Convert.ToDecimal(item.ProductAmount));
+                        total += (Convert.ToDecimal(item.price) * Convert.ToDecimal(item.ProductAmount));
+                    }
+
+
+
                 }
-                else
-                {
-                    total += (Convert.ToDecimal(item.price) * Convert.ToDecimal(item.ProductAmount));
-                }
-
-
-
             }
+            return total;
         }
-        return total;
     }
-}
