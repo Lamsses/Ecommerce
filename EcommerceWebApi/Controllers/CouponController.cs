@@ -36,6 +36,13 @@ public class CouponController : ControllerBase
         }
         return Ok(output);
     }
+    [HttpPost("Apply/{cname}")]
+    [AllowAnonymous]
+    public async Task<ActionResult<CouponModel>> ApplyCoupon(string cname , [FromBody] List<ProductsModel> CartItems)
+    {
+        var output = await _coupons.ApplyCoupon(cname, CartItems);
+        return Ok(output);
+    }
     [HttpPost]
     [Authorize(Policy = PolicyConstants.Admin)]
 

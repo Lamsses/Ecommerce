@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 using System.Xml.Linq;
 using EcommerceLibrary.Models;
 
@@ -40,6 +42,40 @@ public class CouponData: ICouponData
 
     }
 
+    public async Task<HttpResponseMessage> ApplyCoupon(string couponName, List<ProductsModel> CartItems)
+    {
+        var coupon = await GetCouponByName(couponName);
+        if (coupon is  null)
+        {
+            return new HttpResponseMessage(HttpStatusCode.NotFound);
+        }
+
+        if (CartItems.Count <= 0)
+        {
+            return new HttpResponseMessage(HttpStatusCode.BadRequest);
+
+        }
+        if (coupon.coupon_use > 0 && coupon.coupon_expire > DateTime.Today)
+        {
+            foreach (var item in CartItems)
+            {
+                if (item.coupon_id == coupon.coupon_id)
+                {
+                    item.discounted_price = ((Convert.ToDecimal(coupon.coupon_discount) / 100) *
+                                             (Convert.ToDecimal(item.price)
+                                              * Convert.ToDecimal(item.ProductAmount)));
+
+                }
+            }
+            return new HttpResponseMessage(HttpStatusCode.OK);
+
+        }
+        return new HttpResponseMessage(HttpStatusCode.BadRequest);
+
+
+        // return _sql.SaveData<dynamic>("dbo.spCoupon_Update", coupon, "Default");
+
+    }
     public Task Delete(int coupon_id)
     {
         return _sql.SaveData<dynamic>("dbo.spCoupon_Delete", new { coupon_id }, "Default");

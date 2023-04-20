@@ -23,9 +23,9 @@ builder.AddRateLimitServices();
 
 var app = builder.Build();
 
-app.Urls.Add("http://192.248.185.203:5041");
-
-app.Urls.Add("http://localhost:5041");
+// app.Urls.Add("http://192.248.185.203:5041");
+//
+// app.Urls.Add("http://localhost:5041");
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

@@ -11,6 +11,7 @@ public class CouponModel
     public string coupon_name { get; set; }
     public int coupon_use { get; set; } 
     public int coupon_discount { get;set; }
-    public DateTime coupon_expire { get; set; } 
+    public DateTime coupon_expire { get; set; }
+
 
 }

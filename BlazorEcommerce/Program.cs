@@ -10,10 +10,10 @@ builder.AddAuthServices();
 builder.AddHttpClientService();
 
 var app = builder.Build();
-app.Urls.Add("https://192.248.185.203:7021");
-
-
-app.Urls.Add("https://localhost:7021");
+// app.Urls.Add("https://192.248.185.203:7021");
+//
+//
+// app.Urls.Add("https://localhost:7021");
 
 if (!app.Environment.IsDevelopment())
 {

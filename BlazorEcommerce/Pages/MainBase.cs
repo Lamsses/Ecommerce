@@ -27,41 +27,38 @@ public class MainBase : ComponentBase
     protected AuthenticationModel Authenticat = new();
     private OrdersModel orders;
 
-    
 
+    // public async Task AddToCart(ProductsModel products)
+    // {
+    //     var cart = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
+    //     if (cart is null)
+    //     {
+    //
+    //         cart = new List<ProductsModel>();
+    //     }
+    //     var find = cart.Find(p => p.product_id == products.product_id);
+    //     if (find is null)
+    //     {
+    //         cart.Add(products);
+    //
+    //     }
+    //     else
+    //     {
+    //         find.ProductAmount += 1;
+    //         products.ProductAmount = find.ProductAmount;
+    //
+    //     }
+    //     await LocalStorage.SetItemAsync("cart", cart);
+    //
+    //
+    // }
 
-
-    public async Task AddToCart(ProductsModel products)
-    {
-        var cart = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
-        if (cart is null)
-        {
-    
-            cart = new List<ProductsModel>();
-        }
-        var find = cart.Find(p => p.product_id == products.product_id);
-        if (find is null)
-        {
-            cart.Add(products);
-    
-        }
-        else
-        {
-            find.ProductAmount += 1;
-            products.ProductAmount = find.ProductAmount;
-    
-        }
-        await LocalStorage.SetItemAsync("cart", cart);
-    
-    
-    }
-
-    public  async Task Logout()
-    {
-        NavigationManager!.NavigateTo("/", true);
-        await LocalStorage!.RemoveItemAsync("token");
-        await AuthStateProvider!.GetAuthenticationStateAsync();
-    }
+    // public  async Task Logout()
+    // {
+    //     NavigationManager!.NavigateTo("/", true);
+    //     await LocalStorage!.RemoveItemAsync("token");
+    //     await AuthStateProvider!.GetAuthenticationStateAsync();
+    // }
     public string ReceiptGenrator()
     {
         Random random = new Random();
@@ -73,9 +70,8 @@ public class MainBase : ComponentBase
         } while (IsDuplicate(uniqueNumber));
 
         return uniqueNumber.ToString();
-
-
     }
+
     private static List<int> generatedNumbers = new();
 
     private static bool IsDuplicate(int number)
@@ -90,89 +86,54 @@ public class MainBase : ComponentBase
             return false;
         }
     }
+
     public async Task OrdersCheckout()
     {
-
-        var cart =  await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
+        var cart = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
         var token = await LocalStorage.GetItemAsync<string>("token");
-
-
-
-        var order = new OrdersModel
-        {
-            order_date = DateTime.Now,
-            customer_id =await customerService.GetUserIdFromToken(),
-            receipt = ReceiptGenrator()
-        };
-
+        var orderProducts = new List<OrdersProductsModel>();
         client = factory.CreateClient("api");
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         if (cart is not null)
         {
+            foreach (var product in cart)
+            {
+                orderProducts.Add(new OrdersProductsModel
+                    {
+                        product_id = product.product_id,
+                        amount = product.ProductAmount,
+                        price = decimal.Parse(product.price)
+                    }
+                );
+            }
+
+            var order = new OrdersModel
+            {
+                order_date = DateTime.Now,
+                customer_id = await customerService.GetUserIdFromToken(),
+                receipt = ReceiptGenrator(),
+                OrderProducts = orderProducts
+            };
 
             var response = await orderService.AddOrder(order);
             var result = await response.Content.ReadFromJsonAsync<OrdersModel>();
 
             if (response.IsSuccessStatusCode)
             {
-
-
-
-
-                foreach (var item in cart)
-                {
-                    if (item.discounted_price <= 0)
-                    {
-
-                        await orderProductsService.Add(new OrdersProductsModel
-                        {
-                            order_id = result.order_id, product_id = item.product_id, amount = item.ProductAmount,
-                            price = decimal.Parse(item.price)
-                        });
-                        item.quantity -= item.ProductAmount;
-                        var a = await ProductService.UpdateProduct(item);
-
-                    }
-                    else
-                    {
-                        await orderProductsService.Add(new OrdersProductsModel
-                        {
-                            order_id = result.order_id, product_id = item.product_id, amount = item.ProductAmount,
-                            price = item.discounted_price
-                        });
-                        item.quantity -= item.ProductAmount;
-                        //await ProductService.UpdateProduct(item);
-
-                        item.discounted_price = 0;
-                        var a1 = await client.PutAsJsonAsync<ProductsModel>($"Products/{item.product_id}", item);
-
-                    }
-
-                }
-
-
                 ToastService.ShowSuccess("Order Successfuly Completed");
                 await LocalStorage.RemoveItemAsync("cart");
                 Thread.Sleep(1500);
                 NavigationManager.NavigateTo("/", true);
             }
-
-
+            else
+            {
+                ToastService.ShowError("Something went wrong try again later");
+            }
         }
         else
         {
             ToastService.ShowError("Add Some Items to your cart first!!");
-
         }
-
-
-
     }
-
-
-    
-
-
 }
-

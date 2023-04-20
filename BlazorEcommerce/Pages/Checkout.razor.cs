@@ -28,11 +28,10 @@ partial class Checkout
         {
             client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
-
         }
+
         products = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
         Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
-
     }
 
 
@@ -43,63 +42,57 @@ partial class Checkout
         client.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
 
-        var userId = await customerService.GetUserIdFromToken();
+        // var userId = await customerService.GetUserIdFromToken();
 
         if (!string.IsNullOrEmpty(couponName))
         {
-            var result = await client.GetAsync($"Coupon/{couponName}");
-            if (result.StatusCode == HttpStatusCode.OK)
+            var request = await client.PostAsJsonAsync<List<ProductsModel>>($"Coupon/Apply/{couponName}",products);
+            var response = await request.Content.ReadFromJsonAsync<List<ProductsModel>>();
+            if (request.IsSuccessStatusCode)
             {
-                var coupon = await result.Content.ReadFromJsonAsync<CouponModel>();
-                if (coupon != null)
-                {
-                    var customerCoupon = await client.GetAsync
-                        ($"CustomerCoupon/{userId}/{coupon.coupon_id}");
-                    if (!customerCoupon.IsSuccessStatusCode)
-                    {
-                        if (coupon.coupon_use > 0 && coupon.coupon_expire > DateTime.Today)
-                        {
-                            foreach (var item in products)
-                            {
+                await LocalStorage.SetItemAsync("cart", products);
+                ToastService.ShowSuccess("Coupon Applied successfully");
 
-
-                                // var product = products.Where(p => p.coupon_id == coupon.coupon_id).FirstOrDefault();
-                                if (item.coupon_id == coupon.coupon_id)
-                                {
-                                    item.discounted_price = ((Convert.ToDecimal(coupon.coupon_discount) / 100) *
-                                                                (Convert.ToDecimal(item.price)
-                                                                 * Convert.ToDecimal(item.ProductAmount)));
-                                    await LocalStorage.SetItemAsync("cart", products);
-                                    //var response = await client.PutAsJsonAsync($"Products/{product.product_id}", product);
-                                    coupon.coupon_use -= 1;
-                                    await client.PutAsJsonAsync<CouponModel>($"Coupon/{coupon.coupon_id}", coupon);
-                                    await client.PostAsJsonAsync<CustomerCouponModel>($"CustomerCoupon",
-                                        new CustomerCouponModel { coupon_id = coupon.coupon_id, customer_id = userId });
-                                    ToastService.ShowSuccess("Coupon Apllied successfully");
-
-                                }
-
-
-
-                            }
-                        }
-                    }
-
-                }
             }
-            }
-            else
-            {
-                ToastService.ShowError("Wrong Coupon");
-            }
+            // var result = await client.GetAsync($"Coupon/{couponName}");
+            // if (result.StatusCode == HttpStatusCode.OK)
+            // {
+            //     var coupon = await result.Content.ReadFromJsonAsync<CouponModel>();
+            //     if (coupon != null)
+            //     {
+            //         var customerCoupon = await client.GetAsync
+            //             ($"CustomerCoupon/{userId}/{coupon.coupon_id}");
+            //         if (!customerCoupon.IsSuccessStatusCode)
+            //         {
+            //             if (coupon.coupon_use > 0 && coupon.coupon_expire > DateTime.Today)
+            //             {
+            // foreach (var item in products)
+            // {
+            // var product = products.Where(p => p.coupon_id == coupon.coupon_id).FirstOrDefault();
+            // if (item.coupon_id == coupon.coupon_id)
+            // {
+            //     item.discounted_price = ((Convert.ToDecimal(coupon.coupon_discount) / 100) *
+            //                              (Convert.ToDecimal(item.price)
+            //                               * Convert.ToDecimal(item.ProductAmount)));
+            //     await LocalStorage.SetItemAsync("cart", products);
+            //var response = await client.PutAsJsonAsync($"Products/{product.product_id}", product);
+            // coupon.coupon_use -= 1;
+            // await client.PutAsJsonAsync<CouponModel>($"Coupon/{coupon.coupon_id}", coupon);
+            // await client.PostAsJsonAsync<CustomerCouponModel>($"CustomerCoupon",
+            //     new CustomerCouponModel { coupon_id = coupon.coupon_id, customer_id = userId });
+            // }
+            // }
+            //             }
+            //         }
+            //     }
+            // }
         }
+        else
+        {
+            ToastService.ShowError("Wrong Coupon");
+        }
+
         products = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
-
-
-
-
-
-
     }
 
 
@@ -128,27 +121,19 @@ partial class Checkout
         {
             foreach (var item in products)
             {
-
                 if (item.discounted_price > 0)
                 {
                     // var newPrice = (Convert.ToDecimal(item.discounted_price) * Convert.ToDecimal(item.ProductAmount));
                     total += item.discounted_price;
-                            var newPrice = ((Convert.ToDecimal(coupon.coupon_discount) / 100) *
                 }
-                    {
+
                 else
                 {
                     total += (Convert.ToDecimal(item.price) * Convert.ToDecimal(item.ProductAmount));
                 }
-                else
-                {
-                    total += (Convert.ToDecimal(item.price) * Convert.ToDecimal(item.ProductAmount));
-                }
-
-
-
             }
         }
+
         return total;
     }
 }

@@ -30,10 +30,10 @@ public class CustomerCouponController : ControllerBase
         return Ok(output);
     }
 
+    
 
 
-
-    [HttpPost]
+        [HttpPost]
 
     public async Task<ActionResult<CustomerCouponModel>> Post([FromBody] CustomerCouponModel customerCouponData)
     {
