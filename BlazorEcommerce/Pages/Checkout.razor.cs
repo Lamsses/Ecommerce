@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualBasic;
 using System.Net.Http.Headers;
+using System;
 
 namespace BlazorEcommerce.Pages;
 
@@ -33,6 +34,7 @@ partial class Checkout
         products = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
         Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
     }
+
 
 
     public async Task ApplyCoupon()
@@ -135,5 +137,6 @@ partial class Checkout
         }
 
         return total;
+
     }
 }

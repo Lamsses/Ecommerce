@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace EcommerceWebApi.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Policy = PolicyConstants.Admin)]
+
 
 public class AnalyticsController : ControllerBase
 {

@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using System.Net.Http.Headers;
 using System.Net;
 using System.Text.Json;
-
+using Blazored.Typeahead;
 
 namespace BlazorEcommerce.Pages;
 
@@ -52,7 +52,8 @@ partial class DashBoardProdcuts : MainBase
     private CategoriesModel category = new();
     private CouponModel coupon = new();
     public int productId;
-
+     private string searchQuery;
+  
 
     private async Task<IEnumerable<ProductsModel>> SearchProducts(string searchText)
     {
@@ -61,6 +62,7 @@ partial class DashBoardProdcuts : MainBase
 
         return response;
     }
+
     private async Task<HttpResponseMessage> AddProduct()
     {
 
