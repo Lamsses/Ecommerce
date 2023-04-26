@@ -13,10 +13,12 @@ namespace EcommerceLibrary.DataAccess;
 public class CouponData: ICouponData
 {
     private readonly ISqlDataAccess _sql;
+    private readonly IProductsData _products;
 
-    public CouponData(ISqlDataAccess sql)
+    public CouponData(ISqlDataAccess sql ,IProductsData products)
     {
         _sql = sql;
+        _products = products;
     }
     public Task<List<CouponModel>> GetAll()
     {
@@ -42,19 +44,19 @@ public class CouponData: ICouponData
 
     }
 
-    public async Task<HttpResponseMessage> ApplyCoupon(string couponName, List<ProductsModel> CartItems)
+    public async Task<List<ProductsModel>> ApplyCoupon(string couponName, List<ProductsModel> CartItems)
     {
         var coupon = await GetCouponByName(couponName);
-        if (coupon is  null)
+        if (coupon is null)
         {
-            return new HttpResponseMessage(HttpStatusCode.NotFound);
+            throw new ArgumentException("Coupon not found.");
         }
 
         if (CartItems.Count <= 0)
         {
-            return new HttpResponseMessage(HttpStatusCode.BadRequest);
-
+            throw new ArgumentException("Cart is empty.");
         }
+
         if (coupon.coupon_use > 0 && coupon.coupon_expire > DateTime.Today)
         {
             foreach (var item in CartItems)
@@ -62,21 +64,30 @@ public class CouponData: ICouponData
                 if (item.coupon_id == coupon.coupon_id)
                 {
                     item.discounted_price = ((Convert.ToDecimal(coupon.coupon_discount) / 100) *
-                                             (Convert.ToDecimal(item.price)
-                                              * Convert.ToDecimal(item.ProductAmount)));
+                                                 (Convert.ToDecimal(item.price)
+                                                  * Convert.ToDecimal(item.ProductAmount)));
+                   await _products.Update(item.product_id, item.name, Convert.ToDecimal(item.price), item.quantity, item.img_url,
+                        item.description, item.coupon_id, item.discounted_price);
 
                 }
+            
             }
-            return new HttpResponseMessage(HttpStatusCode.OK);
-
         }
-        return new HttpResponseMessage(HttpStatusCode.BadRequest);
+        
+        else
+        {
+            throw new ArgumentException("Coupon is expired or has already been used up.");
+        }
 
-
-        // return _sql.SaveData<dynamic>("dbo.spCoupon_Update", coupon, "Default");
-
+        return CartItems;
     }
-    public Task Delete(int coupon_id)
+
+
+
+    // return _sql.SaveData<dynamic>("dbo.spCoupon_Update", coupon, "Default");
+
+
+public Task Delete(int coupon_id)
     {
         return _sql.SaveData<dynamic>("dbo.spCoupon_Delete", new { coupon_id }, "Default");
 

@@ -49,7 +49,7 @@ public class OrdersData : IOrdersData
                     {
                         await _sql.LoaddataInTransaction<OrdersProductsModel, dynamic>("dbo.spOrdersProducts_Create", new { item.order_id, item.product_id, item.amount, item.price });
                         product.quantity -= 1;
-                        await _sql.SaveDataInTransaction<dynamic>("dbo.spProducts_Update", new { product.product_id, product.name, product.price, product.quantity, product.img_url, product.description, product.category_id, product.coupon_id, product.discounted_price });
+                        await _sql.SaveDataInTransaction<dynamic>("dbo.spProducts_Update", new { product.product_id, product.name, product.price, product.quantity, product.img_url, product.description, product.coupon_id, product.discounted_price });
                     }
                     else
                     {
@@ -57,7 +57,7 @@ public class OrdersData : IOrdersData
                         await _sql.LoaddataInTransaction<OrdersProductsModel, dynamic>("dbo.spOrdersProducts_Create", new { item.order_id, item.product_id, item.amount, item.price });
                         product.quantity -= 1;
                         product.discounted_price = 0;
-                        await _sql.SaveDataInTransaction<dynamic>("dbo.spProducts_Update", new { product.product_id, product.name, product.price, product.quantity, product.img_url, product.description, product.category_id, product.coupon_id, product.discounted_price });
+                        await _sql.SaveDataInTransaction<dynamic>("dbo.spProducts_Update", new { product.product_id, product.name, product.price, product.quantity, product.img_url, product.description, product.coupon_id, product.discounted_price });
 
                     }
                 }
@@ -66,7 +66,7 @@ public class OrdersData : IOrdersData
             }
             catch(Exception e) 
             {
-_sql.RollbackTransaction();
+                _sql.RollbackTransaction();
                 throw;
             }
         

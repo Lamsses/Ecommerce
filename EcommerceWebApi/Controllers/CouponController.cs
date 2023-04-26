@@ -40,8 +40,10 @@ public class CouponController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<CouponModel>> ApplyCoupon(string cname , [FromBody] List<ProductsModel> CartItems)
     {
-        var output = await _coupons.ApplyCoupon(cname, CartItems);
-        return Ok(output);
+      
+             var output = await _coupons.ApplyCoupon(cname, CartItems);
+             return Ok(output);  
+ 
     }
     [HttpPost]
     [Authorize(Policy = PolicyConstants.Admin)]
@@ -49,6 +51,7 @@ public class CouponController : ControllerBase
 
     public async Task<ActionResult<CouponModel>> Post([FromBody] CouponModel coupons)
     {
+       
         var output = await _coupons.Create(coupons.coupon_name,coupons.coupon_use,coupons.coupon_discount,coupons.coupon_expire);
         return Ok(output);
 

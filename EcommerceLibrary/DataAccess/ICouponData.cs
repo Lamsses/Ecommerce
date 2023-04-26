@@ -13,5 +13,6 @@ public interface ICouponData
     Task<CouponModel> Create(string coupon_name,int coupon_use,int coupon_discount,DateTime coupon_expire);
     Task Update(int coupon_id,string coupon_name,int coupon_use,int coupon_discount,DateTime coupon_expire);
     Task Delete(int coupon_id);
-    Task<HttpResponseMessage> ApplyCoupon(string couponName, List<ProductsModel> CartItems);
+    //Task<HttpResponseMessage> ApplyCoupon(string couponName, List<ProductsModel> CartItems);
+    Task<List<ProductsModel>> ApplyCoupon(string couponName, List<ProductsModel> CartItems);
 }

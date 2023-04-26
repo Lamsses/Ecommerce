@@ -34,7 +34,7 @@
                     <ul class="dropdown-menu">
                         @foreach (var item in Categories)
                         {
-                            <li><a class="dropdown-item" href="/cat/@item.category_id">@item.Name</a></li>
+                            <li><button class="dropdown-item" @onclick="()=>ToCategotry(item.category_id)">@item.Name</button></li>
 
                         }
 

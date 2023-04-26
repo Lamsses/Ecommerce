@@ -61,7 +61,7 @@
                     </div>
                     <div class="col-md-6">
                         <label for="inputCategory" class="form-label">Category</label>
-                        <InputSelect placeholder="" id="inputCategoryy"  @bind-Value="addProduct.category_id" class="form-control" required>
+                 @*       <InputSelect placeholder="" id="inputCategoryy"  @bind-Value="addProduct.category_id" class="form-control" required>
                             <option  selected  >Choose Category</option>
                             @if (Categories is not null)
                             {
@@ -71,7 +71,7 @@
                                     
                                 }
                             }
-                        </InputSelect>
+                        </InputSelect>*@
                     </div>
                     <div class="col-md-6">
                         <label for="inputCouponn" class="form-label">Coupon</label>
@@ -133,7 +133,7 @@
                         <label for="inputQuantity" class="form-label">Quantity</label>
                         <InputNumber placeholder="quantity" id="inputQuantity" @bind-Value="editProduct.quantity" class="form-control" required />
                     </div>
-                    <div class="col-md-6">
+                   @* <div class="col-md-6">
                         <label for="inputCat" class="form-label">Category</label>
                         <InputSelect placeholder="category_id" id="inputCat" @bind-Value="editProduct.category_id" class="form-control" required>
                             <option  selected ="">Choose Category</option>
@@ -148,7 +148,7 @@
                             }
                         </InputSelect>
 
-                    </div>
+                    </div>*@
                     <div class="col-md-6">
                         <label for="inputCoupon" class="form-label">Coupon</label>
                         <InputSelect placeholder="coupon_id" id="inputCoupon" @bind-Value="editProduct.coupon_id" class="form-control">

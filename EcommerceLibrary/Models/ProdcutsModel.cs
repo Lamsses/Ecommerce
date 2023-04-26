@@ -17,7 +17,6 @@ namespace EcommerceLibrary.Models
         public string? img_url { get; set; }
 
         public string? description { get; set; }
-        public int category_id { get; set; }
 
         public int ProductAmount { get; set; } = 1;
         

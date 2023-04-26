@@ -58,7 +58,7 @@ public class ProductsController : ControllerBase
         try
         {
             var output = await _products.Create
-                (products.name, decimal.Parse(products.price), products.quantity, products.img_url, products.description, products.category_id, products.coupon_id, products.discounted_price);
+                (products.name, decimal.Parse(products.price), products.quantity, products.img_url, products.description, products.coupon_id, products.discounted_price);
             return Ok(output);
         }
         catch (Exception e)
@@ -77,7 +77,7 @@ public class ProductsController : ControllerBase
         
          await _products.Update
             (id, products.name, decimal.Parse(products.price), 
-            products.quantity,  products.img_url,  products.description, products.category_id,products.coupon_id, products.discounted_price);
+            products.quantity,  products.img_url,  products.description, products.coupon_id, products.discounted_price);
 
         return Ok();
     }

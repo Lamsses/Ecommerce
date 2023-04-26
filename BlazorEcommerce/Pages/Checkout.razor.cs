@@ -48,8 +48,8 @@ partial class Checkout
 
         if (!string.IsNullOrEmpty(couponName))
         {
-            var request = await client.PostAsJsonAsync<List<ProductsModel>>($"Coupon/Apply/{couponName}",products);
-            var response = await request.Content.ReadFromJsonAsync<List<ProductsModel>>();
+            var request = await client.PostAsJsonAsync($"Coupon/Apply/{couponName}",products);
+      
             if (request.IsSuccessStatusCode)
             {
                 await LocalStorage.SetItemAsync("cart", products);

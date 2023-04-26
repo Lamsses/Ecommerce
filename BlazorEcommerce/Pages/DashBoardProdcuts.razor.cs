@@ -49,11 +49,10 @@ partial class DashBoardProdcuts : MainBase
     private AdminLogsModel adminLogs = new();
     private ProductsModel editProduct = new();
     private ProductsModel addProduct = new();
+    private List<ProductCategoryModel>productCategory = new();
     private CategoriesModel category = new();
     private CouponModel coupon = new();
     public int productId;
-     private string searchQuery;
-  
 
     private async Task<IEnumerable<ProductsModel>> SearchProducts(string searchText)
     {
@@ -203,21 +202,32 @@ partial class DashBoardProdcuts : MainBase
         var token = await LocalStorage.GetItemAsync<string>("token");
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
         var response = await client.PostAsJsonAsync("Categories", category.Name);
+
         Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
+
+
         // if (response.IsSuccessStatusCode)
         // {
         //      adminLog.AddCategeoryLog(category.Name);
         // }
 
     }
+    private async Task AddProductCategory()
+    {
+        client = factory.CreateClient("api");
+        var token = await LocalStorage.GetItemAsync<string>("token");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
+         await client.PostAsJsonAsync("Categories", category.Name);
+
+        var response = await client.PostAsJsonAsync
+            ("ProductCategory", new ProductCategoryModel {category_id = category.category_id, product_id = addProduct.product_id  });
+        productCategory = await client.GetFromJsonAsync<List<ProductCategoryModel>>("ProductCategory");
+    }
 
     private async Task EditCategory()
     {
         var response = await client.PutAsJsonAsync($"Categories/{category.category_id}", category);
         Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
-
-
-
     }
     private async Task DeleteCategory()
     {

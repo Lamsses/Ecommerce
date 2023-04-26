@@ -2,7 +2,7 @@
 @inherits CartBase
 @inject IProductService ProductService
 @inject ICategoryService CategoryService
-
+@inject IProductCategoryService ProductCategoryService
 <section class="products-section pt-5">
     <div class="container ">
         @* <h1 class="section__heading mb-4">Today's Best Deals For You</h1> *@
@@ -13,7 +13,7 @@
                         {
 
                             <li class="nav-item" role="presentation">
-                                <button role="tab" class="nav-link ms-2 mt-2" aria-selected="false" data-bs-toggle="pill" @onclick="() => ShowCategoryProducts(item.category_id)">@item.Name</button>
+                        <button role="tab" class="nav-link ms-2 mt-2" aria-selected="false" data-bs-toggle="pill" @onclick="() => ShowCategoryProducts(item.category_id)">@item.name</button>
                             </li>
                         }
                     }
@@ -58,8 +58,11 @@
     public List<CategoriesModel> Categories = new();
     public ICollection<ProductsModel> CategoryProducts;
     public List<ProductsModel> Products = new();
+    private IEnumerable<ProductCategoryModel>? productCategory;
+
     protected override async Task OnInitializedAsync()
     {
+
         CategoryProducts = await ProductService.GetProducts();
         Products = await ProductService.GetProducts();
         foreach (var item in Products)

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using EcommerceLibrary.Constants;
 using System.Text;
+using EcommerceLibrary.Models;
 
 namespace EcommerceWebApi.StartupConfig;
 
@@ -23,6 +24,10 @@ public static class DependnciyInjctionExtention
         builder.Services.AddSingleton<ICustomerCouponData, CustomerCouponData>();
         builder.Services.AddSingleton<IAdminLog, AdminLogData>();
         builder.Services.AddSingleton<IProductsData, ProductsData>();
+        builder.Services.AddSingleton<IProductsData, ProductsData>();
+        builder.Services.AddSingleton<IProdcutCategoryData, ProdcutCategoryData>();
+
+
         builder.Services.AddSingleton<IOrdersProductsData, OrdersProductsData>();
         builder.Services.AddSingleton<ICategoriesData, CategoriesData>();
         builder.Services.AddSingleton<ICustomersData, CustomersData>();
