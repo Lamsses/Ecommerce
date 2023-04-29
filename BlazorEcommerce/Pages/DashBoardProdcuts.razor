@@ -33,7 +33,7 @@
 <button class="mybtn mybtn--outline" data-bs-toggle="modal" data-bs-target="#category">Manage Categories</button>
 <button class="mybtn mybtn--outline" data-bs-toggle="modal" data-bs-target="#coupon">Manage Coupons</button>
 <!-- Add Product -->
-<div class="modal fade" id="product" tabindex="-2" aria-labelledby="addProductLabel" aria-hidden="true">
+        <div class="modal fade" id="product" tabindex="-2" aria-labelledby="addProductLabel" aria-hidden="true" >
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -53,7 +53,7 @@
                     </div>
                     <div class="col-md-6">
                         <label for="inputImgg" class="form-label">Image</label>
-                        <InputText placeholder="" id="inputImgg" @bind-Value="addProduct.img_url" class="form-control" required />
+                        <InputText placeholder="" id="inputImgg" @bind-Value="addProduct.img_url" class="form-control"  />
                     </div>
                     <div class="col-md-6">
                         <label for="inputQuantityy" class="form-label">Quantity</label>
@@ -61,17 +61,21 @@
                     </div>
                     <div class="col-md-6">
                         <label for="inputCategory" class="form-label">Category</label>
-                 @*       <InputSelect placeholder="" id="inputCategoryy"  @bind-Value="addProduct.category_id" class="form-control" required>
-                            <option  selected  >Choose Category</option>
-                            @if (Categories is not null)
-                            {
-                                foreach (var item in Categories)
-                                {
-                                    <option value="@item.category_id">@item.Name</option>
-                                    
-                                }
-                            }
-                        </InputSelect>*@
+                        <div class="dropdown">
+                                    <button class="btn border  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Choose Category
+                            </button>
+                            <ul class="dropdown-menu">
+                                    @foreach (var item in Categories)
+                                    {
+                                <div class="form-check ms-2">
+                                        <InputCheckbox class="form-check-input" @bind-Value="@item.isSelected" />
+                                        <label class="form-check-label"> @item.Name</label>
+                                </div>
+                                    }
+                                
+                            </ul>
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <label for="inputCouponn" class="form-label">Coupon</label>
@@ -99,12 +103,13 @@
                     </div>
 
                 </EditForm>
-
+                
             </div>
         </div>
     </div>
 </div>
 <!-- Edit Product -->
+
 <div class="modal fade" id="editproduct" tabindex="-1" aria-labelledby="editProductLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -133,22 +138,24 @@
                         <label for="inputQuantity" class="form-label">Quantity</label>
                         <InputNumber placeholder="quantity" id="inputQuantity" @bind-Value="editProduct.quantity" class="form-control" required />
                     </div>
-                   @* <div class="col-md-6">
-                        <label for="inputCat" class="form-label">Category</label>
-                        <InputSelect placeholder="category_id" id="inputCat" @bind-Value="editProduct.category_id" class="form-control" required>
-                            <option  selected ="">Choose Category</option>
-                            @if (Categories is not null)
-                            {
-                                foreach (var item in Categories)
+                    <div class="col-md-6">
+                        <label for="inputCategory" class="form-label">Category</label>
+                        <div class="dropdown">
+                            <button class="btn border  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Choose Category
+                            </button>
+                            <ul class="dropdown-menu">
+                                @foreach (var item in Categories)
                                 {
-                                    <option value="@item.category_id">@item.Name</option>
-                                    
-                                    
+                                    <div class="form-check ms-2">
+                                        <input type="checkbox" class="form-check-input" @bind="@item.isSelected" />
+                                        <label class="form-check-label"> @item.Name</label>
+                                    </div>
                                 }
-                            }
-                        </InputSelect>
-
-                    </div>*@
+                                
+                            </ul>
+                        </div>
+                    </div>
                     <div class="col-md-6">
                         <label for="inputCoupon" class="form-label">Coupon</label>
                         <InputSelect placeholder="coupon_id" id="inputCoupon" @bind-Value="editProduct.coupon_id" class="form-control">

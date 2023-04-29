@@ -1,4 +1,5 @@
-﻿using Blazored.LocalStorage;
+﻿using System.Net.Http.Headers;
+using Blazored.LocalStorage;
 using EcommerceLibrary.Models;
 
 namespace BlazorEcommerce.Services;
@@ -23,6 +24,15 @@ public class ProductCategoryService : IProductCategoryService
         var token = await localStorage.GetItemAsync<string>("token");
         // _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
         var response = await _client.GetFromJsonAsync<List<ProductCategoryModel>>("ProductCategory");
+        return response;
+    }
+
+    public async Task<HttpResponseMessage> AddProductCategory(ProductCategoryModel model)
+    {
+        _client = _factory.CreateClient("api");
+        var token = await localStorage.GetItemAsync<string>("token");
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
+        var response = await _client.PostAsJsonAsync("ProductCategory",model);
         return response;
     }
 }

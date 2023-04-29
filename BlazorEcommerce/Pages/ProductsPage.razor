@@ -13,7 +13,7 @@
                         {
 
                             <li class="nav-item" role="presentation">
-                        <button role="tab" class="nav-link ms-2 mt-2" aria-selected="false" data-bs-toggle="pill" @onclick="() => ShowCategoryProducts(item.category_id)">@item.name</button>
+                        <button role="tab" class="nav-link ms-2 mt-2" aria-selected="false" data-bs-toggle="pill" @onclick="() => ShowCategoryProducts(item.category_id)">@item.Name</button>
                             </li>
                         }
                     }
@@ -65,28 +65,38 @@
 
         CategoryProducts = await ProductService.GetProducts();
         Products = await ProductService.GetProducts();
-        foreach (var item in Products)
+        productCategory = await ProductCategoryService.GetProductCategory();
+        foreach (var item in productCategory)
         {
             var category = (await CategoryService.GetCategories()).FirstOrDefault(c => c.category_id == item.category_id);
 
-         
+
             if (category != null && !Categories.Exists(c=> c.category_id == category.category_id))
             {
                 Categories.Add(category);
             }
 
-            
+
         }
-            Categories = Categories.Distinct().ToList();
-        
+        Categories = Categories.Distinct().ToList();
+
     }
 
     public async Task ShowCategoryProducts(int id)
     {
-        
-        CategoryProducts = (await ProductService.GetProducts()).Where(p => p.category_id == id).ToList();
+        var tmp = new List<ProductsModel>();
+        productCategory = await ProductCategoryService.GetProductCategory();
 
-        
-       
+        productCategory = productCategory.Where(c => c.category_id == id);
+
+        foreach (var item in productCategory)
+        {
+            tmp.Add((await ProductService.GetProducts()).Where(p => p.product_id == item.product_id).First());
+            
+        }
+
+        CategoryProducts = tmp;
+
+
     }
 }

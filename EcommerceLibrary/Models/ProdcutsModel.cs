@@ -21,5 +21,6 @@ namespace EcommerceLibrary.Models
         public int ProductAmount { get; set; } = 1;
         
         public int? coupon_id { get; set; }
+        
     }
 }

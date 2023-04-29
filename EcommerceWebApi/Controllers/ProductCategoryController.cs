@@ -30,19 +30,13 @@ public class ProductCategoryController : ControllerBase
     }
 
     [HttpPost]
+    [AllowAnonymous]
     public async Task<ActionResult<ProductCategoryModel>> Post([FromBody] ProductCategoryModel products)
     {
-        try
-        {
-            var output = await _product.Create(products.product_id, products.category_id);
+        
+            var output = await _product.Create( products.category_id,products.product_id);
             return Ok(output);
-        }
-        catch (Exception e)
-        {
 
-            return StatusCode(StatusCodes.Status500InternalServerError,
-               "Error retrieving data from the database");
-        }
 
 
     }

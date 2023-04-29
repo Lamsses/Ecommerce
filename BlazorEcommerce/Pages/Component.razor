@@ -1,0 +1,19 @@
+﻿@page "/pp"
+<h3>Component</h3>
+
+<InputSelect @bind-Value="@selectedOptions" multiple="true">
+    @foreach (var option in options)
+    {
+        <option value="@option">@option</option>
+    }
+</InputSelect>
+
+@code {
+    List<string> options = new List<string>{"Option 1", "Option 2", "Option 3"};
+    List<string> selectedOptions = new List<string>();
+
+    protected override void OnInitialized()
+    {
+        selectedOptions.Add(options[0]);
+    }
+}

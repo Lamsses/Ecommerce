@@ -10,6 +10,7 @@ using System.Net.Http.Headers;
 using System.Net;
 using System.Text.Json;
 using Blazored.Typeahead;
+using Microsoft.JSInterop;
 
 namespace BlazorEcommerce.Pages;
 
@@ -21,11 +22,17 @@ partial class DashBoardProdcuts : MainBase
     [Inject] IProductService productService { get; set; }
     [Inject] IOrderProductsService orderProductsService { get; set; }
     [Inject] IToastService toastService { get; set; }
+    [Inject] IProductCategoryService productCategoryService { get; set; }
+    [Inject] IJSRuntime jsRuntime { get; set; }
     protected List<ProductsModel> products = new();
     protected List<CategoriesModel> Categories = new();
-    protected List<CouponModel> Coupons = new();
+    protected List<CategoriesModel> selectedCategories = new();
+    protected List<CouponModel> Coupons = new ();
     [CascadingParameter]
     private Task<AuthenticationState>? authenticationState { get; set; }
+
+    List<string> options = new List<string> { "Option 1", "Option 2", "Option 3" };
+    List<string> selectedOptions = new List<string>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -34,9 +41,10 @@ partial class DashBoardProdcuts : MainBase
 
             var authState = await authenticationState;
             var user = authState?.User;
+            selectedOptions.Add(options[0]);
 
-    
-                client = factory.CreateClient("api");
+
+            client = factory.CreateClient("api");
                 var token = await LocalStorage.GetItemAsync<string>("token");
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
                 products = await client.GetFromJsonAsync<List<ProductsModel>>("Products");
@@ -67,14 +75,27 @@ partial class DashBoardProdcuts : MainBase
 
         try
         {
-            client = factory.CreateClient("api");
+            // client = factory.CreateClient("api");
+            
             var product = products.Where(p => p.name == addProduct.name).FirstOrDefault();
             if (product == null)
             {
+
                 var response = await productService.AddProduct(addProduct);
                 var result = await response.Content.ReadFromJsonAsync<ProductsModel>();
                 if (response.IsSuccessStatusCode)
                 {
+                foreach (var item in Categories)
+                {
+                    if (item.isSelected)
+                    {
+                        var s = await productCategoryService.AddProductCategory(new ProductCategoryModel
+                        {
+        category_id = item.category_id,
+        product_id = result.product_id
+                        });
+                    }
+                }
                     toastService.ShowSuccess("Product Added Successfully");
                     adminLog.AddLog(result);
                     products = await productService.GetProducts();
@@ -84,6 +105,11 @@ partial class DashBoardProdcuts : MainBase
                 {
                     toastService.ShowError("An error occurred Please try again");
                 }
+            }
+            else
+            {
+                    toastService.ShowError("Item with this name already exist");
+
             }
         }
         catch (HttpRequestException ex)
@@ -97,7 +123,8 @@ partial class DashBoardProdcuts : MainBase
         }
         catch (JsonException ex)
         {
-            toastService.ShowError("There are Missing Inputs");
+            toastService.ShowError(ex.Message);
+            throw ex;
 
 
             // Return an informative error response
@@ -165,6 +192,8 @@ partial class DashBoardProdcuts : MainBase
                 toastService.ShowSuccess("Product Edited Successfully");
 
                 adminLog.UpdateLog(productId);
+
+
             }
             else
             {
@@ -242,12 +271,16 @@ partial class DashBoardProdcuts : MainBase
         await client.PostAsJsonAsync<CouponModel>("Coupon", coupon);
         Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
 
-        }private async Task EditCoupon()
+        }
+    private async Task EditCoupon()
+
     {
         var response = await client.PutAsJsonAsync($"Coupon/{coupon.coupon_id}", coupon);
         Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
 
-        }private async Task DeleteCoupon()
+        }
+    
+    private async Task DeleteCoupon()
     {
         client = factory.CreateClient("api");
         var token = await LocalStorage.GetItemAsync<string>("token");
@@ -266,7 +299,19 @@ partial class DashBoardProdcuts : MainBase
         editProduct = await productService.GetProductById(id);
 
     }
-  
+
+    public async void LoadProductData()
+    {
+        editProduct = await productService.GetProductById(productId);
+
+    }
+
+    public  void ClearProductData()
+    {
+        editProduct = new ProductsModel();
+    }
+
+
     private void HandleSearch(ProductsModel product)
     {
         if (product == null) return;
