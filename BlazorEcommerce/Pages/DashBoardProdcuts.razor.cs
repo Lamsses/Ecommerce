@@ -123,8 +123,7 @@ partial class DashBoardProdcuts : MainBase
         }
         catch (JsonException ex)
         {
-            toastService.ShowError(ex.Message);
-            throw ex;
+            toastService.ShowError("There are Missing Inputs");
 
 
             // Return an informative error response
