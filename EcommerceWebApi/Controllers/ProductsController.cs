@@ -4,6 +4,7 @@ using EcommerceLibrary.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 
 namespace EcommerceApi.Controllers;
@@ -12,7 +13,7 @@ namespace EcommerceApi.Controllers;
 [ApiController]
 
 
-public class ProductsController : ControllerBase
+public class ProductsController : ControllerBase 
 {
     private readonly IProductsData _products;
 
@@ -52,13 +53,14 @@ public class ProductsController : ControllerBase
 
 
     [HttpPost]
-    [Authorize(Policy = PolicyConstants.Admin)]
+    [AllowAnonymous]
     public async Task<ActionResult<ProductsModel>> Post([FromBody] ProductsModel products)
     {
         try
         {
             var output = await _products.Create
-                (products.name, decimal.Parse(products.price), products.quantity, products.img_url, products.description, products.category_id, products.coupon_id, products.discounted_price);
+                (products.name, decimal.Parse(products.price), products.quantity, products.img_url, products.description
+                , products.coupon_id, products.discounted_price, products.original_price);
             return Ok(output);
         }
         catch (Exception e)
@@ -76,8 +78,8 @@ public class ProductsController : ControllerBase
     {
         
          await _products.Update
-            (id, products.name, decimal.Parse(products.price), 
-            products.quantity,  products.img_url,  products.description, products.category_id,products.coupon_id, products.discounted_price);
+            (id,products.name, decimal.Parse(products.price), products.quantity, products.img_url, products.description
+                , products.coupon_id, products.discounted_price, products.original_price);
 
         return Ok();
     }

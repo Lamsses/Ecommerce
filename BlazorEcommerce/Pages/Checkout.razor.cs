@@ -45,57 +45,66 @@ partial class Checkout
         client.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
 
-        var userId = await customerService.GetUserIdFromToken();
+        // var userId = await customerService.GetUserIdFromToken();
 
         if (!string.IsNullOrEmpty(couponName))
         {
-            var result = await client.GetAsync($"Coupon/{couponName}");
-            if (result.StatusCode == HttpStatusCode.OK)
+            var request = await client.PostAsJsonAsync($"Coupon/Apply/{couponName}", products);
+            
+            if (request.IsSuccessStatusCode)
             {
-                var coupon = await result.Content.ReadFromJsonAsync<CouponModel>();
-                if (coupon != null)
+                products = await request.Content.ReadFromJsonAsync<List<ProductsModel>>();
+                await LocalStorage.SetItemAsync("cart", products);
+                foreach (var item in products)
                 {
-                    var customerCoupon = await client.GetAsync
-                        ($"CustomerCoupon/{userId}/{coupon.coupon_id}");
-                    if (!customerCoupon.IsSuccessStatusCode)
+                    if (item.discounted_price > 0)
                     {
-                        if (coupon.coupon_use > 0 && coupon.coupon_expire > DateTime.Today)
-                        {
-                            foreach (var item in products)
-                            {
-
-
-                                // var product = products.Where(p => p.coupon_id == coupon.coupon_id).FirstOrDefault();
-                                if (item.coupon_id == coupon.coupon_id)
-                                {
-                                    item.discounted_price = (Convert.ToDecimal(item.price) * item.ProductAmount) - ((Convert.ToDecimal(coupon.coupon_discount) / 100) *
-                                                                (Convert.ToDecimal(item.price)
-                                                                 * item.ProductAmount));
-                                    item.discounted_price = Math.Round(item.discounted_price, 2);
-
-                                    await LocalStorage.SetItemAsync("cart", products);
-                                    //var response = await client.PutAsJsonAsync($"Products/{product.product_id}", product);
-                                    coupon.coupon_use -= 1;
-                                    await client.PutAsJsonAsync<CouponModel>($"Coupon/{coupon.coupon_id}", coupon);
-                                    await client.PostAsJsonAsync<CustomerCouponModel>($"CustomerCoupon",
-                                        new CustomerCouponModel { coupon_id = coupon.coupon_id, customer_id = userId });
-                                    ToastService.ShowSuccess("Coupon Apllied successfully");
-
-                                }
-
-
-
-                            }
-                        }
+                        item.discounted_price = 0;  
+                        await productService.UpdateProduct(item);
                     }
 
-                }
+                } 
+                ToastService.ShowSuccess("Coupon Applied successfully");
+
             }
+            // var result = await client.GetAsync($"Coupon/{couponName}");
+            // if (result.StatusCode == HttpStatusCode.OK)
+            // {
+            //     var coupon = await result.Content.ReadFromJsonAsync<CouponModel>();
+            //     if (coupon != null)
+            //     {
+            //         var customerCoupon = await client.GetAsync
+            //             ($"CustomerCoupon/{userId}/{coupon.coupon_id}");
+            //         if (!customerCoupon.IsSuccessStatusCode)
+            //         {
+            //             if (coupon.coupon_use > 0 && coupon.coupon_expire > DateTime.Today)
+            //             {
+            // foreach (var item in products)
+            // {
+            // var product = products.Where(p => p.coupon_id == coupon.coupon_id).FirstOrDefault();
+            // if (item.coupon_id == coupon.coupon_id)
+            // {
+            //     item.discounted_price = ((Convert.ToDecimal(coupon.coupon_discount) / 100) *
+            //                              (Convert.ToDecimal(item.price)
+            //                               * Convert.ToDecimal(item.ProductAmount)));
+            //     await LocalStorage.SetItemAsync("cart", products);
+            //var response = await client.PutAsJsonAsync($"Products/{product.product_id}", product);
+            // coupon.coupon_use -= 1;
+            // await client.PutAsJsonAsync<CouponModel>($"Coupon/{coupon.coupon_id}", coupon);
+            // await client.PostAsJsonAsync<CustomerCouponModel>($"CustomerCoupon",
+            //     new CustomerCouponModel { coupon_id = coupon.coupon_id, customer_id = userId });
+            // }
+            // }
+            //             }
+            //         }
+            //     }
+            // }
         }
         else
         {
             ToastService.ShowError("Wrong Coupon");
         }
+
         products = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
     }
 
@@ -133,15 +142,10 @@ partial class Checkout
                     total += item.discounted_price;
 
                 }
-
-
                 else
                 {
                     total += (Convert.ToDecimal(item.price) * Convert.ToDecimal(item.ProductAmount));
                 }
-
-
-
             }
         }
         return total;

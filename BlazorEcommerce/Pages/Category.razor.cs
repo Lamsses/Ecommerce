@@ -15,7 +15,7 @@ namespace BlazorEcommerce.Pages
         {
 
             products = await ProductService.GetProducts();
-            categoriesProduct = products.Where(c => c.category_id == Id);
+            //categoriesProduct = products.Where(c => c.category_id == Id);
 
         }
     }

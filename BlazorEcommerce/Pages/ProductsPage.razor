@@ -11,10 +11,10 @@
                     {
                         if (item is not null)
                         {
-
+@*
                             <li class="nav-item" role="presentation">
                                 <button role="tab" class="nav-link ms-2 mt-2" aria-selected="false" data-bs-toggle="pill" @onclick="() => ShowCategoryProducts(item.category_id)">@item.Name</button>
-                            </li>
+                            </li>*@
                         }
                     }
         
@@ -62,28 +62,28 @@
     {
         CategoryProducts = await ProductService.GetProducts();
         Products = await ProductService.GetProducts();
-        foreach (var item in Products)
-        {
-            var category = (await CategoryService.GetCategories()).FirstOrDefault(c => c.category_id == item.category_id);
+        //foreach (var item in Products)
+        //{
+        //    var category = (await CategoryService.GetCategories()).FirstOrDefault(c => c.category_id == item.category_id);
 
          
-            if (category != null && !Categories.Exists(c=> c.category_id == category.category_id))
-            {
-                Categories.Add(category);
-            }
+        //    if (category != null && !Categories.Exists(c=> c.category_id == category.category_id))
+        //    {
+        //        Categories.Add(category);
+        //    }
 
             
-        }
+        //}
             Categories = Categories.Distinct().ToList();
         
     }
 
-    public async Task ShowCategoryProducts(int id)
-    {
+    //public async Task ShowCategoryProducts(int id)
+    //{
         
-        CategoryProducts = (await ProductService.GetProducts()).Where(p => p.category_id == id).ToList();
+    //    CategoryProducts = (await ProductService.GetProducts()).Where(p => p.category_id == id).ToList();
 
         
        
-    }
+    //}
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,10 +18,10 @@ namespace EcommerceLibrary.Models
         public string? img_url { get; set; }
 
         public string? description { get; set; }
-        public int category_id { get; set; }
 
         public int ProductAmount { get; set; } = 1;
         
         public int? coupon_id { get; set; }
+        public decimal original_price { get; set; }
     }
 }

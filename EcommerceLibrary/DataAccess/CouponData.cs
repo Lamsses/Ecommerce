@@ -11,10 +11,12 @@ namespace EcommerceLibrary.DataAccess;
 public class CouponData: ICouponData
 {
     private readonly ISqlDataAccess _sql;
+    private readonly IProductsData _products;
 
-    public CouponData(ISqlDataAccess sql)
+    public CouponData(ISqlDataAccess sql, IProductsData products)
     {
         _sql = sql;
+        _products = products;
     }
     public Task<List<CouponModel>> GetAll()
     {
@@ -32,6 +34,44 @@ public class CouponData: ICouponData
     {
         var result = await _sql.Loaddata<CouponModel, dynamic>("dbo.spCoupon_Create", new { coupon_name, coupon_use, coupon_discount, coupon_expire }, "Default");
         return result.FirstOrDefault();
+    }
+    public async Task<List<ProductsModel>> ApplyCoupon(string couponName, List<ProductsModel> CartItems)
+    {
+        var coupon = await GetCouponByName(couponName);
+        if (coupon is null)
+        {
+            throw new ArgumentException("Coupon not found.");
+        }
+
+        if (CartItems.Count <= 0)
+        {
+            throw new ArgumentException("Cart is empty.");
+        }
+
+        if (coupon.coupon_use > 0 && coupon.coupon_expire > DateTime.Today)
+        {
+            foreach (var item in CartItems)
+            {
+                if (item.coupon_id == coupon.coupon_id)
+                {
+                    item.discounted_price = ((Convert.ToDecimal(coupon.coupon_discount) / 100) *
+                                                 (Convert.ToDecimal(item.price)
+                                                  * Convert.ToDecimal(item.ProductAmount)));
+                    await _products.Update(item.product_id, item.name, Convert.ToDecimal(item.price), item.quantity, item.img_url,
+                        item.description, item.coupon_id, item.discounted_price, item.original_price);
+                    return CartItems;
+
+                }
+
+            }
+        }
+
+        else
+        {
+            throw new ArgumentException("Coupon is expired or has already been used up.");
+        }
+
+        return  new();
     }
 
     public Task Update(int coupon_id, string coupon_name, int coupon_use, int coupon_discount, DateTime coupon_expire)
