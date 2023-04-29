@@ -27,6 +27,8 @@ public static class DependnciyInjctionExtention
         builder.Services.AddScoped<TokenModel>();
         builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
         builder.Services.AddScoped<IProductService, ProductService>();
+        builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
+
         builder.Services.AddScoped<ICartService, CartService>();
         builder.Services.AddScoped<ICategoryService, CategoryService>();
         builder.Services.AddScoped<ICustomerService, CustomerService>();

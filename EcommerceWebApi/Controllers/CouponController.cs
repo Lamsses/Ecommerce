@@ -51,6 +51,7 @@ public class CouponController : ControllerBase
 
     public async Task<ActionResult<CouponModel>> Post([FromBody] CouponModel coupons)
     {
+       
         var output = await _coupons.Create(coupons.coupon_name,coupons.coupon_use,coupons.coupon_discount,coupons.coupon_expire);
         return Ok(output);
 

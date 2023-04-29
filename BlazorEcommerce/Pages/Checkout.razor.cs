@@ -29,11 +29,10 @@ partial class Checkout
         {
             client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
-
         }
+
         products = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
         Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
-
     }
 
 
@@ -109,7 +108,6 @@ partial class Checkout
     }
 
 
-
     //public  decimal ProductTotal(ProductsModel product)
     //{
 
@@ -135,12 +133,10 @@ partial class Checkout
         {
             foreach (var item in products)
             {
-
                 if (item.discounted_price > 0)
                 {
                     // var newPrice = (Convert.ToDecimal(item.discounted_price) * Convert.ToDecimal(item.ProductAmount));
                     total += item.discounted_price;
-
                 }
                 else
                 {
@@ -148,6 +144,7 @@ partial class Checkout
                 }
             }
         }
+
         return total;
 
     }

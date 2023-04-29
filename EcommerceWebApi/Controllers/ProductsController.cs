@@ -66,8 +66,7 @@ public class ProductsController : ControllerBase
         catch (Exception e)
         {
 
-             return StatusCode(StatusCodes.Status500InternalServerError,
-                "Error retrieving data from the database");
+            throw e;
         }
 
     }

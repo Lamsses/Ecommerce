@@ -57,6 +57,10 @@ partial class NavBar : CartBase
         NavigationManager.NavigateTo("/", true);
 
     }
+    public void ToCategotry(int id)
+    {
+        NavigationManager.NavigateTo($"cat/{id}", true);
+    }
 
     public async Task Logout()
     {

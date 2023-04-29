@@ -4,7 +4,7 @@ namespace EcommerceLibrary.DataAccess
 {
     public interface IOrdersData
     {
-        Task<OrdersModel?> Create(DateTime order_date, int customer_id, string receipt);
+        Task<OrdersModel?> Create(DateTime order_date, int customer_id, string receipt, List<OrdersProductsModel>? OrderProducts);
         Task Delete(int order_id);
         Task<List<OrdersModel>> GetAll();
         Task<OrdersModel?> GetOne(int order_id);

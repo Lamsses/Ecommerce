@@ -11,6 +11,7 @@ using System.Net;
 using System.Text.Json;
 using Blazored.Typeahead;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.JSInterop;
 
 namespace BlazorEcommerce.Pages;
 
@@ -23,11 +24,17 @@ partial class DashBoardProdcuts : MainBase
     [Inject] IOrderProductsService orderProductsService { get; set; }
     [Inject] IToastService toastService { get; set; }
     [Inject] IConfiguration config { get; set; }
+    [Inject] IProductCategoryService productCategoryService { get; set; }
+    [Inject] IJSRuntime jsRuntime { get; set; }
     protected List<ProductsModel> products = new();
     protected List<CategoriesModel> Categories = new();
-    protected List<CouponModel> Coupons = new();
+    protected List<CategoriesModel> selectedCategories = new();
+    protected List<CouponModel> Coupons = new ();
     [CascadingParameter]
     private Task<AuthenticationState>? authenticationState { get; set; }
+
+    List<string> options = new List<string> { "Option 1", "Option 2", "Option 3" };
+    List<string> selectedOptions = new List<string>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -36,6 +43,7 @@ partial class DashBoardProdcuts : MainBase
 
             var authState = await authenticationState;
             var user = authState?.User;
+            selectedOptions.Add(options[0]);
 
 
             client = factory.CreateClient("api");
@@ -53,6 +61,7 @@ partial class DashBoardProdcuts : MainBase
     private List<ProductsModel> searchItems= new();
 
     private ProductsModel addProduct = new();
+    private List<ProductCategoryModel>productCategory = new();
     private CategoriesModel category = new();
     private CouponModel coupon = new();
     public int productId;
@@ -94,6 +103,17 @@ partial class DashBoardProdcuts : MainBase
                 var result = await response.Content.ReadFromJsonAsync<ProductsModel>();
                 if (response.IsSuccessStatusCode)
                 {
+                foreach (var item in Categories)
+                {
+                    if (item.isSelected)
+                    {
+                        var s = await productCategoryService.AddProductCategory(new ProductCategoryModel
+                        {
+        category_id = item.category_id,
+        product_id = result.product_id
+                        });
+                    }
+                }
                     toastService.ShowSuccess("Product Added Successfully");
                     adminLog.AddLog(result);
                     products = await productService.GetProducts();
@@ -112,6 +132,11 @@ partial class DashBoardProdcuts : MainBase
                 {
                     Content = new StringContent("Product Already Exists")
                 };
+            }
+            else
+            {
+                    toastService.ShowError("Item with this name already exist");
+
             }
         }
         catch (HttpRequestException ex)
@@ -193,6 +218,8 @@ partial class DashBoardProdcuts : MainBase
                 toastService.ShowSuccess("Product Edited Successfully");
 
                 adminLog.UpdateLog(productId);
+
+
             }
             else
             {
@@ -230,21 +257,32 @@ partial class DashBoardProdcuts : MainBase
         var token = await LocalStorage.GetItemAsync<string>("token");
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
         var response = await client.PostAsJsonAsync("Categories", category.Name);
+
         Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
+
+
         // if (response.IsSuccessStatusCode)
         // {
         //      adminLog.AddCategeoryLog(category.Name);
         // }
 
     }
+    private async Task AddProductCategory()
+    {
+        client = factory.CreateClient("api");
+        var token = await LocalStorage.GetItemAsync<string>("token");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
+         await client.PostAsJsonAsync("Categories", category.Name);
+
+        var response = await client.PostAsJsonAsync
+            ("ProductCategory", new ProductCategoryModel {category_id = category.category_id, product_id = addProduct.product_id  });
+        productCategory = await client.GetFromJsonAsync<List<ProductCategoryModel>>("ProductCategory");
+    }
 
     private async Task EditCategory()
     {
         var response = await client.PutAsJsonAsync($"Categories/{category.category_id}", category);
         Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
-
-
-
     }
     private async Task DeleteCategory()
     {
@@ -284,6 +322,17 @@ partial class DashBoardProdcuts : MainBase
         client = factory.CreateClient("api");
         editProduct = await productService.GetProductById(id);
 
+    }
+
+    public async void LoadProductData()
+    {
+        editProduct = await productService.GetProductById(productId);
+
+    }
+
+    public  void ClearProductData()
+    {
+        editProduct = new ProductsModel();
     }
     private string CreateWebPath(string path)
     {

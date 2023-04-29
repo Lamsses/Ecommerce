@@ -2,7 +2,7 @@
 @inherits CartBase
 @inject IProductService ProductService
 @inject ICategoryService CategoryService
-
+@inject IProductCategoryService ProductCategoryService
 <section class="products-section pt-5">
     <div class="container ">
         @* <h1 class="section__heading mb-4">Today's Best Deals For You</h1> *@
@@ -13,8 +13,8 @@
                         {
 @*
                             <li class="nav-item" role="presentation">
-                                <button role="tab" class="nav-link ms-2 mt-2" aria-selected="false" data-bs-toggle="pill" @onclick="() => ShowCategoryProducts(item.category_id)">@item.Name</button>
-                            </li>*@
+                        <button role="tab" class="nav-link ms-2 mt-2" aria-selected="false" data-bs-toggle="pill" @onclick="() => ShowCategoryProducts(item.category_id)">@item.Name</button>
+                            </li>
                         }
                     }
         
@@ -58,32 +58,45 @@
     public List<CategoriesModel> Categories = new();
     public ICollection<ProductsModel> CategoryProducts;
     public List<ProductsModel> Products = new();
+    private IEnumerable<ProductCategoryModel>? productCategory;
+
     protected override async Task OnInitializedAsync()
     {
+
         CategoryProducts = await ProductService.GetProducts();
         Products = await ProductService.GetProducts();
-        //foreach (var item in Products)
-        //{
-        //    var category = (await CategoryService.GetCategories()).FirstOrDefault(c => c.category_id == item.category_id);
+        productCategory = await ProductCategoryService.GetProductCategory();
+        foreach (var item in productCategory)
+        {
+            var category = (await CategoryService.GetCategories()).FirstOrDefault(c => c.category_id == item.category_id);
 
-         
-        //    if (category != null && !Categories.Exists(c=> c.category_id == category.category_id))
-        //    {
-        //        Categories.Add(category);
-        //    }
 
-            
-        //}
-            Categories = Categories.Distinct().ToList();
-        
+            if (category != null && !Categories.Exists(c=> c.category_id == category.category_id))
+            {
+                Categories.Add(category);
+            }
+
+
+        }
+        Categories = Categories.Distinct().ToList();
+
     }
 
-    //public async Task ShowCategoryProducts(int id)
-    //{
-        
-    //    CategoryProducts = (await ProductService.GetProducts()).Where(p => p.category_id == id).ToList();
+    public async Task ShowCategoryProducts(int id)
+    {
+        var tmp = new List<ProductsModel>();
+        productCategory = await ProductCategoryService.GetProductCategory();
 
-        
-       
-    //}
+        productCategory = productCategory.Where(c => c.category_id == id);
+
+        foreach (var item in productCategory)
+        {
+            tmp.Add((await ProductService.GetProducts()).Where(p => p.product_id == item.product_id).First());
+            
+        }
+
+        CategoryProducts = tmp;
+
+
+    }
 }

@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 using System.Xml.Linq;
 using EcommerceLibrary.Models;
 
@@ -13,7 +15,7 @@ public class CouponData: ICouponData
     private readonly ISqlDataAccess _sql;
     private readonly IProductsData _products;
 
-    public CouponData(ISqlDataAccess sql, IProductsData products)
+    public CouponData(ISqlDataAccess sql ,IProductsData products)
     {
         _sql = sql;
         _products = products;
@@ -80,7 +82,50 @@ public class CouponData: ICouponData
 
     }
 
-    public Task Delete(int coupon_id)
+    public async Task<List<ProductsModel>> ApplyCoupon(string couponName, List<ProductsModel> CartItems)
+    {
+        var coupon = await GetCouponByName(couponName);
+        if (coupon is null)
+        {
+            throw new ArgumentException("Coupon not found.");
+        }
+
+        if (CartItems.Count <= 0)
+        {
+            throw new ArgumentException("Cart is empty.");
+        }
+
+        if (coupon.coupon_use > 0 && coupon.coupon_expire > DateTime.Today)
+        {
+            foreach (var item in CartItems)
+            {
+                if (item.coupon_id == coupon.coupon_id)
+                {
+                    item.discounted_price = ((Convert.ToDecimal(coupon.coupon_discount) / 100) *
+                                                 (Convert.ToDecimal(item.price)
+                                                  * Convert.ToDecimal(item.ProductAmount)));
+                   await _products.Update(item.product_id, item.name, Convert.ToDecimal(item.price), item.quantity, item.img_url,
+                        item.description, item.coupon_id, item.discounted_price);
+
+                }
+            
+            }
+        }
+        
+        else
+        {
+            throw new ArgumentException("Coupon is expired or has already been used up.");
+        }
+
+        return CartItems;
+    }
+
+
+
+    // return _sql.SaveData<dynamic>("dbo.spCoupon_Update", coupon, "Default");
+
+
+public Task Delete(int coupon_id)
     {
         return _sql.SaveData<dynamic>("dbo.spCoupon_Delete", new { coupon_id }, "Default");
 
