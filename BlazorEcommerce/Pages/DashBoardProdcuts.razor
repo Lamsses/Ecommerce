@@ -83,7 +83,7 @@
                         <label for="inputQuantityy" class="form-label">Quantity</label>
                         <InputNumber placeholder="" id="inputQuantityy" @bind-Value="addProduct.quantity" class="form-control" required />
                     </div>
-                    @*<div class="col-md-6">
+                    <div class="col-md-6">
                         <label for="inputCategory" class="form-label">Category</label>
                         <div class="dropdown">
                                     <button class="btn border  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -148,14 +148,21 @@
                         <label for="inputName" class="form-label">Product Name</label>
                         <InputText placeholder="name" id="inputName" @bind-Value="editProduct.name" class="form-control" required />
                     </div>
+                    
+                                <InputFile class="form-control" OnChange="@LoadFiles" multiple accept=".png,.jpg,.jpeg" />
+                                @if (errors.Count > 0)
+                                {
+                                    <ul class="text-danger">
+                                        @foreach (var item in errors)
+                                        {
+                                            <li>@item</li>
+                                        }
+                                    </ul>
+                                }
+                   
                     <div class="col-md-6">
                         <label for="inputPrice" class="form-label">Price</label>
                         <InputText placeholder="price" id="inputPrice" @bind-Value="editProduct.price" class="form-control" required />
-
-                    </div>
-                    <div class="col-md-6">
-                        <label for="inputImg" class="form-label">Image</label>
-                        <InputText placeholder="img_url" id="inputImg" @bind-Value="editProduct.img_url" class="form-control" required />
 
                     </div>
                     <div class="col-md-6">
@@ -280,13 +287,13 @@
 
                     <div class="col-md-12">
                         <label for="inputCoupon2" class="form-label">Coupon</label>
-                        <InputSelect placeholder="coupon_id" id="inputCoupon2" @bind-Value="coupon.coupon_id" class="form-control">
-                            <option  selected disabled="">Coupon</option> 
+                        <InputSelect placeholder="coupon_id" id="inputCoupon2" @bind-Value="coupon.coupon_id"  class="form-control">
+                            <option   selected disabled="">Coupon</option> 
                             @if (Coupons is not null)
                             {
                                 foreach (var item in Coupons)
                                 {
-                                    <option value="@item.coupon_id">@item.coupon_name</option>
+                                    <option @onselectstart="()=>GetCouponDetalis(item.coupon_id)" value="@item.coupon_id">@item.coupon_name</option>
                                     
                                     
                                 }

@@ -96,48 +96,51 @@ partial class DashBoardProdcuts : MainBase
                         Content = new StringContent("Price cannot be less the Original price")
                     };
                 }
+
                 string relativePath = await CaptureFile();
                 addProduct.img_url = relativePath;
+                if (relativePath is not null)
+                {
 
-                var response = await productService.AddProduct(addProduct);
-                var result = await response.Content.ReadFromJsonAsync<ProductsModel>();
-                if (response.IsSuccessStatusCode)
-                {
-                foreach (var item in Categories)
-                {
-                    if (item.isSelected)
+                    var response = await productService.AddProduct(addProduct);
+                    var result = await response.Content.ReadFromJsonAsync<ProductsModel>();
+                    if (response.IsSuccessStatusCode)
                     {
-                        var s = await productCategoryService.AddProductCategory(new ProductCategoryModel
+                        foreach (var item in Categories)
                         {
-        category_id = item.category_id,
-        product_id = result.product_id
-                        });
+                            if (item.isSelected)
+                            {
+                                var s = await productCategoryService.AddProductCategory(new ProductCategoryModel
+                                {
+                                    category_id = item.category_id,
+                                    product_id = result.product_id
+                                });
+                            }
+                        }
+                        toastService.ShowSuccess("Product Added Successfully");
+                        adminLog.AddLog(result);
+                        products = await productService.GetProducts();
+
                     }
+                    else
+                    {
+                        toastService.ShowError("An error occurred Please try again");
+                    }
+
+               
                 }
-                    toastService.ShowSuccess("Product Added Successfully");
-                    adminLog.AddLog(result);
-                    products = await productService.GetProducts();
 
                 }
                 else
                 {
-                    toastService.ShowError("An error occurred Please try again");
+                    toastService.ShowError("Product Already Exists");
+                    return new HttpResponseMessage(HttpStatusCode.BadRequest)
+                    {
+                        Content = new StringContent("Product Already Exists")
+                    };
                 }
 
-            }
-            else
-            {
-                toastService.ShowError("Product Already Exists");
-                return new HttpResponseMessage(HttpStatusCode.BadRequest)
-                {
-                    Content = new StringContent("Product Already Exists")
-                };
-            }
-            else
-            {
-                    toastService.ShowError("Item with this name already exist");
 
-            }
         }
         catch (HttpRequestException ex)
         {
@@ -303,6 +306,7 @@ partial class DashBoardProdcuts : MainBase
         var response = await client.PutAsJsonAsync($"Coupon/{coupon.coupon_id}", coupon);
         Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
 
+
     }
     private async Task DeleteCoupon()
     {
@@ -313,7 +317,16 @@ partial class DashBoardProdcuts : MainBase
         Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
 
     }
+    private async Task GetCouponDetalis(int id)
+    {
+        client = factory.CreateClient("api");
+        var token = await LocalStorage.GetItemAsync<string>("token");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
+        coupon = await client.GetFromJsonAsync<CouponModel>($"Coupon/{id}");
+        await InvokeAsync(StateHasChanged);
 
+
+    }
 
 
     private async void GetProductId(int id)
@@ -321,6 +334,9 @@ partial class DashBoardProdcuts : MainBase
         productId = id;
         client = factory.CreateClient("api");
         editProduct = await productService.GetProductById(id);
+        
+
+        await InvokeAsync(StateHasChanged);
 
     }
 
@@ -379,26 +395,31 @@ partial class DashBoardProdcuts : MainBase
             {
                 errors.Add("File must be an image file (.jpg, .png, .jpeg)");
             }
-            string newFileName = Path.ChangeExtension(
-                Path.GetRandomFileName(),
-                Path.GetExtension(file.Name));
-            var userName = await customerService.GetUserNameFromToken();
-            string path = Path.Combine(
-                config.GetValue<string>("FileStorage")!,
-                userName,
-                newFileName);
+            else
+            {
+                string newFileName = Path.ChangeExtension(
+                    Path.GetRandomFileName(),
+                    Path.GetExtension(file.Name));
+                var userName = await customerService.GetUserNameFromToken();
+                string path = Path.Combine(
+                    config.GetValue<string>("FileStorage")!,
+                    userName,
+                    newFileName);
 
-            string relativePath = Path.Combine(
-                userName,
-                newFileName);
+                string relativePath = Path.Combine(
+                    userName,
+                    newFileName);
 
-            Directory.CreateDirectory(Path.Combine(
-                config.GetValue<string>("FileStorage")!,
-                userName));
+                Directory.CreateDirectory(Path.Combine(
+                    config.GetValue<string>("FileStorage")!,
+                    userName));
 
-            await using FileStream fs = new(path, FileMode.Create);
-            await file.OpenReadStream(maxFileSize).CopyToAsync(fs);
-            return relativePath;
+                await using FileStream fs = new(path, FileMode.Create);
+                await file.OpenReadStream(maxFileSize).CopyToAsync(fs); 
+                return relativePath;
+            }
+
+            return null;
         }
         catch (Exception ex)
         {
