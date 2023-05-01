@@ -136,7 +136,8 @@ partial class Checkout
                 if (item.discounted_price > 0)
                 {
                     // var newPrice = (Convert.ToDecimal(item.discounted_price) * Convert.ToDecimal(item.ProductAmount));
-                    total += item.discounted_price;
+                    total += item.discounted_price * item.ProductAmount;
+                   
                 }
                 else
                 {
