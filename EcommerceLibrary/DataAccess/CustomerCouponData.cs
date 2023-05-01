@@ -26,4 +26,18 @@ public class CustomerCouponData : ICustomerCouponData
         return result.FirstOrDefault();
     }
 
+
+    public async Task<CustomerCouponModel?> Update(int customer_id, int coupon_id,bool IsUsed)
+    {
+        var result = await _sql.Loaddata<CustomerCouponModel, dynamic>("dbo.spCustomerCoupon_Update", new { customer_id, coupon_id, IsUsed }, "Default");
+
+        return result.FirstOrDefault();
+    }
+    public  Task Delete(int customer_id, int coupon_id)
+    {
+         return _sql.SaveData<dynamic>("dbo.spCustomerCoupon_Delete", new { customer_id , coupon_id }, "Default");
+
+       
+    }
+
 }

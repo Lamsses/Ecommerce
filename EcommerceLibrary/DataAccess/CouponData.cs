@@ -14,11 +14,13 @@ public class CouponData: ICouponData
 {
     private readonly ISqlDataAccess _sql;
     private readonly IProductsData _products;
+    private readonly ICustomerCouponData _customerCoupon;
 
-    public CouponData(ISqlDataAccess sql ,IProductsData products)
+    public CouponData(ISqlDataAccess sql ,IProductsData products,ICustomerCouponData customerCoupon)
     {
         _sql = sql;
         _products = products;
+        _customerCoupon = customerCoupon;
     }
     public Task<List<CouponModel>> GetAll()
     {
@@ -37,7 +39,7 @@ public class CouponData: ICouponData
         var result = await _sql.Loaddata<CouponModel, dynamic>("dbo.spCoupon_Create", new { coupon_name, coupon_use, coupon_discount, coupon_expire }, "Default");
         return result.FirstOrDefault();
     }
-    public async Task<List<ProductsModel>> ApplyCoupon(string couponName, List<ProductsModel> CartItems)
+    public async Task<List<ProductsModel>> ApplyCoupon(string couponName, List<ProductsModel> CartItems,int userId)
     {
         var coupon = await GetCouponByName(couponName);
         if (coupon is null)
@@ -56,16 +58,19 @@ public class CouponData: ICouponData
             {
                 if (item.coupon_id == coupon.coupon_id)
                 {
-                    item.discounted_price = ((Convert.ToDecimal(coupon.coupon_discount) / 100) *
-                                                 (Convert.ToDecimal(item.price)
-                                                  * Convert.ToDecimal(item.ProductAmount)));
+                    item.discounted_price = (Convert.ToDecimal(item.price) * item.ProductAmount) - ((Convert.ToDecimal(coupon.coupon_discount) / 100) *
+                                                                (Convert.ToDecimal(item.price)
+                                                                 * item.ProductAmount));
+                    item.discounted_price = Math.Round(item.discounted_price, 2);
                     await _products.Update(item.product_id, item.name, Convert.ToDecimal(item.price), item.quantity, item.img_url,
                         item.description, item.coupon_id, item.discounted_price, item.original_price);
+
                     return CartItems;
 
                 }
 
             }
+            _customerCoupon.Create();
         }
 
         else

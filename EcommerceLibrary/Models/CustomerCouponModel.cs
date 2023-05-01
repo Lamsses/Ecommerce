@@ -10,4 +10,5 @@ public class CustomerCouponModel
     public int coupon_id { get; set; }
 
     public int customer_id { get; set; }
+    public bool IsUsed { get; set; }
 }

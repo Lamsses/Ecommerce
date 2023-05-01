@@ -54,14 +54,14 @@ partial class CustomerLog
                 on o.customer_id equals c.customer_id
             select new
             {
-    o.order_id, c.first_name,o.receipt
+                 o.order_id, c.first_name,o.receipt
             };
-        ProductsOrders = from cl in customerLog
+             ProductsOrders = from cl in customerLog
             join p in Products
                 on cl.product_id equals p.product_id
             select new
             {
-    p.name,cl.amount,cl.total,cl.order_id
+             p.name,cl.amount,cl.total,cl.order_id
             };
 
     }
