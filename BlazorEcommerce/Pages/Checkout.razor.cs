@@ -44,11 +44,11 @@ partial class Checkout
         client.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
 
-        // var userId = await customerService.GetUserIdFromToken();
+        var customerId = await customerService.GetUserIdFromToken();
 
         if (!string.IsNullOrEmpty(couponName))
         {
-            var request = await client.PostAsJsonAsync($"Coupon/Apply/{couponName}", products);
+            var request = await client.PostAsJsonAsync($"Coupon/Apply/{couponName}/{customerId}", products);
             
             if (request.IsSuccessStatusCode)
             {

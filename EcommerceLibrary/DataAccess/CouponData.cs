@@ -33,13 +33,19 @@ public class CouponData: ICouponData
 
         return result.FirstOrDefault();
     }
+    public async Task<CouponModel> GetCouponById(int coupon_id)
+    {
+        var result = await _sql.Loaddata<CouponModel, dynamic>("dbo.spCoupon_GetCouponById", new { coupon_id }, "Default");
+
+        return result.FirstOrDefault();
+    }
 
     public async Task<CouponModel> Create(string coupon_name, int coupon_use, int coupon_discount, DateTime coupon_expire)
     {
         var result = await _sql.Loaddata<CouponModel, dynamic>("dbo.spCoupon_Create", new { coupon_name, coupon_use, coupon_discount, coupon_expire }, "Default");
         return result.FirstOrDefault();
     }
-    public async Task<List<ProductsModel>> ApplyCoupon(string couponName, List<ProductsModel> CartItems,int userId)
+    public async Task<List<ProductsModel>> ApplyCoupon(string couponName, List<ProductsModel> CartItems,int customerId)
     {
         var coupon = await GetCouponByName(couponName);
         if (coupon is null)
@@ -51,6 +57,10 @@ public class CouponData: ICouponData
         {
             throw new ArgumentException("Cart is empty.");
         }
+
+        var customerCoupons = (await _customerCoupon.GetAll(customerId, coupon.coupon_id)).FirstOrDefault();
+        if (customerCoupons is  null || customerCoupons.IsUsed != true)
+        {
 
         if (coupon.coupon_use > 0 && coupon.coupon_expire > DateTime.Today)
         {
@@ -65,20 +75,26 @@ public class CouponData: ICouponData
                     await _products.Update(item.product_id, item.name, Convert.ToDecimal(item.price), item.quantity, item.img_url,
                         item.description, item.coupon_id, item.discounted_price, item.original_price);
 
-                    return CartItems;
+                    //return CartItems;
 
                 }
 
             }
-            _customerCoupon.Create();
+            
+         if (customerCoupons is null)
+        
+        {
+            var r = await _customerCoupon.Create(customerId, coupon.coupon_id);
         }
-
+        }
         else
         {
             throw new ArgumentException("Coupon is expired or has already been used up.");
         }
+        }
 
-        return  new();
+
+        return  CartItems;
     }
 
     public Task Update(int coupon_id, string coupon_name, int coupon_use, int coupon_discount, DateTime coupon_expire)

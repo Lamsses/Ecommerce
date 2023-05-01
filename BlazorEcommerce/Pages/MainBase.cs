@@ -89,35 +89,35 @@ public class MainBase : ComponentBase
 
     public async Task OrdersCheckout()
     {
+
         var cart = await LocalStorage.GetItemAsync<List<ProductsModel>>("cart");
+        if (cart is not null)
+        {
         var token = await LocalStorage.GetItemAsync<string>("token");
         var orderProducts = new List<OrdersProductsModel>();
         client = factory.CreateClient("api");
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-        if (cart is not null)
-        {
-            foreach (var product in cart)
-            {
-                orderProducts.Add(new OrdersProductsModel
-                    {
-                        product_id = product.product_id,
-                        amount = product.ProductAmount,
-                        price = decimal.Parse(product.price)
-                    }
-                );
-            }
+            //foreach (var product in cart)
+            //{
+            //    orderProducts.Add(new OrdersProductsModel
+            //        {
+            //            product_id = product.product_id,
+            //            amount = product.ProductAmount,
+            //            price = decimal.Parse(product.price)
+            //        }
+            //    );
+            //}
 
             var order = new OrdersModel
             {
                 order_date = DateTime.Now,
                 customer_id = await customerService.GetUserIdFromToken(),
                 receipt = ReceiptGenrator(),
-                OrderProducts = orderProducts
+                Products = cart
             };
 
             var response = await orderService.AddOrder(order);
-            var result = await response.Content.ReadFromJsonAsync<OrdersModel>();
+            //var result = await response.Content.ReadFromJsonAsync<OrdersModel>();
 
             if (response.IsSuccessStatusCode)
             {

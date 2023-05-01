@@ -36,12 +36,12 @@ public class CouponController : ControllerBase
         }
         return Ok(output);
     }
-    [HttpPost("Apply/{cname}")]
+    [HttpPost("Apply/{cname}/{customerId}")]
     [AllowAnonymous]
-    public async Task<ActionResult<CouponModel>> ApplyCoupon(string cname, [FromBody] List<ProductsModel> CartItems)
+    public async Task<ActionResult<CouponModel>> ApplyCoupon(string cname, [FromBody] List<ProductsModel> CartItems, int customerId)
     {
 
-        var output = await _coupons.ApplyCoupon(cname, CartItems);
+        var output = await _coupons.ApplyCoupon(cname,CartItems, customerId);
         return Ok(output);
 
     }

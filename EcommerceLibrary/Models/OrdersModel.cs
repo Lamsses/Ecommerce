@@ -8,5 +8,5 @@ public class OrdersModel
     public int customer_id { get; set; }
 
     public string receipt { get; set; }
-    public List<OrdersProductsModel>? OrderProducts { get; set; }
+    public List<ProductsModel>? Products { get; set; }
 }

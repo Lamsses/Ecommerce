@@ -39,7 +39,7 @@ public class OrdersController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<OrdersModel>> Post([FromBody] OrdersModel orders)
     {
-        var output = await _orders.Create(orders.order_date, orders.customer_id, orders.receipt,orders.OrderProducts);
+        var output = await _orders.Create(orders.order_date, orders.customer_id, orders.receipt,orders.Products);
         return Ok(output);
     }
 
