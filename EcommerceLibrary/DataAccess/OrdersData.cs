@@ -58,7 +58,7 @@ public class OrdersData : IOrdersData
                     else
                     {
                         //product.price =  product.discounted_price.ToString();
-                        await _sql.LoaddataInTransaction<OrdersProductsModel, dynamic>("dbo.spOrdersProducts_Create", new { result.order_id, product.product_id, amount = product.ProductAmount, price= product.discounted_price });
+                        await _sql.LoaddataInTransaction<OrdersProductsModel, dynamic>("dbo.spOrdersProducts_Create", new { result.order_id, product.product_id, amount = product.ProductAmount, price = product.discounted_price });
                         product.quantity -= 1;
                         product.discounted_price = 0;
                         await _sql.SaveDataInTransaction<dynamic>("dbo.spProducts_Update", new { product.product_id, product.name, product.price, product.quantity, product.img_url, product.description, product.coupon_id, product.discounted_price,product.original_price });
