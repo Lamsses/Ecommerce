@@ -35,4 +35,12 @@ public class ProductCategoryService : IProductCategoryService
         var response = await _client.PostAsJsonAsync("ProductCategory",model);
         return response;
     }
+    public async Task<HttpResponseMessage> DeleteProductCategory(ProductCategoryModel model)
+    {
+        _client = _factory.CreateClient("api");
+        var token = await localStorage.GetItemAsync<string>("token");
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
+        var response = await _client.DeleteAsync($"ProductCategory/{model.category_id}/{model.product_id}");
+        return response;
+    }
 }

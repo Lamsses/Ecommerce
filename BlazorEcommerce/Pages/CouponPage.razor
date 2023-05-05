@@ -1,0 +1,187 @@
+﻿@page "/coupon"
+@layout DashboardLayout
+@using System.Net.Http.Headers
+
+<div class="container mt-2">
+    <button class="mybtn mybtn--outline " data-bs-toggle="modal" data-bs-target="#coupon">Add Coupons</button>
+    <!-- Add Coupon Window -->
+    <div class="modal fade" id="coupon" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add Coupons</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="coupon" class="row g-3">
+                        <div class="col-md-6">
+                            <label for="inputCouponName" class="form-label">Coupon Name</label>
+                            <InputText type="text" @bind-Value="coupon.coupon_name" class="form-control" id="inputCouponName" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="inputUse" class="form-label">Coupon Use</label>
+                            <InputNumber TValue="int" type="number" @bind-Value="coupon.coupon_use" class="form-control" id="inputUse" required />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="inputDiscount" class="form-label">Coupon Discount</label>
+                            <InputNumber type="number" @bind-Value="coupon.coupon_discount" class="form-control" id="inputDiscount" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="inputExpire" class="form-label">Coupon Expire</label>
+                            <InputDate Type="InputDateType.Date" @bind-Value="coupon.coupon_expire" class="form-control" id="inputExpire" required />
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="submit" @onclick="AddCoupon" class="btn mybtn--primary">Add</button>
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+
+                            
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- Edit Coupon Window -->
+    <div class="modal fade" id="editcoupon" tabindex="-1" aria-labelledby="editcouponLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="editcouponLabel">Edit Coupon</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="editCoupon" class="row g-3">
+                        <div class="col-md-6">
+                            <label for="inputCouponName" class="form-label">Coupon Name</label>
+                            <InputText type="text" @bind-Value="editCoupon.coupon_name" class="form-control" id="inputCouponName" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="inputUse" class="form-label">Coupon Use</label>
+                            <InputNumber TValue="int" type="number" @bind-Value="editCoupon.coupon_use" class="form-control" id="inputUse" required />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="inputDiscount" class="form-label">Coupon Discount</label>
+                            <InputNumber type="number" @bind-Value="editCoupon.coupon_discount" class="form-control" id="inputDiscount" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="inputExpire" class="form-label">Coupon Expire</label>
+                            <InputDate Type="InputDateType.Date" @bind-Value="editCoupon.coupon_expire" class="form-control" id="inputExpire" required />
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="submit" @onclick="EditCoupon" class="btn mybtn--primary">Edit</button>
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+
+                            
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- Confirm Delete Window -->
+    <div class="modal fade" id="confirmDelete" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="confirmLabel">Confirm Delete</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to Delete This?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" @onclick="DeleteCoupon" class="btn btn-danger">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="table mt-3">
+        <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Use</th>
+            <th scope="col">Discount</th>
+            <th scope="col">Expire</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Coupons)
+        {
+
+            <tr>
+                <td>@item.coupon_name</td>
+                <td>@item.coupon_use</td>
+                <td>@item.coupon_discount%</td>
+                <td>@item.coupon_expire</td>
+                <td>
+                        <button @onclick="()=> GetCouponId(item.coupon_id)" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#editcoupon">Edit</button>
+                        <button @onclick="()=> GetCouponId(item.coupon_id)" class="btn btn-danger " data-bs-toggle="modal" data-bs-target="#confirmDelete">Delete</button>
+                </td>
+                @*<td><button>Delete</button> </td>*@
+
+            </tr>
+
+        }
+
+        </tbody>
+    </table>
+</div>
+@code {
+    public List<CouponModel> Coupons = new();
+    private CouponModel coupon = new();
+    private CouponModel editCoupon = new();
+    public int couponId;
+    [Inject] public IHttpClientFactory? factory { get; set; }
+    [Inject] public HttpClient? client { get; set; }
+    [Inject] ILocalStorageService LocalStorage { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        client = factory.CreateClient("api");
+        var token = await LocalStorage.GetItemAsync<string>("token");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
+
+        Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
+
+    }
+    private async Task AddCoupon()
+    {
+        await client.PostAsJsonAsync<CouponModel>("Coupon", coupon);
+        Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
+
+    }
+    private async Task EditCoupon()
+    {
+        var response = await client.PutAsJsonAsync($"Coupon/{editCoupon.coupon_id}", editCoupon);
+        Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
+
+
+    }
+    private async Task DeleteCoupon()
+    {
+        client = factory.CreateClient("api");
+        var token = await LocalStorage.GetItemAsync<string>("token");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
+        var response = await client.DeleteAsync($"Coupon/{couponId}");
+        Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
+
+    }
+    async void  GetCouponId(int id)
+    {
+        couponId = id;
+        client = factory.CreateClient("api");
+        var token = await LocalStorage.GetItemAsync<string>("token");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
+        editCoupon = await client.GetFromJsonAsync<CouponModel>($"Coupon/GetById/{id}");
+        await InvokeAsync(StateHasChanged);
+
+    }
+
+}

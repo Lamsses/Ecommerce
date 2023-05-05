@@ -56,7 +56,7 @@
 
     public ProductBase ProductBase = new();
     public List<CategoriesModel> Categories = new();
-    public ICollection<ProductsModel> CategoryProducts;
+    public List<ProductsModel> CategoryProducts;
     public List<ProductsModel> Products = new();
     private IEnumerable<ProductCategoryModel>? productCategory;
 
@@ -91,7 +91,7 @@
 
         foreach (var item in productCategory)
         {
-            tmp.Add((await ProductService.GetProducts()).Where(p => p.product_id == item.product_id).First());
+            tmp.Add(Products.Where(p => p.product_id == item.product_id).First());
             
         }
 

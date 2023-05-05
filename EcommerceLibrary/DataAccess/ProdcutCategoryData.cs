@@ -26,4 +26,10 @@ public class ProdcutCategoryData : IProdcutCategoryData
             ("dbo.spProductCategory_Create", new { category_id, product_id }, "Default");
         return result.FirstOrDefault();
     }
+    public  Task Delete(int category_id, int product_id)
+    {
+ var s =          _sql.SaveData<dynamic>
+            ("dbo.spProductCategory_Delete", new { category_id, product_id }, "Default");
+ return s;
+    }
 }

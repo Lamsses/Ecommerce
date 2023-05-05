@@ -23,5 +23,6 @@ namespace EcommerceLibrary.Models
         
         public int? coupon_id { get; set; }
         public decimal original_price { get; set; }
+        public List<CategoriesModel> Categories { get; set; }
     }
 }

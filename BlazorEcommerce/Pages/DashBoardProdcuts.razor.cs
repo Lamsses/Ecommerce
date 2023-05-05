@@ -28,13 +28,12 @@ partial class DashBoardProdcuts : MainBase
     [Inject] IJSRuntime jsRuntime { get; set; }
     protected List<ProductsModel> products = new();
     protected List<CategoriesModel> Categories = new();
-    protected List<CategoriesModel> selectedCategories = new();
+    protected List<SelectableCategory> selectableCategories = new();
+    public List<ProductCategoryModel> ProductCategory { get; set; } = new ();
     protected List<CouponModel> Coupons = new ();
     [CascadingParameter]
     private Task<AuthenticationState>? authenticationState { get; set; }
 
-    List<string> options = new List<string> { "Option 1", "Option 2", "Option 3" };
-    List<string> selectedOptions = new List<string>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -43,15 +42,14 @@ partial class DashBoardProdcuts : MainBase
 
             var authState = await authenticationState;
             var user = authState?.User;
-            selectedOptions.Add(options[0]);
-
-
             client = factory.CreateClient("api");
             var token = await LocalStorage.GetItemAsync<string>("token");
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
             products = await client.GetFromJsonAsync<List<ProductsModel>>("Products");
             Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
+            ProductCategory = await productCategoryService.GetProductCategory();
             Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
+            //selectableCategories = Categories.Select(c => new SelectableCategory { category_id = c.category_id,Name = c.Name}).ToList();
 
         }
     }
@@ -63,7 +61,7 @@ partial class DashBoardProdcuts : MainBase
     private ProductsModel addProduct = new();
     private List<ProductCategoryModel>productCategory = new();
     private CategoriesModel category = new();
-    private CouponModel coupon = new();
+
     public int productId;
 
     private string searchQuery;
@@ -213,11 +211,39 @@ partial class DashBoardProdcuts : MainBase
     {
 
         var response = await productService.UpdateProduct(editProduct);
-        var result = response.Content.ReadFromJsonAsync<ProductsModel>();
+        var result =  response.Content.ReadFromJsonAsync<ProductsModel>();
         try
         {
             if (response.IsSuccessStatusCode)
             {
+                var productCategories = ProductCategory.Where(p => p.product_id == editProduct.product_id).ToList();
+                foreach (var item in editProduct.Categories)
+                {
+                        var isExist = productCategories.Where(p => p.category_id == item.category_id).FirstOrDefault();
+                    if (item.isSelected)
+                    {
+                        if (isExist is null)
+                        {
+                            var s = await productCategoryService.AddProductCategory(new ProductCategoryModel
+                            {
+                                category_id = item.category_id,
+                                product_id = editProduct.product_id
+                            });
+                        }
+                    }
+                    else
+                    {
+                        if (isExist is not null)
+                        {
+                            var s = await productCategoryService.DeleteProductCategory(new ProductCategoryModel
+                            {
+                                category_id = item.category_id,
+                                product_id = editProduct.product_id
+                            });
+                        }
+                    }
+                    
+                }
                 toastService.ShowSuccess("Product Edited Successfully");
 
                 adminLog.UpdateLog(productId);
@@ -270,17 +296,7 @@ partial class DashBoardProdcuts : MainBase
         // }
 
     }
-    private async Task AddProductCategory()
-    {
-        client = factory.CreateClient("api");
-        var token = await LocalStorage.GetItemAsync<string>("token");
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
-         await client.PostAsJsonAsync("Categories", category.Name);
 
-        var response = await client.PostAsJsonAsync
-            ("ProductCategory", new ProductCategoryModel {category_id = category.category_id, product_id = addProduct.product_id  });
-        productCategory = await client.GetFromJsonAsync<List<ProductCategoryModel>>("ProductCategory");
-    }
 
     private async Task EditCategory()
     {
@@ -295,38 +311,7 @@ partial class DashBoardProdcuts : MainBase
 
 
     }
-    private async Task AddCoupon()
-    {
-        await client.PostAsJsonAsync<CouponModel>("Coupon", coupon);
-        Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
 
-    }
-    private async Task EditCoupon()
-    {
-        var response = await client.PutAsJsonAsync($"Coupon/{coupon.coupon_id}", coupon);
-        Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
-
-
-    }
-    private async Task DeleteCoupon()
-    {
-        client = factory.CreateClient("api");
-        var token = await LocalStorage.GetItemAsync<string>("token");
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
-        var response = await client.DeleteAsync($"Coupon/{coupon.coupon_id}");
-        Coupons = await client.GetFromJsonAsync<List<CouponModel>>("Coupon");
-
-    }
-    private async Task GetCouponDetalis(int id)
-    {
-        client = factory.CreateClient("api");
-        var token = await LocalStorage.GetItemAsync<string>("token");
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
-        coupon = await client.GetFromJsonAsync<CouponModel>($"Coupon/{id}");
-        await InvokeAsync(StateHasChanged);
-
-
-    }
 
 
     private async void GetProductId(int id)
@@ -335,21 +320,26 @@ partial class DashBoardProdcuts : MainBase
         client = factory.CreateClient("api");
         editProduct = await productService.GetProductById(id);
         
+        var productCategories = ProductCategory.Where(p => p.product_id == editProduct.product_id).ToList();
+
+        editProduct.Categories = await client.GetFromJsonAsync<List<CategoriesModel>>("Categories");
+        foreach (var item in editProduct.Categories)
+        {
+            var isExist = productCategories.Where(p => p.category_id == item.category_id).FirstOrDefault();
+            if (isExist is not null)
+            {
+                item.isSelected = true;
+            }
+        }
+        
+
+
 
         await InvokeAsync(StateHasChanged);
 
     }
 
-    public async void LoadProductData()
-    {
-        editProduct = await productService.GetProductById(productId);
 
-    }
-
-    public  void ClearProductData()
-    {
-        editProduct = new ProductsModel();
-    }
     private string CreateWebPath(string path)
     {
         if (!string.IsNullOrEmpty(path))

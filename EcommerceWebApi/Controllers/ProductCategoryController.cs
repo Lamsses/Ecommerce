@@ -40,4 +40,15 @@ public class ProductCategoryController : ControllerBase
 
 
     }
+    [HttpDelete("{category_id}/{product_id}")]
+    [AllowAnonymous]
+    public async Task<ActionResult> Delete(int category_id,int product_id)
+    {
+
+          await _product.Delete(category_id, product_id);
+        return Ok();
+
+
+
+    }
 }

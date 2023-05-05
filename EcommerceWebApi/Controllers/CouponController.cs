@@ -36,6 +36,17 @@ public class CouponController : ControllerBase
         }
         return Ok(output);
     }
+    [HttpGet("GetById/{id}")]
+
+    public async Task<ActionResult<CouponModel>> GetById(int id)
+    {
+        var output = await _coupons.GetCouponById(id);
+        if (output is null)
+        {
+            return BadRequest();
+        }
+        return Ok(output);
+    }
     [HttpPost("Apply/{cname}/{customerId}")]
     [AllowAnonymous]
     public async Task<ActionResult<CouponModel>> ApplyCoupon(string cname, [FromBody] List<ProductsModel> CartItems, int customerId)

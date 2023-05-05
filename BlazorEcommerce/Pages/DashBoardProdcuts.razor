@@ -93,7 +93,7 @@
                                     @foreach (var item in Categories)
                                     {
                                 <div class="form-check ms-2">
-                                        <InputCheckbox class="form-check-input" @bind-Value="@item.isSelected" />
+                                        <InputCheckbox class="form-check-input"  @bind-Value="@item.isSelected" />
                                         <label class="form-check-label"> @item.Name</label>
                                 </div>
                                     }
@@ -176,14 +176,16 @@
                                 Choose Category
                             </button>
                             <ul class="dropdown-menu">
-                                @foreach (var item in Categories)
+                                @if (editProduct.Categories is not null)
                                 {
-                                    <div class="form-check ms-2">
-                                        <input type="checkbox" class="form-check-input" @bind="@item.isSelected" />
-                                        <label class="form-check-label"> @item.Name</label>
-                                    </div>
+                                    @foreach (var item in editProduct.Categories)
+                                    {
+                                        <div class="form-check ms-2">
+                                            <input type="checkbox" class="form-check-input" @bind="@item.isSelected"/>
+                                            <label class="form-check-label"> @item.Name</label>
+                                        </div>
+                                    }
                                 }
-                                
                             </ul>
                         </div>
                     </div>
@@ -257,61 +259,7 @@
         </div>
     </div>
 </div>
-<!-- Manage Coupon -->
-<div class="modal fade" id="coupon" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Add Coupons</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <EditForm Model="coupon"  class="row g-3">
-                    <div class="col-md-6">
-                        <label for="inputCouponName" class="form-label">Coupon Name</label>
-                        <InputText  type="text" @bind-Value="coupon.coupon_name" class="form-control" id="inputCouponName" required/>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="inputUse" class="form-label">Coupon Use</label>
-                        <InputNumber TValue="int" type="number" @bind-Value="coupon.coupon_use" class="form-control" id="inputUse" required/>
-                    </div>
 
-                    <div class="col-md-6">
-                        <label for="inputDiscount" class="form-label">Coupon Discount</label>
-                        <InputNumber  type="number" @bind-Value="coupon.coupon_discount" class="form-control" id="inputDiscount" required/>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="inputExpire" class="form-label">Coupon Expire</label>
-                        <InputDate  Type="InputDateType.Date" @bind-Value="coupon.coupon_expire" class="form-control" id="inputExpire" required/>
-                    </div>
-
-                    <div class="col-md-12">
-                        <label for="inputCoupon2" class="form-label">Coupon</label>
-                        <InputSelect placeholder="coupon_id" id="inputCoupon2" @bind-Value="coupon.coupon_id"  class="form-control">
-                            <option   selected disabled="">Coupon</option> 
-                            @if (Coupons is not null)
-                            {
-                                foreach (var item in Coupons)
-                                {
-                                    <option @onselectstart="()=>GetCouponDetalis(item.coupon_id)" value="@item.coupon_id">@item.coupon_name</option>
-                                    
-                                    
-                                }
-                            }
-                        </InputSelect>
-                                
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" @onclick="AddCoupon" class="btn mybtn--primary">Add</button>
-                        <button type="submit" @onclick="EditCoupon" class="btn btn-dark">Edit</button>
-                        <button type="button" @onclick="DeleteCoupon" class="btn btn-danger">Delete</button>
-                    </div>
-                </EditForm>
-            </div>
-        </div>
-
-    </div>
-</div>
 <!-- Confirm Delete -->
 <div class="modal fade" id="confirmDelete" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
     <div class="modal-dialog">
