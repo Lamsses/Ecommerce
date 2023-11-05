@@ -122,7 +122,9 @@ partial class DashBoardProdcuts : MainBase
                     }
                     else
                     {
-                        toastService.ShowError("An error occurred Please try again");
+                        //toastService.ShowError("An error occurred Please try again");
+                        toastService.ShowError(response.StatusCode.ToString());
+                        //Console.WriteLine("Error: "+response.Content);
                     }
 
                
@@ -340,7 +342,7 @@ partial class DashBoardProdcuts : MainBase
     }
 
 
-    private string CreateWebPath(string path)
+    public string CreateWebPath(string path)
     {
         if (!string.IsNullOrEmpty(path))
         {

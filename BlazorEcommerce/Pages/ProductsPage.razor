@@ -3,6 +3,7 @@
 @inject IProductService ProductService
 @inject ICategoryService CategoryService
 @inject IProductCategoryService ProductCategoryService
+@inject IConfiguration config
 <section class="products-section pt-5">
     <div class="container ">
         @* <h1 class="section__heading mb-4">Today's Best Deals For You</h1> *@
@@ -29,7 +30,7 @@
                         <div class="col col-6 col-xl-3 col-lg-4 col-sm-6  mb-3">
                             <div class="card">
                                 <a href="/p/@item.product_id">
-                                    <img src="@item.img_url" class="card-img-top" alt="...">
+                                    <img src="@CreateWebPath(item.img_url)" class="card-img-top" alt="...">
                                 </a>
                                 <div class="card-body">
                                     <h5 class="card-title d-flex justify-content-between">@item.name
@@ -59,7 +60,16 @@
     public List<ProductsModel> CategoryProducts;
     public List<ProductsModel> Products = new();
     private IEnumerable<ProductCategoryModel>? productCategory;
+    
+    public string CreateWebPath(string path)
+    {
+        if (!string.IsNullOrEmpty(path))
+        {
 
+            return Path.Combine(config.GetValue<string>("WebStorageRoot")!, path);
+        }
+        return "";
+    }
     protected override async Task OnInitializedAsync()
     {
 
